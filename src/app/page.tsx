@@ -175,6 +175,7 @@ export default function Home() {
               flexDirection: "column",
               width: "800px",
               gap: "10rem",
+              marginBottom: "100rem",
             }}
           >
             <form style={{ display: "flex" }}>

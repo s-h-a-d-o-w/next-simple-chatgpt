@@ -61,15 +61,18 @@ const components: Options["components"] = {
         {match ? (
           <Prism
             language={match[1]}
-            // wrapLongLines={true}
             showLineNumbers={true}
             wrapLines={true}
+            // Superior to `wrapLongLines` because line numbers stay correct this way.
             lineProps={() => ({
               style: {
                 display: "flex",
                 flexWrap: "wrap",
               },
             })}
+            customStyle={{
+              fontSize: "14rem",
+            }}
           >
             {text.replace(/\n$/, "")}
           </Prism>

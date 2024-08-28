@@ -4,4 +4,7 @@ html {
     font-size: 6.25%;
 }
 
-body { font-size: 14rem; }
+body {
+    font-family: 'Georgia, sans-serif';
+    font-size: 16rem;
+}
