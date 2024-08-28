@@ -9,7 +9,9 @@ import { Prism } from "react-syntax-highlighter";
 const StyledMessage = styled("div", {
   base: {
     display: "flex",
-    gap: "5rem",
+    gap: "4rem",
+    padding: "8rem",
+    alignItems: "flex-start",
 
     width: "80%",
   },
@@ -33,7 +35,7 @@ const StyledMessage = styled("div", {
 });
 
 type Props = MessageType & {
-  handleDelete: (id: string) => void;
+  handleDelete?: (id: string) => void;
 };
 
 const components: Options["components"] = {
@@ -68,6 +70,7 @@ const components: Options["components"] = {
               style: {
                 display: "flex",
                 flexWrap: "wrap",
+                textWrap: "wrap",
               },
             })}
             customStyle={{
@@ -112,7 +115,7 @@ export function Message({ role, id, content, handleDelete }: Props) {
           {content}
         </MemoizedReactMarkdown>
       </div>
-      <Button onClick={() => handleDelete(id)}>Delete</Button>
+      {handleDelete && <Button onClick={() => handleDelete(id)}>Delete</Button>}
     </StyledMessage>
   );
 }

@@ -10,6 +10,7 @@ import { Button } from "./components/Button";
 import HmrTimestamp from "./components/HmrTimestamp";
 import { Message } from "./components/Message";
 import Spinner from "./components/Spinner";
+import { css } from "../../styled-system/css";
 
 // const DEBUG = true;
 const isDev = process.env.NODE_ENV !== "production";
@@ -136,8 +137,9 @@ export default function Home() {
         style={{
           display: "flex",
           justifyContent: "flex-end",
-          gap: "10rem",
-          marginRight: "10rem",
+          gap: "12rem",
+          marginRight: "12rem",
+          padding: "12rem",
         }}
       >
         | Built:{" "}
@@ -164,7 +166,7 @@ export default function Home() {
             setShowHistory(!showHistory);
           }}
         >
-          History Picker
+          History
         </Button>
       </nav>
       <main>
@@ -178,8 +180,8 @@ export default function Home() {
               marginBottom: "100rem",
             }}
           >
-            <form style={{ display: "flex" }}>
-              System:
+            <form style={{ display: "flex", gap: "8rem" }}>
+              System
               <StyledInput
                 name="prompt"
                 value={systemValue}
@@ -228,6 +230,7 @@ export default function Home() {
             >
               <StyledInput
                 name="prompt"
+                placeholder="Leave empty to re-run."
                 value={input}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -263,12 +266,16 @@ export default function Home() {
         <div
           style={{
             position: "fixed",
-            top: "10%", // TODO: implement click outside to close
-            right: 0,
+            top: "10%",
+            right: "8rem",
             width: "30%",
             backgroundColor: "white",
             border: "1px solid black",
-            padding: "20rem",
+            padding: "12rem",
+
+            display: "flex",
+            gap: "8rem",
+            flexDirection: "column",
           }}
         >
           {Object.keys(history).map((key) => (
@@ -277,6 +284,10 @@ export default function Home() {
               onClick={() => {
                 setActiveHistoryEntry(history[key]);
               }}
+              className={css({
+                backgroundColor: "orange.100",
+                padding: "4rem",
+              })}
             >
               {history[key][1].createdAt?.toLocaleString()}:{" "}
               {history[key][1].content}
@@ -288,15 +299,18 @@ export default function Home() {
         <div
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
+            top: "8rem",
+            left: "8rem",
+            bottom: "8rem",
             width: "60%",
             backgroundColor: "white",
             border: "1px solid black",
             padding: "20rem",
+            overflow: "auto",
 
             display: "flex",
             flexDirection: "column",
+            gap: "8rem",
           }}
         >
           <Button
@@ -310,7 +324,8 @@ export default function Home() {
             Restore
           </Button>
           {activeHistoryEntry.map((message, index) => (
-            <div key={index}>{JSON.stringify(message, null, 2)}</div>
+            <Message key={index} {...message} />
+            // <div key={index}>{JSON.stringify(message, null, 2)}</div>
           ))}
         </div>
       )}
