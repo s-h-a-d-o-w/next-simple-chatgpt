@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Autorun scripts",
+      "type": "shell",
+      "command": "concurrently \"pm dev\" \"pm panda:watch\"",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+
+      "isBackground": true
+    }
+  ]
+}
