@@ -11,7 +11,7 @@ import HmrTimestamp from "./components/HmrTimestamp";
 import { Message } from "./components/Message";
 import Spinner from "./components/Spinner";
 
-const DEBUG = false;
+// const DEBUG = true;
 const isDev = process.env.NODE_ENV !== "production";
 
 const StyledInput = styled("textarea", {
@@ -188,14 +188,11 @@ export default function Home() {
             </form>
 
             {messages.map((message) => (
-              <div key={message.id}>
-                <Message
-                  key={message.id}
-                  handleDelete={handleDelete}
-                  {...message}
-                />
-                {DEBUG && <>raw: {JSON.stringify(message, null, 2)}</>}
-              </div>
+              <Message
+                key={message.id}
+                handleDelete={handleDelete}
+                {...message}
+              />
             ))}
 
             {error && (
@@ -218,11 +215,14 @@ export default function Home() {
               }}
               style={{
                 display: "flex",
-                position: "absolute",
-                bottom: "10rem",
+                position: "fixed",
+                bottom: 0,
                 width: "800px",
                 alignItems: "center",
                 gap: "10rem",
+                padding: "10rem",
+                backgroundColor: "white",
+                border: "1px solid black",
               }}
             >
               <StyledInput
@@ -293,6 +293,9 @@ export default function Home() {
             backgroundColor: "white",
             border: "1px solid black",
             padding: "20rem",
+
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <Button
@@ -301,6 +304,7 @@ export default function Home() {
               setActiveHistoryEntry(undefined);
               setShowHistory(false);
             }}
+            style={{ alignSelf: "flex-end" }}
           >
             Restore
           </Button>

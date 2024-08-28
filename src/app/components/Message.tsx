@@ -40,17 +40,16 @@ const components: Options["components"] = {
   //   h1: ({ className, ...props }: ComponentProps<"h1">) => <h1 {...props} />,
   // more components + custom components
 
+  // pre() {
+
+  // },
   code(props) {
-    const { children, className, ...rest } = props;
+    const { children, className } = props;
     const text = String(children);
 
     // Inline code
-    if (!text.includes("```")) {
-      return (
-        <code {...rest} className={className}>
-          {children}
-        </code>
-      );
+    if (!text.includes("\n")) {
+      return <code className={className}>{children}</code>;
     }
 
     const match = /language-(\w+)/.exec(className || "");
@@ -60,11 +59,22 @@ const components: Options["components"] = {
     return (
       <div style={{ position: "relative" }}>
         {match ? (
-          <Prism language={match[1]}>{text.replace(/\n$/, "")}</Prism>
+          <Prism
+            language={match[1]}
+            // wrapLongLines={true}
+            showLineNumbers={true}
+            wrapLines={true}
+            lineProps={() => ({
+              style: {
+                display: "flex",
+                flexWrap: "wrap",
+              },
+            })}
+          >
+            {text.replace(/\n$/, "")}
+          </Prism>
         ) : (
-          <code {...rest} className={className}>
-            {children}
-          </code>
+          <code className={className}>{children}</code>
         )}
         <Button
           onClick={() => {
