@@ -8,7 +8,7 @@
     "lint": "next lint --ignore-path .gitignore",
     "panda:watch": "panda --watch",
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
-    "prepare": "husky",
+    "prepare": "concurrently \"panda codegen\" \"husky\"",
     "start": "next start",
     "typecheck": "tsc"
   },
