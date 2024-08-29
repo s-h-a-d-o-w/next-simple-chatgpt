@@ -11,6 +11,8 @@ import HmrTimestamp from "./components/HmrTimestamp";
 import { Message } from "./components/Message";
 import Spinner from "./components/Spinner";
 import { css } from "../../styled-system/css";
+import { loadJsonFile } from "./loadJsonFile";
+import { saveJsonFile } from "./saveJsonFile";
 
 // const DEBUG = true;
 const isDev = process.env.NODE_ENV !== "production";
@@ -167,6 +169,31 @@ export default function Home() {
           }}
         >
           History
+        </Button>
+        <Button
+          onClick={async () => {
+            try {
+              const history = superjson.parse(await loadJsonFile()) as Record<
+                string,
+                MessageType[]
+              >;
+              setHistory(history);
+            } catch {
+              // user cancelled or picked nonsense. should probably show error.
+            }
+          }}
+        >
+          Load
+        </Button>
+        <Button
+          onClick={() => {
+            saveJsonFile(
+              history,
+              `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+            );
+          }}
+        >
+          Save
         </Button>
       </nav>
       <main>
