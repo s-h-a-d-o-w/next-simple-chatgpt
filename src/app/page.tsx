@@ -202,7 +202,9 @@ export default function Home() {
             style={{
               display: "flex",
               flexDirection: "column",
-              width: "800px",
+              maxWidth: "800px",
+              width: "100%",
+              padding: "10rem",
               gap: "10rem",
               marginBottom: "100rem",
             }}
@@ -234,47 +236,59 @@ export default function Home() {
               </>
             )}
 
-            <form
-              onSubmit={(event) => {
-                if (input === "") {
-                  event.preventDefault();
-                  reload();
-                } else {
-                  handleSubmit(event);
-                }
-              }}
+            <div
               style={{
-                display: "flex",
                 position: "fixed",
                 bottom: 0,
-                width: "800px",
-                alignItems: "center",
-                gap: "10rem",
-                padding: "10rem",
-                backgroundColor: "white",
-                border: "1px solid black",
+                left: 0,
+                right: 0,
+
+                display: "flex",
+                justifyContent: "center",
               }}
             >
-              <StyledInput
-                name="prompt"
-                placeholder="Leave empty to re-run."
-                value={input}
-                onChange={handleInputChange}
-                disabled={isLoading}
-                style={{ flexGrow: 1 }}
-              />
+              <form
+                onSubmit={(event) => {
+                  if (input === "") {
+                    event.preventDefault();
+                    reload();
+                  } else {
+                    handleSubmit(event);
+                  }
+                }}
+                style={{
+                  display: "flex",
+                  maxWidth: "800px",
+                  width: "100%",
+                  padding: "10rem",
 
-              {isLoading ? (
-                <>
-                  <Spinner />
-                  <Button type="button" onClick={() => stop()}>
-                    Stop
-                  </Button>
-                </>
-              ) : (
-                <Button type="submit">Run</Button>
-              )}
-            </form>
+                  alignItems: "center",
+                  gap: "10rem",
+                  backgroundColor: "white",
+                  border: "1px solid black",
+                }}
+              >
+                <StyledInput
+                  name="prompt"
+                  placeholder="Leave empty to re-run."
+                  value={input}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                  style={{ flexGrow: 1 }}
+                />
+
+                {isLoading ? (
+                  <>
+                    <Spinner />
+                    <Button type="button" onClick={() => stop()}>
+                      Stop
+                    </Button>
+                  </>
+                ) : (
+                  <Button type="submit">Run</Button>
+                )}
+              </form>
+            </div>
           </div>
         </VStack>
       </main>
@@ -294,8 +308,12 @@ export default function Home() {
           style={{
             position: "fixed",
             top: "10%",
+            bottom: "10%",
             right: "8rem",
-            width: "30%",
+            overflow: "auto",
+
+            width: "40%",
+
             backgroundColor: "white",
             border: "1px solid black",
             padding: "12rem",
@@ -329,7 +347,7 @@ export default function Home() {
             top: "8rem",
             left: "8rem",
             bottom: "8rem",
-            width: "60%",
+            width: "58%",
             backgroundColor: "white",
             border: "1px solid black",
             padding: "20rem",

@@ -9,6 +9,7 @@ import { Prism } from "react-syntax-highlighter";
 const StyledMessage = styled("div", {
   base: {
     display: "flex",
+    flexDirection: "column",
     gap: "4rem",
     padding: "8rem",
     alignItems: "flex-start",
