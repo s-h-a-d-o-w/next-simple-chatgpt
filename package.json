@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "predev": "rimraf .next",
     "dev": "next dev",
     "lint": "next lint --ignore-path .gitignore",
     "panda:watch": "panda --watch",
@@ -41,6 +42,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.5",
     "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
     "typescript": "^5"
   }
 }

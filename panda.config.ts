@@ -10,15 +10,14 @@ export default defineConfig({
   // Files to exclude
   exclude: [],
 
-  // Useful for theme customization
   theme: {
     extend: {
-      breakpoints: {
-        sm: "640rem",
-        md: "768rem",
-        lg: "1024rem",
-        xl: "1280rem",
-        "2xl": "1536rem",
+      tokens: {
+        fontSizes: {
+          xs: { value: "10rem" },
+          sm: { value: "12rem" },
+          md: { value: "16rem" },
+        },
       },
     },
   },

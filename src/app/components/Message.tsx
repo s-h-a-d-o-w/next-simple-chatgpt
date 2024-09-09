@@ -107,10 +107,35 @@ const MemoizedReactMarkdown = memo(
     prevProps.className === nextProps.className,
 );
 
+const RoleTag = styled("div", {
+  base: {
+    borderRadius: "4rem",
+    padding: "0 8rem",
+
+    fontSize: "xs",
+    md: {
+      fontSize: "sm",
+    },
+  },
+
+  variants: {
+    isUser: {
+      true: {
+        backgroundColor: "green.300",
+      },
+      false: {
+        backgroundColor: "red.300",
+      },
+    },
+  },
+});
+
 export function Message({ role, id, content, handleDelete }: Props) {
   return role === "system" ? null : (
     <StyledMessage variant={role === "user" ? "user" : undefined} key={id}>
-      {role === "user" ? "User: " : "AI: "}
+      <RoleTag isUser={role === "user"}>
+        {role === "user" ? "User " : "AI "}
+      </RoleTag>
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
           {content}

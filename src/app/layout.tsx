@@ -15,9 +15,9 @@ export const metadata: Metadata = {
 
 const Body = styled("body", {
   base: {
-    fontSize: "12rem",
-    sm: {
-      fontSize: "16rem",
+    fontSize: "sm",
+    md: {
+      fontSize: "md",
     },
   },
 });
