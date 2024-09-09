@@ -1,9 +1,9 @@
 import "./global.css";
 import type { Metadata } from "next";
-import { Roboto_Slab } from "next/font/google";
+import { Aleo } from "next/font/google";
 import { styled } from "../../styled-system/jsx";
 
-const nextFont = Roboto_Slab({
+const nextFont = Aleo({
   subsets: ["latin"],
   display: "swap",
 });

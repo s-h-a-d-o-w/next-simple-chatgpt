@@ -161,6 +161,7 @@ export default function Home() {
       <nav
         style={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "flex-end",
           alignItems: "center",
           gap: "12rem",
@@ -194,6 +195,14 @@ export default function Home() {
           }}
         >
           History
+        </Button>
+        <Button
+          onClick={() => {
+            // TODO: Really should have a confirmation modal for this...
+            setHistory([]);
+          }}
+        >
+          Delete History
         </Button>
         <Button
           onClick={async () => {
