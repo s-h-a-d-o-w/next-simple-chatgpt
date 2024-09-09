@@ -67,6 +67,7 @@ const components: Options["components"] = {
             showLineNumbers={true}
             wrapLines={true}
             // Superior to `wrapLongLines` because line numbers stay correct this way.
+            // PROBLEM: makes it impossible to copy just a selection of the code. But we need it for the code not to render off screen.
             lineProps={() => ({
               style: {
                 display: "flex",

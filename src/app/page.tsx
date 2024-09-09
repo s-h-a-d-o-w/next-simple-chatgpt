@@ -2,7 +2,13 @@
 
 import { useChat, type Message as MessageType } from "ai/react";
 import { cloneDeep, debounce } from "lodash";
-import { ChangeEventHandler, useCallback, useEffect, useState } from "react";
+import {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
 import { styled, VStack } from "../../styled-system/jsx";
@@ -32,6 +38,8 @@ function createSystemMessage(content: string) {
 }
 
 export default function Home() {
+  const endOfPageRef = useRef<HTMLDivElement>(null);
+
   const [showHistory, setShowHistory] = useState(false);
   const [activeHistoryEntry, setActiveHistoryEntry] = useState<MessageType[]>();
   const [systemValue, setSystemValue] = useState(
@@ -53,14 +61,33 @@ export default function Home() {
     keepLastMessageOnError: true,
     initialMessages: [createSystemMessage(systemValue)],
   });
-  const [history, setHistory] = useLocalStorageState<
-    Record<string, MessageType[]>
-  >("history", {
-    defaultValue: {},
-    serializer: superjson,
-  });
+  const [history, setHistory] = useLocalStorageState<Array<MessageType[]>>(
+    "history",
+    {
+      defaultValue: [],
+      serializer: superjson,
+    },
+  );
   const [lastHistoryUpdate, setLastHistoryUpdate] = useState(0);
 
+  // Scroll to bottom while message loads
+  useEffect(() => {
+    let scrollingInterval: number | undefined;
+
+    if (isLoading) {
+      scrollingInterval = window.setInterval(() => {
+        endOfPageRef.current?.scrollIntoView();
+      }, 100);
+    } else {
+      clearInterval(scrollingInterval);
+    }
+
+    return () => {
+      clearInterval(scrollingInterval);
+    };
+  }, [isLoading]);
+
+  // Keep history in sync
   useEffect(() => {
     const latestMessageDate =
       messages[messages.length - 1].createdAt?.valueOf();
@@ -75,7 +102,17 @@ export default function Home() {
       if (firstMessageDate) {
         setHistory((history) => {
           const nextHistory = cloneDeep(history);
-          nextHistory![firstMessageDate] = messages;
+          const index = nextHistory.findIndex(
+            (messages) => messages[1].createdAt?.valueOf() === firstMessageDate,
+          );
+
+          // Already exists
+          if (index >= 0) {
+            nextHistory[index] = messages;
+          } else {
+            nextHistory.push(messages);
+          }
+
           setLastHistoryUpdate(Date.now());
           return nextHistory;
         });
@@ -117,21 +154,6 @@ export default function Home() {
     setSystemValue(event.target.value);
     updateSystemMessage(event.target.value);
   };
-
-  // useEffect(() => {
-  //   setMessages([
-  //     {
-  //       role: "user",
-  //       content: "something",
-  //       id: "1",
-  //     },
-  //     {
-  //       role: "assistant",
-  //       content: "something else \n```ts\nconst bla = 1;\n```",
-  //       id: "2",
-  //     },
-  //   ]);
-  // }, [setMessages]);
 
   return (
     <>
@@ -175,8 +197,7 @@ export default function Home() {
         <Button
           onClick={async () => {
             try {
-              const history = superjson.parse(await loadJsonFile()) as Record<
-                string,
+              const history = superjson.parse(await loadJsonFile()) as Array<
                 MessageType[]
               >;
               setHistory(history);
@@ -293,6 +314,7 @@ export default function Home() {
             </div>
           </div>
         </VStack>
+        <div ref={endOfPageRef} />
       </main>
       {showHistory && (
         <div
@@ -332,22 +354,24 @@ export default function Home() {
             flexDirection: "column",
           }}
         >
-          {Object.keys(history).map((key) => (
-            <div
-              key={key}
-              onClick={() => {
-                setActiveHistoryEntry(history[key]);
-              }}
-              className={css({
-                backgroundColor: "orange.100",
-                padding: "4rem",
-                cursor: "pointer",
-              })}
-            >
-              {history[key][1].createdAt?.toLocaleString()}:{" "}
-              {history[key][1].content}
-            </div>
-          ))}
+          {history
+            .slice(0)
+            .reverse()
+            .map((messages, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  setActiveHistoryEntry(messages);
+                }}
+                className={css({
+                  backgroundColor: "orange.100",
+                  padding: "4rem",
+                  cursor: "pointer",
+                })}
+              >
+                {messages[1].createdAt?.toLocaleString()}: {messages[1].content}
+              </div>
+            ))}
         </div>
       )}
       {activeHistoryEntry && (
@@ -380,7 +404,6 @@ export default function Home() {
           </Button>
           {activeHistoryEntry.map((message, index) => (
             <Message key={index} {...message} />
-            // <div key={index}>{JSON.stringify(message, null, 2)}</div>
           ))}
         </div>
       )}
