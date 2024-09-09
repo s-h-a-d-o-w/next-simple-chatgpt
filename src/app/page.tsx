@@ -1,6 +1,7 @@
 "use client";
 
 import { useChat, type Message as MessageType } from "ai/react";
+import { formatDistance } from "date-fns/formatDistance";
 import { cloneDeep, debounce } from "lodash";
 import {
   ChangeEventHandler,
@@ -11,12 +12,12 @@ import {
 } from "react";
 import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
+import { css } from "../../styled-system/css";
 import { styled, VStack } from "../../styled-system/jsx";
 import { Button } from "./components/Button";
 import HmrTimestamp from "./components/HmrTimestamp";
 import { Message } from "./components/Message";
 import Spinner from "./components/Spinner";
-import { css } from "../../styled-system/css";
 import { loadJsonFile } from "./loadJsonFile";
 import { saveJsonFile } from "./saveJsonFile";
 
@@ -369,7 +370,27 @@ export default function Home() {
                   cursor: "pointer",
                 })}
               >
-                {messages[1].createdAt?.toLocaleString()}: {messages[1].content}
+                <div>
+                  {messages[1].createdAt
+                    ? formatDistance(messages[1].createdAt, new Date(), {
+                        addSuffix: true,
+                      })
+                    : ""}
+                  <span
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      const index = history.findIndex(
+                        (_messages) => _messages === messages,
+                      );
+                      const nextHistory = cloneDeep(history);
+                      nextHistory.splice(index, 1);
+                      setHistory(nextHistory);
+                    }}
+                  >
+                    🚮
+                  </span>
+                </div>
+                {messages[1].content}
               </div>
             ))}
         </div>
