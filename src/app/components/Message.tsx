@@ -4,7 +4,7 @@ import { styled } from "../../../styled-system/jsx";
 import ReactMarkdown, { type Options } from "react-markdown";
 import { memo } from "react";
 import { Prism } from "react-syntax-highlighter";
-// import { relative } from "path";
+import { css } from "../../../styled-system/css";
 
 const StyledMessage = styled("div", {
   base: {
@@ -75,8 +75,13 @@ const components: Options["components"] = {
                 textWrap: "wrap",
               },
             })}
-            customStyle={{
-              fontSize: "14rem",
+            codeTagProps={{
+              className: css({
+                fontSize: "sm",
+                md: {
+                  fontSize: "md",
+                },
+              }),
             }}
           >
             {text.replace(/\n$/, "")}

@@ -349,10 +349,6 @@ export default function Home() {
             backgroundColor: "white",
             border: "1px solid black",
             padding: "12rem",
-
-            display: "flex",
-            gap: "8rem",
-            flexDirection: "column",
           }}
         >
           {history
@@ -367,7 +363,11 @@ export default function Home() {
                 className={css({
                   backgroundColor: "orange.100",
                   padding: "4rem",
+                  marginBottom: "8rem",
                   cursor: "pointer",
+                  maxHeight: "115rem",
+                  overflowY: "hidden",
+                  textOverflow: "ellipsis",
                 })}
               >
                 <div>
@@ -405,7 +405,7 @@ export default function Home() {
             width: "58%",
             backgroundColor: "white",
             border: "1px solid black",
-            padding: "20rem",
+            padding: "12rem",
             overflow: "auto",
 
             display: "flex",

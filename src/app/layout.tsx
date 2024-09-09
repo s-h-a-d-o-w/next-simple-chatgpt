@@ -17,7 +17,7 @@ const Body = styled("body", {
   base: {
     fontSize: "sm",
     md: {
-      fontSize: "md",
+      fontSize: "lg",
     },
   },
 });

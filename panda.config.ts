@@ -16,7 +16,8 @@ export default defineConfig({
         fontSizes: {
           xs: { value: "10rem" },
           sm: { value: "12rem" },
-          md: { value: "16rem" },
+          md: { value: "14rem" },
+          lg: { value: "16rem" },
         },
       },
     },
