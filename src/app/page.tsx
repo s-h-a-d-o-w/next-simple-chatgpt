@@ -296,7 +296,14 @@ export default function Home() {
       </main>
       {showHistory && (
         <div
-          style={{ position: "fixed", width: "100%", height: "100%", top: 0 }}
+          style={{
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            backgroundColor: "white",
+            opacity: "0.5",
+          }}
           onClick={() => {
             if (showHistory) {
               setShowHistory(false);
@@ -306,56 +313,42 @@ export default function Home() {
         />
       )}
       {showHistory && history && (
-        <>
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: 0,
-              backgroundColor: "white",
-              opacity: "0.5",
-              pointerEvents: "none",
-            }}
-          ></div>
-          <div
-            style={{
-              position: "fixed",
-              top: "10%",
-              bottom: "10%",
-              right: "8rem",
-              overflow: "auto",
+        <div
+          style={{
+            position: "fixed",
+            top: "10%",
+            bottom: "10%",
+            right: "8rem",
+            overflow: "auto",
 
-              width: "40%",
+            width: "40%",
 
-              backgroundColor: "white",
-              border: "1px solid black",
-              padding: "12rem",
+            backgroundColor: "white",
+            border: "1px solid black",
+            padding: "12rem",
 
-              display: "flex",
-              gap: "8rem",
-              flexDirection: "column",
-            }}
-          >
-            {Object.keys(history).map((key) => (
-              <div
-                key={key}
-                onClick={() => {
-                  setActiveHistoryEntry(history[key]);
-                }}
-                className={css({
-                  backgroundColor: "orange.100",
-                  padding: "4rem",
-                  cursor: "pointer",
-                })}
-              >
-                {history[key][1].createdAt?.toLocaleString()}:{" "}
-                {history[key][1].content}
-              </div>
-            ))}
-          </div>
-        </>
+            display: "flex",
+            gap: "8rem",
+            flexDirection: "column",
+          }}
+        >
+          {Object.keys(history).map((key) => (
+            <div
+              key={key}
+              onClick={() => {
+                setActiveHistoryEntry(history[key]);
+              }}
+              className={css({
+                backgroundColor: "orange.100",
+                padding: "4rem",
+                cursor: "pointer",
+              })}
+            >
+              {history[key][1].createdAt?.toLocaleString()}:{" "}
+              {history[key][1].content}
+            </div>
+          ))}
+        </div>
       )}
       {activeHistoryEntry && (
         <div
