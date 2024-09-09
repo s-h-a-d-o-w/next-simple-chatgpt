@@ -139,6 +139,7 @@ export default function Home() {
         style={{
           display: "flex",
           justifyContent: "flex-end",
+          alignItems: "center",
           gap: "12rem",
           marginRight: "12rem",
           padding: "12rem",
