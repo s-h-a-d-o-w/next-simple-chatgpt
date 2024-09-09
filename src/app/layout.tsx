@@ -1,11 +1,11 @@
 import "./global.css";
 import type { Metadata } from "next";
-// import { EB_Garamond } from "next/font/google";
+import { Roboto_Slab } from "next/font/google";
 
-// const garamond = EB_Garamond({
-//   subsets: ["latin"],
-//   display: "swap",
-// });
+const nextFont = Roboto_Slab({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={nextFont.className}>{children}</body>
     </html>
   );
 }
