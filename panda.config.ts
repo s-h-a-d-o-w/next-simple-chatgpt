@@ -13,15 +13,12 @@ export default defineConfig({
   // Useful for theme customization
   theme: {
     extend: {
-      keyframes: {
-        // foo: {
-        //   from: {
-        //     transform: "rotate(0deg)",
-        //   },
-        //   to: {
-        //     transform: "rotate(360deg)",
-        //   },
-        // },
+      breakpoints: {
+        sm: "640rem",
+        md: "768rem",
+        lg: "1024rem",
+        xl: "1280rem",
+        "2xl": "1536rem",
       },
     },
   },
