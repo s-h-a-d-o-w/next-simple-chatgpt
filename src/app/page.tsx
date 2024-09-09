@@ -165,7 +165,7 @@ export default function Home() {
           Reset
         </Button>
         <Button
-          disabled
+          disabled={Object.keys(history).length === 0}
           onClick={() => {
             setShowHistory(!showHistory);
           }}
