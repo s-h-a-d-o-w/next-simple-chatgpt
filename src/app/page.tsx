@@ -56,8 +56,6 @@ export default function Home() {
     stop,
     error,
     reload,
-    data,
-    metadata,
   } = useChat({
     keepLastMessageOnError: true,
     initialMessages: [createSystemMessage(systemValue)],
@@ -119,11 +117,6 @@ export default function Home() {
       }
     }
   }, [isLoading, lastHistoryUpdate, messages, setConversationHistory]);
-
-  console.log({
-    data,
-    metadata,
-  });
 
   const handleDelete = (id: string) => {
     setMessages(messages.filter((message) => message.id !== id));
