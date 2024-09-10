@@ -20,6 +20,7 @@ import { Message } from "./components/Message";
 import Spinner from "./components/Spinner";
 import { loadJsonFile } from "./loadJsonFile";
 import { saveJsonFile } from "./saveJsonFile";
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 
 // const DEBUG = true;
 const isDev = process.env.NODE_ENV !== "production";
@@ -42,6 +43,7 @@ export default function Home() {
   const endOfPageRef = useRef<HTMLDivElement>(null);
 
   const [showHistory, setShowHistory] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [activeHistoryEntry, setActiveHistoryEntry] = useState<MessageType[]>();
   const [systemValue, setSystemValue] = useState(
     "You are a concise assistant.",
@@ -197,9 +199,9 @@ export default function Home() {
           History
         </Button>
         <Button
+          disabled={Object.keys(history).length === 0}
           onClick={() => {
-            // TODO: Really should have a confirmation modal for this...
-            setHistory([]);
+            setShowDeleteConfirmation(true);
           }}
         >
           Delete History
@@ -436,6 +438,17 @@ export default function Home() {
             <Message key={index} {...message} />
           ))}
         </div>
+      )}
+      {showDeleteConfirmation && (
+        <DeleteConfirmationModal
+          onConfirm={() => {
+            setHistory([]);
+            setShowDeleteConfirmation(false);
+          }}
+          onClose={() => {
+            setShowDeleteConfirmation(false);
+          }}
+        />
       )}
     </>
   );
