@@ -10,6 +10,7 @@ export const Button = styled("button", {
     _disabled: {
       backgroundColor: "gray.200",
       color: "gray.500",
+      cursor: "default",
     },
   },
 });

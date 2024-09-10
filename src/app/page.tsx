@@ -15,14 +15,13 @@ import { styled, VStack } from "../../styled-system/jsx";
 import { Button } from "./components/Button";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 import { History } from "./components/History";
-import HmrTimestamp from "./components/HmrTimestamp";
 import { Message } from "./components/Message";
+import { Navigation } from "./components/Navigation";
 import Spinner from "./components/Spinner";
 import { loadJsonFile } from "./loadJsonFile";
 import { saveJsonFile } from "./saveJsonFile";
 
 // const DEBUG = true;
-const isDev = process.env.NODE_ENV !== "production";
 
 const StyledInput = styled("textarea", {
   base: {
@@ -63,13 +62,12 @@ export default function Home() {
     keepLastMessageOnError: true,
     initialMessages: [createSystemMessage(systemValue)],
   });
-  const [history, setHistory] = useLocalStorageState<Array<MessageType[]>>(
-    "history",
-    {
-      defaultValue: [],
-      serializer: superjson,
-    },
-  );
+  const [conversationHistory, setConversationHistory] = useLocalStorageState<
+    Array<MessageType[]>
+  >("history", {
+    defaultValue: [],
+    serializer: superjson,
+  });
   const [lastHistoryUpdate, setLastHistoryUpdate] = useState(0);
 
   // Scroll to bottom while message loads
@@ -102,7 +100,7 @@ export default function Home() {
         .find((message) => message.role === "user")
         ?.createdAt?.valueOf();
       if (firstMessageDate) {
-        setHistory((history) => {
+        setConversationHistory((history) => {
           const nextHistory = cloneDeep(history);
           const index = nextHistory.findIndex(
             (messages) => messages[1].createdAt?.valueOf() === firstMessageDate,
@@ -120,7 +118,7 @@ export default function Home() {
         });
       }
     }
-  }, [isLoading, lastHistoryUpdate, messages, setHistory]);
+  }, [isLoading, lastHistoryUpdate, messages, setConversationHistory]);
 
   console.log({
     data,
@@ -159,77 +157,35 @@ export default function Home() {
 
   return (
     <>
-      <nav
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: "12rem",
-          marginRight: "12rem",
-          padding: "12rem",
+      <Navigation
+        conversationHistory={conversationHistory}
+        onDeleteHistory={() => {
+          setShowDeleteConfirmation(true);
         }}
-      >
-        | Built:{" "}
-        {process.env.buildTimestamp
-          ? new Date(
-              parseInt(process.env.buildTimestamp, 10),
-            ).toLocaleTimeString()
-          : "unknown build time"}{" "}
-        |{" "}
-        {isDev && (
-          <>
-            Last update: <HmrTimestamp /> |
-          </>
-        )}
-        <Button
-          onClick={() => {
-            setMessages([createSystemMessage(systemValue)]);
-          }}
-        >
-          Reset
-        </Button>
-        <Button
-          disabled={Object.keys(history).length === 0}
-          onClick={() => {
-            setShowHistory(!showHistory);
-          }}
-        >
-          History
-        </Button>
-        <Button
-          disabled={Object.keys(history).length === 0}
-          onClick={() => {
-            setShowDeleteConfirmation(true);
-          }}
-        >
-          Delete History
-        </Button>
-        <Button
-          onClick={async () => {
-            try {
-              const history = superjson.parse(await loadJsonFile()) as Array<
-                MessageType[]
-              >;
-              setHistory(history);
-            } catch {
-              // user cancelled or picked nonsense. should probably show error.
-            }
-          }}
-        >
-          Load
-        </Button>
-        <Button
-          onClick={() => {
-            saveJsonFile(
-              history,
-              `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
-            );
-          }}
-        >
-          Save
-        </Button>
-      </nav>
+        onHistory={() => {
+          setShowHistory(true);
+        }}
+        onLoad={async () => {
+          try {
+            const history = superjson.parse(await loadJsonFile()) as Array<
+              MessageType[]
+            >;
+            setConversationHistory(history);
+          } catch {
+            // TODO: user cancelled or picked nonsense. should probably show error.
+          }
+        }}
+        onReset={() => {
+          setMessages([createSystemMessage(systemValue)]);
+        }}
+        onSave={() => {
+          saveJsonFile(
+            conversationHistory,
+            `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+          );
+        }}
+      />
+
       <main>
         <VStack>
           <div
@@ -327,34 +283,37 @@ export default function Home() {
         </VStack>
         <div ref={endOfPageRef} />
       </main>
-      <History
-        activeHistoryEntry={activeHistoryEntry}
-        history={history}
-        showHistory={showHistory}
-        onClose={() => {
-          setShowHistory(false);
-          setActiveHistoryEntry(undefined);
-        }}
-        onDeleteHistoryEntry={(index) => {
-          const nextHistory = cloneDeep(history);
-          nextHistory.splice(index, 1);
-          setHistory(nextHistory);
-        }}
-        onRestoreHistoryEntry={() => {
-          if (activeHistoryEntry) {
-            setMessages(activeHistoryEntry);
-            setActiveHistoryEntry(undefined);
+
+      {showHistory && (
+        <History
+          activeHistoryEntry={activeHistoryEntry}
+          conversationHistory={conversationHistory}
+          onClose={() => {
             setShowHistory(false);
-          }
-        }}
-        onSetActiveHistoryEntry={(nextMessages) => {
-          setActiveHistoryEntry(nextMessages);
-        }}
-      />
+            setActiveHistoryEntry(undefined);
+          }}
+          onDeleteHistoryEntry={(index) => {
+            const nextHistory = cloneDeep(conversationHistory);
+            nextHistory.splice(index, 1);
+            setConversationHistory(nextHistory);
+          }}
+          onRestoreHistoryEntry={() => {
+            if (activeHistoryEntry) {
+              setMessages(activeHistoryEntry);
+              setActiveHistoryEntry(undefined);
+              setShowHistory(false);
+            }
+          }}
+          onSetActiveHistoryEntry={(nextMessages) => {
+            setActiveHistoryEntry(nextMessages);
+          }}
+        />
+      )}
+
       {showDeleteConfirmation && (
         <DeleteConfirmationModal
           onConfirm={() => {
-            setHistory([]);
+            setConversationHistory([]);
             setShowDeleteConfirmation(false);
           }}
           onClose={() => {
