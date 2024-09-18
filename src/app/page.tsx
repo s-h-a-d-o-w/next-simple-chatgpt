@@ -303,17 +303,18 @@ export default function Home() {
         />
       )}
 
-      {showDeleteConfirmation && (
-        <DeleteConfirmationModal
-          onConfirm={() => {
-            setConversationHistory([]);
-            setShowDeleteConfirmation(false);
-          }}
-          onClose={() => {
-            setShowDeleteConfirmation(false);
-          }}
-        />
-      )}
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onConfirm={() => {
+          console.log("ok");
+          // setConversationHistory([]);
+          setShowDeleteConfirmation(false);
+        }}
+        onClose={() => {
+          console.log("cancel");
+          setShowDeleteConfirmation(false);
+        }}
+      />
     </>
   );
 }
