@@ -9,8 +9,8 @@ const nextFont = Aleo({
 });
 
 export const metadata: Metadata = {
-  title: "GPT UI",
-  description: "My Chat GPT UI",
+  title: "Simple ChatGPT UI",
+  description: "Barebones UI for using ChatGPT.",
 };
 
 const Body = styled("body", {
