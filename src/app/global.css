@@ -1,5 +1,9 @@
 @layer reset, base, tokens, recipes, utilities;
 
-html { 
-    font-size: 6.25%;
+html {
+  font-size: 6.25%;
+}
+
+* {
+  border-radius: 4rem;
 }
