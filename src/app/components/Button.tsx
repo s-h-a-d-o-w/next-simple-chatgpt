@@ -10,8 +10,9 @@ export const Button = styled("button", {
   base: {
     backgroundColor: "amber.800",
     color: "white",
-    padding: "2rem 8rem",
+    padding: "4rem 8rem 2rem 8rem",
     cursor: "pointer",
+    fontSize: "md",
 
     ...transition,
     transitionProperty: "background-color,opacity",
