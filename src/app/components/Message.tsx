@@ -144,7 +144,7 @@ export function Message({ role, id, content, handleDelete }: Props) {
       </RoleTag>
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
-          {content}
+          {content.replace(/\n/g, "  \n")}
         </MemoizedReactMarkdown>
       </div>
       {handleDelete && <Button onClick={() => handleDelete(id)}>Delete</Button>}
