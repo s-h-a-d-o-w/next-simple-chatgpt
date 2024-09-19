@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    buildTimestamp: String(Date.now()),
+    BUILD_TIMESTAMP: String(Date.now()),
   },
   eslint: {
     ignoreDuringBuilds: true,

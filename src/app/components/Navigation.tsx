@@ -1,3 +1,4 @@
+import { css } from "../../../styled-system/css";
 import { isDev } from "../utils";
 import { Button } from "./Button";
 import HmrTimestamp from "./HmrTimestamp";
@@ -22,7 +23,7 @@ export function Navigation({
 }: Props) {
   return (
     <nav
-      style={{
+      className={css({
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "flex-end",
@@ -30,20 +31,24 @@ export function Navigation({
         gap: "12rem",
         marginRight: "12rem",
         padding: "12rem",
-      }}
+      })}
     >
-      | Built:{" "}
-      {process.env.buildTimestamp
-        ? new Date(
-            parseInt(process.env.buildTimestamp, 10),
-          ).toLocaleTimeString()
-        : "unknown build time"}{" "}
-      |{" "}
-      {isDev && (
-        <>
-          Last update: <HmrTimestamp /> |
-        </>
-      )}
+      <div
+        className={css({
+          fontSize: "sm",
+        })}
+      >
+        | Built:{" "}
+        {process.env.BUILD_TIMESTAMP
+          ? new Date(parseInt(process.env.BUILD_TIMESTAMP, 10)).toLocaleString()
+          : "unknown build time"}{" "}
+        |{" "}
+        {isDev && (
+          <>
+            Last update: <HmrTimestamp /> |
+          </>
+        )}
+      </div>
       <Button onClick={onReset}>Reset</Button>
       <Button
         disabled={Object.keys(conversationHistory).length === 0}
