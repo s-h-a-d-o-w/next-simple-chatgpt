@@ -11,7 +11,6 @@ export const Button = styled("button", {
     backgroundColor: "blue.100",
     padding: "2rem 8rem",
     cursor: "pointer",
-    border: "1px solid token(colors.blue.200)",
 
     ...transition,
     transitionProperty: "background-color",
