@@ -67,7 +67,11 @@ export function History({
           .reverse()
           .map((messages, index) => (
             <div key={index}>
-              <div>
+              <div
+                className={css({
+                  fontSize: "sm",
+                })}
+              >
                 {messages[1].createdAt
                   ? formatDistance(messages[1].createdAt, new Date(), {
                       addSuffix: true,
