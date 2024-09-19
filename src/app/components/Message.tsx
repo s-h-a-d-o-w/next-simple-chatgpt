@@ -84,7 +84,7 @@ const components: Options["components"] = {
               }),
             }}
           >
-            {text.replace(/\n$/, "")}
+            {text}
           </Prism>
         ) : (
           <code className={className}>{children}</code>
@@ -144,6 +144,7 @@ export function Message({ role, id, content, handleDelete }: Props) {
       </RoleTag>
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
+          {/* Markdown obviously swallows \n */}
           {content.replace(/\n/g, "  \n")}
         </MemoizedReactMarkdown>
       </div>
