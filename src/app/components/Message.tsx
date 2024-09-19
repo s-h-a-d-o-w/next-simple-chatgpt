@@ -10,8 +10,8 @@ const StyledMessage = styled("div", {
   base: {
     display: "flex",
     flexDirection: "column",
-    gap: "4rem",
-    padding: "8rem",
+    gap: "8rem",
+    padding: "12rem",
     alignItems: "flex-start",
 
     width: "80%",
@@ -22,10 +22,12 @@ const StyledMessage = styled("div", {
       user: {
         alignSelf: "flex-start",
         backgroundColor: "amber.100",
+        border: "1px solid token(colors.amber.700)",
       },
       default: {
         alignSelf: "flex-end",
         backgroundColor: "white",
+        border: "1px solid token(colors.stone.400)",
       },
     },
   },
@@ -113,35 +115,9 @@ const MemoizedReactMarkdown = memo(
     prevProps.className === nextProps.className,
 );
 
-const RoleTag = styled("div", {
-  base: {
-    borderRadius: "4rem",
-    padding: "0 8rem",
-
-    fontSize: "xs",
-    md: {
-      fontSize: "sm",
-    },
-  },
-
-  variants: {
-    isUser: {
-      true: {
-        backgroundColor: "green.300",
-      },
-      false: {
-        backgroundColor: "red.300",
-      },
-    },
-  },
-});
-
 export function Message({ role, id, content, handleDelete }: Props) {
   return role === "system" ? null : (
     <StyledMessage variant={role === "user" ? "user" : undefined} key={id}>
-      <RoleTag isUser={role === "user"}>
-        {role === "user" ? "User " : "AI "}
-      </RoleTag>
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
           {/* Markdown obviously swallows \n */}

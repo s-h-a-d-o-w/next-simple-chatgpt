@@ -20,6 +20,7 @@ import { Navigation } from "./components/Navigation";
 import Spinner from "./components/Spinner";
 import { loadJsonFile } from "./loadJsonFile";
 import { saveJsonFile } from "./saveJsonFile";
+import { css } from "../../styled-system/css";
 
 // const DEBUG = true;
 
@@ -190,7 +191,7 @@ export default function Home() {
               width: "100%",
               padding: "10rem",
               gap: "10rem",
-              // marginBottom: "100rem",
+              marginBottom: "100rem",
             }}
           >
             <form style={{ display: "flex", gap: "8rem" }}>
@@ -240,7 +241,7 @@ export default function Home() {
                     handleSubmit(event);
                   }
                 }}
-                style={{
+                className={css({
                   display: "flex",
                   maxWidth: "800px",
                   width: "100%",
@@ -248,10 +249,9 @@ export default function Home() {
 
                   alignItems: "center",
                   gap: "10rem",
-                  // backgroundColor: "white",
-                  // border: "1px solid black",
+                  backgroundColor: "amber.50",
                   boxShadow: "rgb(38, 57, 77) 0px 20px 30px -10px",
-                }}
+                })}
               >
                 <StyledInput
                   name="prompt"
