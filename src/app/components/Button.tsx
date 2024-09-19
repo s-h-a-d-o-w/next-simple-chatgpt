@@ -8,7 +8,8 @@ const transition: SystemStyleObject = {
 
 export const Button = styled("button", {
   base: {
-    backgroundColor: "blue.100",
+    backgroundColor: "amber.800",
+    color: "white",
     padding: "2rem 8rem",
     cursor: "pointer",
 
@@ -16,7 +17,7 @@ export const Button = styled("button", {
     transitionProperty: "background-color",
 
     _hover: {
-      backgroundColor: "blue.200",
+      backgroundColor: "amber.700",
     },
 
     _disabled: {

@@ -21,11 +21,11 @@ const StyledMessage = styled("div", {
     variant: {
       user: {
         alignSelf: "flex-start",
-        backgroundColor: "green.100",
+        backgroundColor: "amber.100",
       },
       default: {
         alignSelf: "flex-end",
-        backgroundColor: "red.100",
+        backgroundColor: "white",
       },
     },
   },
