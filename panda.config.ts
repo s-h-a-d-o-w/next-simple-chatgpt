@@ -1,8 +1,6 @@
 import { defineConfig } from "@pandacss/dev";
 
 export default defineConfig({
-  hash: process.env.NODE_ENV === "production",
-
   // Whether to use css reset
   preflight: true,
 
