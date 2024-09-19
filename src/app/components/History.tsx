@@ -96,7 +96,7 @@ export function History({
                 <IconButton
                   name="delete"
                   type="submit"
-                  size="sm"
+                  size="md"
                   ghost
                   onClick={(event) => {
                     event.stopPropagation();
@@ -107,8 +107,8 @@ export function History({
                   }}
                   className={css({
                     position: "absolute",
-                    top: "4rem",
-                    right: "4rem",
+                    top: "8rem",
+                    right: "8rem",
                   })}
                 />
               </div>

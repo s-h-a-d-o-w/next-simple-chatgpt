@@ -27,6 +27,11 @@ const StyledButton = styled(Button, {
         height: "sm",
         padding: "4rem",
       },
+      md: {
+        width: "md",
+        height: "md",
+        padding: "4rem",
+      },
       xl: {
         width: "xl",
         height: "xl",
