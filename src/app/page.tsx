@@ -194,8 +194,8 @@ export default function Home() {
               marginBottom: "100rem",
             }}
           >
-            <form style={{ display: "flex", gap: "8rem" }}>
-              System
+            <form style={{ display: "flex", flexDirection: "column" }}>
+              <div>System</div>
               <StyledInput
                 name="prompt"
                 value={systemValue}
