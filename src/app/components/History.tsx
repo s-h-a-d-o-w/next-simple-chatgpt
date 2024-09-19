@@ -5,6 +5,7 @@ import { css } from "../../../styled-system/css";
 import { Message } from "./Message";
 import { createPortal } from "react-dom";
 import { styled } from "../../../styled-system/jsx";
+import { IconButton } from "./IconButton";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -77,7 +78,26 @@ export function History({
                       addSuffix: true,
                     })
                   : ""}
-                <span
+              </div>
+              <div style={{ position: "relative" }}>
+                <Message
+                  {...messages[1]}
+                  className={css({
+                    // marginBottom: "16rem",
+                    cursor: "pointer",
+                    maxHeight: "115rem",
+                    overflowY: "hidden",
+                    textOverflow: "ellipsis",
+                  })}
+                  onClick={() => {
+                    onSetActiveHistoryEntry(messages);
+                  }}
+                />
+                <IconButton
+                  name="delete"
+                  type="submit"
+                  size="sm"
+                  ghost
                   onClick={(event) => {
                     event.stopPropagation();
                     const index = conversationHistory.findIndex(
@@ -85,23 +105,13 @@ export function History({
                     );
                     onDeleteHistoryEntry(index);
                   }}
-                >
-                  🚮
-                </span>
+                  className={css({
+                    position: "absolute",
+                    top: "4rem",
+                    right: "4rem",
+                  })}
+                />
               </div>
-              <Message
-                {...messages[1]}
-                className={css({
-                  // marginBottom: "16rem",
-                  cursor: "pointer",
-                  maxHeight: "115rem",
-                  overflowY: "hidden",
-                  textOverflow: "ellipsis",
-                })}
-                onClick={() => {
-                  onSetActiveHistoryEntry(messages);
-                }}
-              />
             </div>
           ))}
       </StyledContainer>

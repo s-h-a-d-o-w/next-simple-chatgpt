@@ -11,16 +11,17 @@ import {
 } from "react";
 import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
+import { css } from "../../styled-system/css";
 import { styled, VStack } from "../../styled-system/jsx";
 import { Button } from "./components/Button";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 import { History } from "./components/History";
+import { IconButton } from "./components/IconButton";
 import { Message } from "./components/Message";
 import { Navigation } from "./components/Navigation";
 import Spinner from "./components/Spinner";
 import { loadJsonFile } from "./loadJsonFile";
 import { saveJsonFile } from "./saveJsonFile";
-import { css } from "../../styled-system/css";
 
 // const DEBUG = true;
 
@@ -270,12 +271,20 @@ export default function Home() {
                 {isLoading ? (
                   <>
                     <Spinner />
-                    <Button type="button" onClick={() => stop()}>
-                      Stop
-                    </Button>
+                    <IconButton
+                      name="stop"
+                      type="button"
+                      onClick={() => stop()}
+                    />
                   </>
+                ) : input ? (
+                  <IconButton name="up" type="submit" />
                 ) : (
-                  <Button type="submit">Run</Button>
+                  <IconButton
+                    name="replay"
+                    type="submit"
+                    disabled={messages.length < 2}
+                  />
                 )}
               </form>
             </div>

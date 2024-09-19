@@ -14,7 +14,7 @@ export const Button = styled("button", {
     cursor: "pointer",
 
     ...transition,
-    transitionProperty: "background-color",
+    transitionProperty: "background-color,opacity",
 
     _hover: {
       backgroundColor: "amber.700",
@@ -24,6 +24,17 @@ export const Button = styled("button", {
       backgroundColor: "gray.200",
       color: "gray.500",
       cursor: "default",
+    },
+  },
+
+  variants: {
+    ghost: {
+      true: {
+        opacity: "0.5",
+        _hover: {
+          opacity: "1",
+        },
+      },
     },
   },
 });
