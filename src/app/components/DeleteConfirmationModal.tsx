@@ -14,18 +14,17 @@ export function DeleteConfirmationModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <div
         style={{
-          padding: "16rem",
-          border: "1px solid black",
-
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           gap: "8rem",
+
+          padding: "32rem",
         }}
       >
-        <div>Are you sure?</div>
-        <div style={{ display: "flex", gap: "8rem" }}>
+        <div>Do you really want to delete your history?</div>
+        <div style={{ display: "flex", gap: "16rem" }}>
           <Button onClick={onConfirm}>Yes</Button>
           <Button
             ref={(element) => {
