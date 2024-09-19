@@ -1,3 +1,4 @@
+import { css } from "../../../styled-system/css";
 import { Button } from "./Button";
 import { Modal } from "./Modal";
 
@@ -13,7 +14,7 @@ export function DeleteConfirmationModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div
-        style={{
+        className={css({
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -21,7 +22,7 @@ export function DeleteConfirmationModal({
           gap: "8rem",
 
           padding: "32rem",
-        }}
+        })}
       >
         <div>Do you really want to delete your history?</div>
         <div style={{ display: "flex", gap: "16rem" }}>

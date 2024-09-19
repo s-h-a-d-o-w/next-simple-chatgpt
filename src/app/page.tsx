@@ -208,6 +208,11 @@ export default function Home() {
               <Message
                 key={message.id}
                 handleDelete={handleDelete}
+                className={
+                  message.role === "user"
+                    ? css({ width: "80%", alignSelf: "flex-start" })
+                    : css({ width: "80%", alignSelf: "flex-end" })
+                }
                 {...message}
               />
             ))}
@@ -250,7 +255,7 @@ export default function Home() {
                   alignItems: "center",
                   gap: "10rem",
                   backgroundColor: "amber.50",
-                  boxShadow: "rgb(38, 57, 77) 0px 20px 30px -10px",
+                  boxShadow: "lg",
                 })}
               >
                 <StyledInput

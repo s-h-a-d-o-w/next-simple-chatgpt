@@ -4,6 +4,7 @@ import { type Message as MessageType } from "ai/react";
 import { css } from "../../../styled-system/css";
 import { Message } from "./Message";
 import { createPortal } from "react-dom";
+import { styled } from "../../../styled-system/jsx";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -14,6 +15,22 @@ type Props = {
 
   activeHistoryEntry?: MessageType[];
 };
+
+const StyledContainer = styled("div", {
+  base: {
+    position: "fixed",
+    overflow: "auto",
+    backgroundColor: "amber.50",
+    padding: "12rem",
+    boxShadow: "lg",
+
+    // position: "fixed",
+
+    display: "flex",
+    flexDirection: "column",
+    gap: "8rem",
+  },
+});
 
 export function History({
   activeHistoryEntry,
@@ -26,50 +43,30 @@ export function History({
   return createPortal(
     <>
       <div
-        style={{
+        className={css({
           position: "fixed",
           width: "100%",
           height: "100%",
           top: 0,
           backgroundColor: "white",
           opacity: "0.5",
-        }}
+        })}
         onClick={onClose}
       />
-      <div
-        style={{
-          position: "fixed",
+      <StyledContainer
+        className={css({
           top: "10%",
           bottom: "10%",
           right: "8rem",
-          overflow: "auto",
 
           width: "40%",
-
-          backgroundColor: "white",
-          border: "1px solid black",
-          padding: "12rem",
-        }}
+        })}
       >
         {conversationHistory
           .slice(0)
           .reverse()
           .map((messages, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                onSetActiveHistoryEntry(messages);
-              }}
-              className={css({
-                backgroundColor: "orange.100",
-                padding: "4rem",
-                marginBottom: "8rem",
-                cursor: "pointer",
-                maxHeight: "115rem",
-                overflowY: "hidden",
-                textOverflow: "ellipsis",
-              })}
-            >
+            <div key={index}>
               <div>
                 {messages[1].createdAt
                   ? formatDistance(messages[1].createdAt, new Date(), {
@@ -88,28 +85,32 @@ export function History({
                   🚮
                 </span>
               </div>
-              {messages[1].content}
+              <Message
+                {...messages[1]}
+                className={css({
+                  // marginBottom: "16rem",
+                  cursor: "pointer",
+                  maxHeight: "115rem",
+                  overflowY: "hidden",
+                  textOverflow: "ellipsis",
+                })}
+                onClick={() => {
+                  onSetActiveHistoryEntry(messages);
+                }}
+              />
             </div>
           ))}
-      </div>
+      </StyledContainer>
 
       {activeHistoryEntry && (
-        <div
-          style={{
-            position: "fixed",
-            top: "8rem",
+        <StyledContainer
+          className={css({
+            top: "26rem",
             left: "8rem",
-            bottom: "8rem",
-            width: "58%",
-            backgroundColor: "white",
-            border: "1px solid black",
-            padding: "12rem",
-            overflow: "auto",
+            bottom: "16rem",
 
-            display: "flex",
-            flexDirection: "column",
-            gap: "8rem",
-          }}
+            width: "57%",
+          })}
         >
           <Button
             onClick={onRestoreHistoryEntry}
@@ -118,9 +119,17 @@ export function History({
             Restore
           </Button>
           {activeHistoryEntry.map((message, index) => (
-            <Message key={index} {...message} />
+            <Message
+              key={index}
+              {...message}
+              className={
+                message.role === "user"
+                  ? css({ width: "80%", alignSelf: "flex-start" })
+                  : css({ width: "80%", alignSelf: "flex-end" })
+              }
+            />
           ))}
-        </div>
+        </StyledContainer>
       )}
     </>,
     document.body,

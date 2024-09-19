@@ -36,7 +36,8 @@ const StyledDialog = styled("dialog", {
     margin: "auto", // revert reset
 
     overflow: "visible",
-    boxShadow: "rgb(38, 57, 77) 0px 20px 30px -10px",
+    boxShadow: "lg",
+    backgroundColor: "amber.50",
 
     ...dialogClosed,
     transitionProperty: "opacity,transform,display,overlay",

@@ -16,6 +16,9 @@ export default defineConfig({
           md: { value: "14rem" },
           lg: { value: "16rem" },
         },
+        shadows: {
+          lg: { value: "rgb(38, 57, 77) 0px 20px 30px -10px" },
+        },
       },
     },
   },

@@ -6,26 +6,22 @@ import { memo } from "react";
 import { Prism } from "react-syntax-highlighter";
 import { css } from "../../../styled-system/css";
 
-const StyledMessage = styled("div", {
+export const StyledMessage = styled("div", {
   base: {
     display: "flex",
     flexDirection: "column",
     gap: "8rem",
     padding: "12rem",
     alignItems: "flex-start",
-
-    width: "80%",
   },
 
   variants: {
     variant: {
       user: {
-        alignSelf: "flex-start",
         backgroundColor: "amber.100",
         border: "1px solid token(colors.amber.700)",
       },
       default: {
-        alignSelf: "flex-end",
         backgroundColor: "white",
         border: "1px solid token(colors.stone.400)",
       },
@@ -38,7 +34,9 @@ const StyledMessage = styled("div", {
 });
 
 type Props = MessageType & {
+  className?: string;
   handleDelete?: (id: string) => void;
+  onClick?: () => void;
 };
 
 const components: Options["components"] = {
@@ -115,9 +113,21 @@ const MemoizedReactMarkdown = memo(
     prevProps.className === nextProps.className,
 );
 
-export function Message({ role, id, content, handleDelete }: Props) {
+export function Message({
+  role,
+  id,
+  content,
+  className,
+  handleDelete,
+  onClick,
+}: Props) {
   return role === "system" ? null : (
-    <StyledMessage variant={role === "user" ? "user" : undefined} key={id}>
+    <StyledMessage
+      variant={role === "user" ? "user" : undefined}
+      key={id}
+      className={className}
+      onClick={onClick}
+    >
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
           {/* Markdown obviously swallows \n */}
