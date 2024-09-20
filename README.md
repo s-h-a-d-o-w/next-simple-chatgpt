@@ -5,3 +5,8 @@ A very simple ChatGPT UI that I created because I have trust issues and talk to 
 ## Decisions
 
 - No support for attachments because I never discuss images with ChatGPT.
+
+## Could be polished
+
+- Maybe: Make textareas expand in height when very long prompts are being written.
+
