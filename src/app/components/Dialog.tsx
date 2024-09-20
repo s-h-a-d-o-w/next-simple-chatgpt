@@ -8,19 +8,33 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
 
+  className?: string;
   /**
    * Modals are wrapped in a form and can't be closed by clicking on the backdrop.
    **/
   isModal?: boolean;
+  /**
+   * Only applies to non-modal dialogs.
+   **/
+  showBackdrop?: boolean;
 };
 
 const dialogClosed: SystemStyleObject = {
-  // display: "none",
+  opacity: 0,
+  transform: "translateY(10rem)",
+  height: "calc(100% - 10rem)",
+};
+const dialogOpened: SystemStyleObject = {
+  opacity: 1,
+  transform: "translateY(0)",
+  height: "100%",
+};
+
+const modalClosed: SystemStyleObject = {
   opacity: 0,
   transform: "translateY(10rem)",
 };
-const dialogOpened: SystemStyleObject = {
-  // display: "flex",
+const modalOpened: SystemStyleObject = {
   opacity: 1,
   transform: "translateY(0)",
 };
@@ -40,22 +54,8 @@ const transition: SystemStyleObject = {
 
 const StyledDialog = styled("dialog", {
   base: {
-    // margin: "auto", // Can't be used because then free positioning via "fixed" within this container wouldn't work
-
-    // These styles make it possible to freely position containers using fixed within the dialog.
-    position: "fixed",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: "100%",
-    height: "100%",
-    maxWidth: "none",
-    maxHeight: "none",
-    backgroundColor: "transparent",
-
-    ...dialogClosed,
-    transitionProperty: "opacity,transform,display,overlay",
+    // ...dialogClosed,
+    transitionProperty: "height,opacity,transform,display,overlay",
     ...transition,
 
     _backdrop: {
@@ -65,7 +65,7 @@ const StyledDialog = styled("dialog", {
     },
 
     _open: {
-      ...dialogOpened,
+      // ...dialogOpened,
 
       _backdrop: {
         ...backdropOpened,
@@ -74,10 +74,50 @@ const StyledDialog = styled("dialog", {
 
     _starting: {
       _open: {
-        ...dialogClosed,
+        // ...dialogClosed,
 
         _backdrop: {
           ...backdropClosed,
+        },
+      },
+    },
+  },
+
+  variants: {
+    isModal: {
+      true: {
+        margin: "auto",
+        overflow: "visible",
+
+        // Modals get more opinionated styling because unlike non-modal content, they will always look the same.
+        backgroundColor: "amber.50",
+        boxShadow: "lg",
+
+        ...modalClosed,
+        _open: {
+          ...modalOpened,
+        },
+        _starting: {
+          _open: {
+            ...modalClosed,
+          },
+        },
+      },
+      false: {
+        // for non-modal
+        margin: 0,
+        top: 0,
+        width: "100%",
+        backgroundColor: "transparent",
+
+        ...dialogClosed,
+        _open: {
+          ...dialogOpened,
+        },
+        _starting: {
+          _open: {
+            ...dialogClosed,
+          },
         },
       },
     },
@@ -89,28 +129,19 @@ const StyledBackdrop = styled("div", {
     position: "fixed",
     width: "100%",
     height: "100%",
-    backgroundColor: "transparent",
+
+    ...backdropOpened,
   },
 });
 
-const StyledCentered = styled("div", {
-  base: {
-    height: "100%",
-
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
-const StyledForm = styled("form", {
-  base: {
-    backgroundColor: "amber.50",
-    boxShadow: "lg",
-  },
-});
-
-export function Modal({ children, isModal = true, isOpen, onClose }: Props) {
+export function Dialog({
+  children,
+  className,
+  isModal = true,
+  isOpen,
+  onClose,
+  showBackdrop = true,
+}: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [portalRoot, setPortalRoot] = useState<HTMLElement>();
 
@@ -127,24 +158,26 @@ export function Modal({ children, isModal = true, isOpen, onClose }: Props) {
     }
 
     if (isOpen) {
-      dialogElement.showModal();
+      if (isModal) {
+        dialogElement.showModal();
+      } else {
+        dialogElement.show();
+      }
     } else {
       dialogElement.close();
     }
-  }, [isOpen]);
+  }, [isModal, isOpen]);
 
   return portalRoot
     ? createPortal(
-        <StyledDialog ref={dialogRef} onClose={onClose}>
-          {/* Used instead of the native backdrop so that we don't have to use `stopPropagation` in all click handlers. Hence also a more transparent strategy. */}
-          {!isModal && <StyledBackdrop onClick={onClose} />}
-          <StyledCentered>
-            {isModal ? (
-              <StyledForm method="dialog">{children}</StyledForm>
-            ) : (
-              children
-            )}
-          </StyledCentered>
+        <StyledDialog
+          ref={dialogRef}
+          onClose={onClose}
+          className={className}
+          isModal={isModal}
+        >
+          {!isModal && showBackdrop && <StyledBackdrop onClick={onClose} />}
+          <form method="dialog">{children}</form>
         </StyledDialog>,
         portalRoot,
       )

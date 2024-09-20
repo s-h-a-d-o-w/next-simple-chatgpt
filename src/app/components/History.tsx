@@ -5,7 +5,7 @@ import { css } from "../../../styled-system/css";
 import { Message } from "./Message";
 import { styled } from "../../../styled-system/jsx";
 import { IconButton } from "./IconButton";
-import { Modal } from "./Modal";
+import { Dialog } from "./Dialog";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -13,7 +13,7 @@ type Props = {
   onClose: () => void;
   onDeleteHistoryEntry: (index: number) => void;
   onRestoreHistoryEntry: () => void;
-  onSetActiveHistoryEntry: (messages: MessageType[]) => void;
+  onSetActiveHistoryEntry: (messages?: MessageType[]) => void;
 
   activeHistoryEntry?: MessageType[];
 };
@@ -21,6 +21,7 @@ type Props = {
 const StyledContainer = styled("div", {
   base: {
     position: "fixed",
+
     overflow: "auto",
     backgroundColor: "amber.50",
     padding: "12rem",
@@ -29,6 +30,25 @@ const StyledContainer = styled("div", {
     display: "flex",
     flexDirection: "column",
     gap: "8rem",
+  },
+
+  variants: {
+    align: {
+      left: {
+        width: "58%",
+        height: "93%",
+
+        top: "24rem",
+        left: "16rem",
+      },
+      right: {
+        width: "38%",
+        maxHeight: "80%",
+
+        top: "64rem",
+        right: "16rem",
+      },
+    },
   },
 });
 
@@ -42,97 +62,83 @@ export function History({
   onSetActiveHistoryEntry,
 }: Props) {
   return (
-    <Modal isModal={false} isOpen={isOpen} onClose={onClose}>
-      <StyledContainer
-        className={css({
-          top: "10%",
-          bottom: "10%",
-          right: "8rem",
-
-          width: "40%",
-        })}
-      >
-        {conversationHistory
-          .slice(0)
-          .reverse()
-          .map((messages, index) => (
-            <div key={index}>
-              <div
-                className={css({
-                  fontSize: "sm",
-                })}
-              >
-                {messages[1].createdAt
-                  ? formatDistance(messages[1].createdAt, new Date(), {
-                      addSuffix: true,
-                    })
-                  : ""}
-              </div>
-              <div style={{ position: "relative" }}>
-                <Message
-                  {...messages[1]}
+    <>
+      <Dialog isModal={false} isOpen={isOpen} onClose={onClose}>
+        <StyledContainer align="right">
+          {conversationHistory
+            .slice(0)
+            .reverse()
+            .map((messages, index) => (
+              <div key={index}>
+                <div
                   className={css({
-                    cursor: "pointer",
-                    maxHeight: "115rem",
-                    overflowY: "hidden",
-                    textOverflow: "ellipsis",
+                    fontSize: "sm",
                   })}
-                  onClick={() => {
-                    onSetActiveHistoryEntry(messages);
-                  }}
-                />
-                <IconButton
-                  name="delete"
-                  type="submit"
-                  size="md"
-                  ghost
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    const index = conversationHistory.findIndex(
-                      (_messages) => _messages === messages,
-                    );
-                    onDeleteHistoryEntry(index);
-                  }}
-                  className={css({
-                    position: "absolute",
-                    top: "8rem",
-                    right: "8rem",
-                  })}
-                />
+                >
+                  {messages[1].createdAt
+                    ? formatDistance(messages[1].createdAt, new Date(), {
+                        addSuffix: true,
+                      })
+                    : ""}
+                </div>
+                <div style={{ position: "relative" }}>
+                  <Message
+                    {...messages[1]}
+                    fullHeight={false}
+                    className={css({
+                      cursor: "pointer",
+                      maxHeight: "115rem",
+                      overflowY: "hidden",
+                      textOverflow: "ellipsis",
+                    })}
+                    onClick={() => {
+                      onSetActiveHistoryEntry(messages);
+                    }}
+                  />
+                  <IconButton
+                    name="delete"
+                    type="button"
+                    size="md"
+                    ghost
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      const index = conversationHistory.findIndex(
+                        (_messages) => _messages === messages,
+                      );
+                      onDeleteHistoryEntry(index);
+                    }}
+                    className={css({
+                      position: "absolute",
+                      top: "8rem",
+                      right: "8rem",
+                    })}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-      </StyledContainer>
-
-      {activeHistoryEntry && (
-        <StyledContainer
-          className={css({
-            top: "26rem",
-            left: "8rem",
-            bottom: "16rem",
-
-            width: "57%",
-          })}
-        >
-          <Button
-            onClick={onRestoreHistoryEntry}
-            style={{ alignSelf: "flex-end" }}
-          >
-            Restore
-          </Button>
-          {activeHistoryEntry.map((message, index) => (
-            <Message
-              key={index}
-              {...message}
-              className={
-                message.role === "user"
-                  ? css({ width: "80%", alignSelf: "flex-start" })
-                  : css({ width: "80%", alignSelf: "flex-end" })
-              }
-            />
-          ))}
+            ))}
         </StyledContainer>
-      )}
-    </Modal>
+        {activeHistoryEntry && (
+          <StyledContainer align="left">
+            <Button
+              onClick={onRestoreHistoryEntry}
+              style={{ alignSelf: "flex-end" }}
+            >
+              Restore
+            </Button>
+            {activeHistoryEntry?.map((message, index) => (
+              <Message
+                key={index}
+                {...message}
+                className={
+                  message.role === "user"
+                    ? css({ width: "80%", alignSelf: "flex-start" })
+                    : css({ width: "80%", alignSelf: "flex-end" })
+                }
+              />
+            ))}
+          </StyledContainer>
+        )}
+      </Dialog>
+    </>
   );
 }

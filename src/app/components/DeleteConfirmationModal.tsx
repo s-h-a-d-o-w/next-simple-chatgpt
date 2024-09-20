@@ -1,6 +1,6 @@
 import { css } from "../../../styled-system/css";
 import { Button } from "./Button";
-import { Modal } from "./Modal";
+import { Dialog } from "./Dialog";
 
 export function DeleteConfirmationModal({
   isOpen,
@@ -12,7 +12,7 @@ export function DeleteConfirmationModal({
   onClose: () => void;
 }) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Dialog isOpen={isOpen} onClose={onClose}>
       <div
         className={css({
           display: "flex",
@@ -38,6 +38,6 @@ export function DeleteConfirmationModal({
           </Button>
         </div>
       </div>
-    </Modal>
+    </Dialog>
   );
 }

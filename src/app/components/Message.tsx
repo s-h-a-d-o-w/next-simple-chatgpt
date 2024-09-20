@@ -6,6 +6,13 @@ import { memo } from "react";
 import { Prism } from "react-syntax-highlighter";
 import { css } from "../../../styled-system/css";
 
+type Props = MessageType & {
+  className?: string;
+  fullHeight?: boolean;
+  handleDelete?: (id: string) => void;
+  onClick?: () => void;
+};
+
 export const StyledMessage = styled("div", {
   base: {
     display: "flex",
@@ -13,6 +20,8 @@ export const StyledMessage = styled("div", {
     gap: "8rem",
     padding: "12rem",
     alignItems: "flex-start",
+
+    overflowX: "auto",
   },
 
   variants: {
@@ -26,6 +35,11 @@ export const StyledMessage = styled("div", {
         border: "1px solid token(colors.stone.400)",
       },
     },
+    fullHeight: {
+      true: {
+        minHeight: "fit-content",
+      },
+    },
   },
 
   defaultVariants: {
@@ -33,19 +47,7 @@ export const StyledMessage = styled("div", {
   },
 });
 
-type Props = MessageType & {
-  className?: string;
-  handleDelete?: (id: string) => void;
-  onClick?: () => void;
-};
-
 const components: Options["components"] = {
-  //   h1: ({ className, ...props }: ComponentProps<"h1">) => <h1 {...props} />,
-  // more components + custom components
-
-  // pre() {
-
-  // },
   code(props) {
     const { children, className } = props;
     const text = String(children);
@@ -116,6 +118,7 @@ const MemoizedReactMarkdown = memo(
 export function Message({
   role,
   id,
+  fullHeight = true,
   content,
   className,
   handleDelete,
@@ -127,6 +130,7 @@ export function Message({
       key={id}
       className={className}
       onClick={onClick}
+      fullHeight={fullHeight}
     >
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
