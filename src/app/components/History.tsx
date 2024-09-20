@@ -3,12 +3,13 @@ import { Button } from "./Button";
 import { type Message as MessageType } from "ai/react";
 import { css } from "../../../styled-system/css";
 import { Message } from "./Message";
-import { createPortal } from "react-dom";
 import { styled } from "../../../styled-system/jsx";
 import { IconButton } from "./IconButton";
+import { Modal } from "./Modal";
 
 type Props = {
   conversationHistory: MessageType[][];
+  isOpen: boolean;
   onClose: () => void;
   onDeleteHistoryEntry: (index: number) => void;
   onRestoreHistoryEntry: () => void;
@@ -25,8 +26,6 @@ const StyledContainer = styled("div", {
     padding: "12rem",
     boxShadow: "lg",
 
-    // position: "fixed",
-
     display: "flex",
     flexDirection: "column",
     gap: "8rem",
@@ -36,24 +35,14 @@ const StyledContainer = styled("div", {
 export function History({
   activeHistoryEntry,
   conversationHistory,
+  isOpen,
   onClose,
   onDeleteHistoryEntry,
   onRestoreHistoryEntry,
   onSetActiveHistoryEntry,
 }: Props) {
-  return createPortal(
-    <>
-      <div
-        className={css({
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          top: 0,
-          backgroundColor: "white",
-          opacity: "0.5",
-        })}
-        onClick={onClose}
-      />
+  return (
+    <Modal isModal={false} isOpen={isOpen} onClose={onClose}>
       <StyledContainer
         className={css({
           top: "10%",
@@ -83,7 +72,6 @@ export function History({
                 <Message
                   {...messages[1]}
                   className={css({
-                    // marginBottom: "16rem",
                     cursor: "pointer",
                     maxHeight: "115rem",
                     overflowY: "hidden",
@@ -145,7 +133,6 @@ export function History({
           ))}
         </StyledContainer>
       )}
-    </>,
-    document.body,
+    </Modal>
   );
 }

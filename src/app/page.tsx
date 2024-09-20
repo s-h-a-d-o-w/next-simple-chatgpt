@@ -293,31 +293,30 @@ export default function Home() {
         <div ref={endOfPageRef} />
       </main>
 
-      {showHistory && (
-        <History
-          activeHistoryEntry={activeHistoryEntry}
-          conversationHistory={conversationHistory}
-          onClose={() => {
-            setShowHistory(false);
+      <History
+        activeHistoryEntry={activeHistoryEntry}
+        conversationHistory={conversationHistory}
+        isOpen={showHistory}
+        onClose={() => {
+          setShowHistory(false);
+          setActiveHistoryEntry(undefined);
+        }}
+        onDeleteHistoryEntry={(index) => {
+          const nextHistory = cloneDeep(conversationHistory);
+          nextHistory.splice(index, 1);
+          setConversationHistory(nextHistory);
+        }}
+        onRestoreHistoryEntry={() => {
+          if (activeHistoryEntry) {
+            setMessages(activeHistoryEntry);
             setActiveHistoryEntry(undefined);
-          }}
-          onDeleteHistoryEntry={(index) => {
-            const nextHistory = cloneDeep(conversationHistory);
-            nextHistory.splice(index, 1);
-            setConversationHistory(nextHistory);
-          }}
-          onRestoreHistoryEntry={() => {
-            if (activeHistoryEntry) {
-              setMessages(activeHistoryEntry);
-              setActiveHistoryEntry(undefined);
-              setShowHistory(false);
-            }
-          }}
-          onSetActiveHistoryEntry={(nextMessages) => {
-            setActiveHistoryEntry(nextMessages);
-          }}
-        />
-      )}
+            setShowHistory(false);
+          }
+        }}
+        onSetActiveHistoryEntry={(nextMessages) => {
+          setActiveHistoryEntry(nextMessages);
+        }}
+      />
 
       <DeleteConfirmationModal
         isOpen={showDeleteConfirmation}
