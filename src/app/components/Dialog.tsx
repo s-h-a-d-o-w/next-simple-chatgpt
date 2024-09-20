@@ -177,7 +177,7 @@ export function Dialog({
           isModal={isModal}
         >
           {!isModal && showBackdrop && <StyledBackdrop onClick={onClose} />}
-          <form method="dialog">{children}</form>
+          {isModal ? <form method="dialog">{children}</form> : children}
         </StyledDialog>,
         portalRoot,
       )
