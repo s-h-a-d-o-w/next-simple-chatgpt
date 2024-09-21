@@ -68,34 +68,22 @@ function Code(
   const clipboardItem = [new ClipboardItem({ [type]: blob })];
   return (
     <div style={{ position: "relative" }}>
-      {match ? (
-        <Prism
-          language={match[1]}
-          showLineNumbers={true}
-          wrapLines={true}
-          // Superior to `wrapLongLines` because line numbers stay correct this way.
-          // PROBLEM: makes it impossible to copy just a selection of the code. But we need it for the code not to render off screen.
-          lineProps={() => ({
-            style: {
-              display: "flex",
-              flexWrap: "wrap",
-              textWrap: "wrap",
+      <Prism
+        language={match?.[1]}
+        wrapLongLines
+        codeTagProps={{
+          className: css({
+            overflowWrap: "anywhere",
+
+            fontSize: "sm",
+            md: {
+              fontSize: "md",
             },
-          })}
-          codeTagProps={{
-            className: css({
-              fontSize: "sm",
-              md: {
-                fontSize: "md",
-              },
-            }),
-          }}
-        >
-          {text}
-        </Prism>
-      ) : (
-        <code className={className}>{children}</code>
-      )}
+          }),
+        }}
+      >
+        {text}
+      </Prism>
       <Button
         disabled={hasCopied}
         onClick={() => {
