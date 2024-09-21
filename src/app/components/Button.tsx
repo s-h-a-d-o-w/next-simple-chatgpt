@@ -25,6 +25,10 @@ export const Button = styled("button", {
       backgroundColor: "gray.200",
       color: "gray.500",
       cursor: "default",
+
+      _hover: {
+        backgroundColor: "gray.200",
+      },
     },
   },
 
@@ -35,6 +39,23 @@ export const Button = styled("button", {
         _hover: {
           opacity: "1",
         },
+      },
+    },
+    iconSize: {
+      sm: {
+        width: "sm",
+        height: "sm",
+        padding: "4rem",
+      },
+      md: {
+        width: "md",
+        height: "md",
+        padding: "4rem",
+      },
+      xl: {
+        width: "xl",
+        height: "xl",
+        padding: "8rem",
       },
     },
   },

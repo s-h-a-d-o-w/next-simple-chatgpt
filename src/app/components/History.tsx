@@ -98,7 +98,7 @@ export function History({
                   <IconButton
                     name="delete"
                     type="button"
-                    size="md"
+                    iconSize="md"
                     ghost
                     onClick={(event) => {
                       event.stopPropagation();

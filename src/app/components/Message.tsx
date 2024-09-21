@@ -119,66 +119,6 @@ function Code(
 
 const components: Options["components"] = {
   code: Code,
-  // code(props) {
-  //   const { children, className } = props;
-  //   const text = String(children);
-
-  //   const [hasCopied, setHasCopied] = useState(false);
-
-  //   // Inline code
-  //   if (!text.includes("\n")) {
-  //     return <code className={className}>{children}</code>;
-  //   }
-
-  //   const match = /language-(\w+)/.exec(className || "");
-  //   const type = "text/plain";
-  //   const blob = new Blob([text], { type });
-  //   const clipboardItem = [new ClipboardItem({ [type]: blob })];
-  //   return (
-  //     <div style={{ position: "relative" }}>
-  //       {match ? (
-  //         <Prism
-  //           language={match[1]}
-  //           showLineNumbers={true}
-  //           wrapLines={true}
-  //           // Superior to `wrapLongLines` because line numbers stay correct this way.
-  //           // PROBLEM: makes it impossible to copy just a selection of the code. But we need it for the code not to render off screen.
-  //           lineProps={() => ({
-  //             style: {
-  //               display: "flex",
-  //               flexWrap: "wrap",
-  //               textWrap: "wrap",
-  //             },
-  //           })}
-  //           codeTagProps={{
-  //             className: css({
-  //               fontSize: "sm",
-  //               md: {
-  //                 fontSize: "md",
-  //               },
-  //             }),
-  //           }}
-  //         >
-  //           {text}
-  //         </Prism>
-  //       ) : (
-  //         <code className={className}>{children}</code>
-  //       )}
-  //       <Button
-  //         onClick={() => {
-  //           navigator.clipboard.write(clipboardItem);
-  //         }}
-  //         style={{
-  //           position: "absolute",
-  //           top: 0,
-  //           right: 0,
-  //         }}
-  //       >
-  //         Copy
-  //       </Button>
-  //     </div>
-  //   );
-  // },
 };
 
 const MemoizedReactMarkdown = memo(
