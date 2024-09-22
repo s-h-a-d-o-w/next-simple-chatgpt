@@ -6,7 +6,7 @@ export function SignIn() {
     <form
       action={async () => {
         "use server";
-        await signIn("github", { redirect: true, redirectTo: "/" });
+        await signIn("github", { redirectTo: "/" });
       }}
     >
       <Button>Sign In</Button>

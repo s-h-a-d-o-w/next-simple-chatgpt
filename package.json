@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "predev": "rimraf .next",
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"pm panda:watch\"",
     "lint": "next lint --ignore-path .gitignore",
     "panda:watch": "panda --watch",
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
