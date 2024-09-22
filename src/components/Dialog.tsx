@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { styled } from "../../../styled-system/jsx";
-import { SystemStyleObject } from "../../../styled-system/types";
+import { styled } from "../../styled-system/jsx";
+import { SystemStyleObject } from "../../styled-system/types";
 
 type Props = {
   children: ReactNode;

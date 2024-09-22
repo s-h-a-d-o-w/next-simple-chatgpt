@@ -1,5 +1,5 @@
-import { styled } from "../../../styled-system/jsx";
-import { SystemStyleObject } from "../../../styled-system/types";
+import { styled } from "../../styled-system/jsx";
+import { SystemStyleObject } from "../../styled-system/types";
 
 const transition: SystemStyleObject = {
   transitionDuration: "0.15s",

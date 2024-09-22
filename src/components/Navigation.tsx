@@ -1,4 +1,4 @@
-import { css } from "../../../styled-system/css";
+import { css } from "../../styled-system/css";
 import { Button } from "./Button";
 import HmrTimestamp from "./HmrTimestamp";
 import { type Message as MessageType } from "ai/react";

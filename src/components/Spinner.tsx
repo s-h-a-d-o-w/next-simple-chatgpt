@@ -1,5 +1,5 @@
 import { HTMLAttributes } from "react";
-import { styled } from "../../../styled-system/jsx";
+import { styled } from "../../styled-system/jsx";
 
 const SpinnerContainer = styled("div", {
   base: {

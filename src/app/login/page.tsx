@@ -1,5 +1,5 @@
 import { styled } from "../../../styled-system/jsx";
-import { AuthButton } from "../components/AuthButton";
+import { AuthButton } from "../../components/AuthButton";
 
 const StyledCenter = styled("main", {
   base: {

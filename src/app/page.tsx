@@ -13,15 +13,15 @@ import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
 import { css } from "../../styled-system/css";
 import { styled, VStack } from "../../styled-system/jsx";
-import { Button } from "./components/Button";
-import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
-import { History } from "./components/History";
-import { IconButton } from "./components/IconButton";
-import { Message } from "./components/Message";
-import { Navigation } from "./components/Navigation";
-import Spinner from "./components/Spinner";
-import { loadJsonFile } from "./loadJsonFile";
-import { saveJsonFile } from "./saveJsonFile";
+import { Button } from "../components/Button";
+import { DeleteConfirmationModal } from "../components/DeleteConfirmationModal";
+import { History } from "../components/History";
+import { IconButton } from "../components/IconButton";
+import { Message } from "../components/Message";
+import { Navigation } from "../components/Navigation";
+import Spinner from "../components/Spinner";
+import { loadJsonFile } from "../utils/loadJsonFile";
+import { saveJsonFile } from "../utils/saveJsonFile";
 
 // const DEBUG = true;
 

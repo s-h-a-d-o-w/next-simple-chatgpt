@@ -1,9 +1,9 @@
 import { formatDistance } from "date-fns/formatDistance";
 import { Button } from "./Button";
 import { type Message as MessageType } from "ai/react";
-import { css } from "../../../styled-system/css";
+import { css } from "../../styled-system/css";
 import { Message } from "./Message";
-import { styled } from "../../../styled-system/jsx";
+import { styled } from "../../styled-system/jsx";
 import { IconButton } from "./IconButton";
 import { Dialog } from "./Dialog";
 

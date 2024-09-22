@@ -1,10 +1,10 @@
 import { type Message as MessageType } from "ai/react";
 import { Button } from "./Button";
-import { styled } from "../../../styled-system/jsx";
+import { styled } from "../../styled-system/jsx";
 import ReactMarkdown, { ExtraProps, type Options } from "react-markdown";
 import { ClassAttributes, HTMLAttributes, memo, useState } from "react";
 import { Prism } from "react-syntax-highlighter";
-import { css } from "../../../styled-system/css";
+import { css } from "../../styled-system/css";
 
 type Props = MessageType & {
   className?: string;
