@@ -1,21 +1,9 @@
-import { styled } from "../../../styled-system/jsx";
-
-const StyledCenter = styled("main", {
-  base: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+import { Centered } from "@/components/Centered";
 
 export default function Login() {
   return (
-    <StyledCenter>
+    <Centered>
       Access denied. You are not on our list of permitted users.
-    </StyledCenter>
+    </Centered>
   );
 }
