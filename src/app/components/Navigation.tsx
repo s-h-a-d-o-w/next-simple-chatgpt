@@ -1,5 +1,4 @@
 import { css } from "../../../styled-system/css";
-import { isDev } from "../utils";
 import { Button } from "./Button";
 import HmrTimestamp from "./HmrTimestamp";
 import { type Message as MessageType } from "ai/react";
@@ -12,6 +11,8 @@ type Props = {
   onReset: () => void;
   onSave: () => void;
 };
+
+const isDev = process.env.NODE_ENV !== "production";
 
 export function Navigation({
   conversationHistory,
