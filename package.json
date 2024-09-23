@@ -2,10 +2,12 @@
   "name": "next-simple-chatgpt",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
+    "create-certificate": "pnpm tsx ./scripts/createCertificate",
     "predev": "rimraf .next",
-    "dev": "concurrently \"next dev --experimental-https --experimental-https-key certificates/localhost-key.pem --experimental-https-cert certificates/localhost.pem\" \"pm panda:watch\"",
+    "dev": "concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",
     "lint": "next lint --ignore-path .gitignore",
     "panda:watch": "panda --watch",
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
@@ -43,9 +45,11 @@
     "eslint-config-next": "^14.2.5",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "execa": "^9.4.0",
     "husky": "^9.1.5",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
+    "tsx": "^4.19.1",
     "typescript": "^5"
   }
 }
