@@ -53,6 +53,11 @@ export function Prompt({
           placeholder="Leave empty to re-run."
           value={input}
           onChange={onChange}
+          onKeyDown={(event) => {
+            if (event.ctrlKey && event.key === "Enter") {
+              onSubmit(event as unknown as FormEvent<HTMLFormElement>);
+            }
+          }}
           disabled={isLoading}
           style={{ flexGrow: 1 }}
         />
