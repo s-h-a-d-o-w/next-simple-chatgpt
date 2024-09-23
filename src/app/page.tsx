@@ -20,15 +20,9 @@ import { Message } from "../components/Message";
 import { Navigation } from "../components/Navigation";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
+import { SystemPrompt } from "@/components/SystemPrompt";
 
 // const DEBUG = true;
-
-const StyledInput = styled("textarea", {
-  base: {
-    border: "1px solid black",
-    padding: "4rem 8rem",
-  },
-});
 
 const StyledMessageContainer = styled("div", {
   base: {
@@ -212,15 +206,7 @@ export default function Home() {
               marginBottom: "100rem",
             }}
           >
-            <form style={{ display: "flex", flexDirection: "column" }}>
-              <div>System</div>
-              <StyledInput
-                name="prompt"
-                value={systemValue}
-                onChange={handleSystemInput}
-                style={{ flexGrow: 1 }}
-              />
-            </form>
+            <SystemPrompt value={systemValue} onChange={handleSystemInput} />
 
             {messages.map((message) => (
               <StyledMessageContainer
