@@ -5,6 +5,7 @@ import ReactMarkdown, { ExtraProps, type Options } from "react-markdown";
 import { ClassAttributes, HTMLAttributes, memo, useState } from "react";
 import { Prism } from "react-syntax-highlighter";
 import { css } from "../../styled-system/css";
+import { fonts } from "@/utils/fonts";
 
 type Props = MessageType & {
   className?: string;
@@ -77,11 +78,10 @@ function Code(
           className: css({
             overflowWrap: "anywhere",
 
-            fontSize: "sm",
-            md: {
-              fontSize: "md",
-            },
+            fontSize: "md",
+            fontWeight: 500,
           }),
+          style: fonts.robotoMono.style,
         }}
       >
         {text}

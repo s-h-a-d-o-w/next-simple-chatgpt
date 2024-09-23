@@ -1,12 +1,7 @@
 import "./global.css";
 import type { Metadata } from "next";
-import { Aleo } from "next/font/google";
 import { styled } from "../../styled-system/jsx";
-
-const nextFont = Aleo({
-  subsets: ["latin"],
-  display: "swap",
-});
+import { fonts } from "@/utils/fonts";
 
 export const metadata: Metadata = {
   title: "Simple ChatGPT UI",
@@ -16,10 +11,7 @@ export const metadata: Metadata = {
 const Body = styled("body", {
   base: {
     backgroundColor: "amber.50",
-    fontSize: "sm",
-    md: {
-      fontSize: "lg",
-    },
+    fontSize: "lg",
   },
 });
 
@@ -29,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={nextFont.className}>
+    <html className={fonts.aleo.className}>
       <Body>{children}</Body>
     </html>
   );
