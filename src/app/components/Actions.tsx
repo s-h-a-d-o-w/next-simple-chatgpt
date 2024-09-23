@@ -1,3 +1,4 @@
+import { isDev } from "@/utils/consts";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
 import { Button } from "../../components/Button";
@@ -35,7 +36,7 @@ export function Actions({
 }: Props) {
   return (
     <StyledActions>
-      {process.env.NODE_ENV !== "production" && (
+      {isDev && (
         <div
           className={css({
             fontSize: "sm",

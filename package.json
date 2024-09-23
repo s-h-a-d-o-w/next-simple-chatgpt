@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "tsx ./scripts/generateBuildTimestamp && next build",
     "create-certificate": "pnpm tsx ./scripts/createCertificate",
     "predev": "rimraf .next",
     "dev": "concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",
