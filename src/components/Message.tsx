@@ -12,6 +12,7 @@ type Props = MessageType & {
   fullHeight?: boolean;
   onClick?: () => void;
   onDelete?: (id: string) => void;
+  shortened?: boolean;
 };
 
 export const StyledMessage = styled("div", {
@@ -39,6 +40,14 @@ export const StyledMessage = styled("div", {
     fullHeight: {
       true: {
         minHeight: "fit-content",
+      },
+    },
+    shortened: {
+      true: {
+        // Not going to obsess over the fact that `cursor` should probably be in its own variant. Instead, might avoid Panda CSS in the future.
+        cursor: "pointer",
+        maxHeight: "115rem",
+        overflowY: "hidden",
       },
     },
   },
@@ -123,6 +132,7 @@ export function Message({
   role,
   id,
   fullHeight = true,
+  shortened = false,
   content,
   className,
   onDelete,
@@ -135,6 +145,7 @@ export function Message({
       className={className}
       onClick={onClick}
       fullHeight={fullHeight}
+      shortened={shortened}
     >
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>

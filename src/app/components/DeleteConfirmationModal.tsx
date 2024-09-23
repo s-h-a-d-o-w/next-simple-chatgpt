@@ -1,6 +1,18 @@
 import { Dialog } from "@/components/Dialog";
-import { css } from "../../../styled-system/css";
 import { Button } from "@/components/Button";
+import { styled } from "../../../styled-system/jsx";
+
+const StyledDeleteConfirmationModal = styled("div", {
+  base: {
+    padding: "32rem",
+
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8rem",
+  },
+});
 
 export function DeleteConfirmationModal({
   isOpen,
@@ -13,17 +25,7 @@ export function DeleteConfirmationModal({
 }) {
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
-      <div
-        className={css({
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "8rem",
-
-          padding: "32rem",
-        })}
-      >
+      <StyledDeleteConfirmationModal>
         <div>Do you really want to delete your history?</div>
         <div style={{ display: "flex", gap: "16rem" }}>
           <Button onClick={onConfirm}>Yes</Button>
@@ -37,7 +39,7 @@ export function DeleteConfirmationModal({
             No
           </Button>
         </div>
-      </div>
+      </StyledDeleteConfirmationModal>
     </Dialog>
   );
 }

@@ -10,12 +10,7 @@ export function SystemPrompt({ onChange, value }: Props) {
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
       <div>System</div>
-      <Textarea
-        name="prompt"
-        value={value}
-        onChange={onChange}
-        style={{ flexGrow: 1 }}
-      />
+      <Textarea name="prompt" value={value} onChange={onChange} />
     </form>
   );
 }

@@ -1,9 +1,9 @@
 import { useChat } from "ai/react";
 import { FormEvent } from "react";
-import { css } from "../../../styled-system/css";
 import { IconButton } from "../../components/IconButton";
 import Spinner from "../../components/Spinner";
 import { Textarea } from "../../components/Textarea";
+import { styled } from "../../../styled-system/jsx";
 
 type Props = {
   disabledReplay: boolean;
@@ -14,6 +14,33 @@ type Props = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
 
+const StyledPrompt = styled("div", {
+  base: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    right: 0,
+
+    display: "flex",
+    justifyContent: "center",
+  },
+});
+
+const StyledForm = styled("form", {
+  base: {
+    width: "100%",
+    maxWidth: "800px",
+    padding: "10rem",
+
+    backgroundColor: "amber.50",
+    boxShadow: "lg",
+
+    display: "flex",
+    alignItems: "center",
+    gap: "10rem",
+  },
+});
+
 export function Prompt({
   disabledReplay,
   input,
@@ -23,31 +50,8 @@ export function Prompt({
   onSubmit,
 }: Props) {
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <form
-        onSubmit={onSubmit}
-        className={css({
-          display: "flex",
-          maxWidth: "800px",
-          width: "100%",
-          padding: "10rem",
-
-          alignItems: "center",
-          gap: "10rem",
-          backgroundColor: "amber.50",
-          boxShadow: "lg",
-        })}
-      >
+    <StyledPrompt>
+      <StyledForm onSubmit={onSubmit}>
         <Textarea
           name="prompt"
           placeholder="Leave empty to re-run."
@@ -72,7 +76,7 @@ export function Prompt({
         ) : (
           <IconButton name="replay" type="submit" disabled={disabledReplay} />
         )}
-      </form>
-    </div>
+      </StyledForm>
+    </StyledPrompt>
   );
 }

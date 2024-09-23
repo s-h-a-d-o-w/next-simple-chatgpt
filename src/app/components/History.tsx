@@ -19,7 +19,7 @@ type Props = {
   activeHistoryEntry?: MessageType[];
 };
 
-const StyledContainer = styled("div", {
+const StyledHistory = styled("div", {
   base: {
     position: "fixed",
 
@@ -64,7 +64,7 @@ export function History({
 }: Props) {
   return (
     <Dialog isModal={false} isOpen={isOpen} onClose={onClose}>
-      <StyledContainer align="right">
+      <StyledHistory align="right">
         {conversationHistory
           .slice(0)
           .reverse()
@@ -85,12 +85,7 @@ export function History({
                 <Message
                   {...messages[1]}
                   fullHeight={false}
-                  className={css({
-                    cursor: "pointer",
-                    maxHeight: "115rem",
-                    overflowY: "hidden",
-                    textOverflow: "ellipsis",
-                  })}
+                  shortened
                   onClick={() => {
                     onSetActiveHistoryEntry(messages);
                   }}
@@ -116,9 +111,10 @@ export function History({
               </div>
             </div>
           ))}
-      </StyledContainer>
+      </StyledHistory>
+
       {activeHistoryEntry && (
-        <StyledContainer align="left">
+        <StyledHistory align="left">
           <Button
             onClick={onRestoreHistoryEntry}
             style={{ alignSelf: "flex-end" }}
@@ -126,7 +122,7 @@ export function History({
             Restore
           </Button>
           <Messages messages={activeHistoryEntry} />
-        </StyledContainer>
+        </StyledHistory>
       )}
     </Dialog>
   );

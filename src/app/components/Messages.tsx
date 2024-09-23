@@ -3,7 +3,7 @@ import { styled } from "../../../styled-system/jsx";
 import { Message } from "@/components/Message";
 import { Button } from "@/components/Button";
 
-const StyledMessageContainer = styled("div", {
+const StyledMessage = styled("div", {
   base: {
     width: "95%",
     sm: {
@@ -34,12 +34,9 @@ export function Messages({ hasError, messages, onDelete, onRetry }: Props) {
   return (
     <>
       {messages.map((message) => (
-        <StyledMessageContainer
-          key={message.id}
-          isUser={message.role === "user"}
-        >
+        <StyledMessage key={message.id} isUser={message.role === "user"}>
           <Message onDelete={onDelete} {...message} />
-        </StyledMessageContainer>
+        </StyledMessage>
       ))}
       {hasError && (
         <div style={{ alignSelf: "flex-end" }}>

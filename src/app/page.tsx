@@ -14,6 +14,7 @@ import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
 import { useHistory } from "@/hooks/useHistory";
+import { styled } from "../../styled-system/jsx";
 
 function createSystemMessage(content: string) {
   return {
@@ -22,6 +23,20 @@ function createSystemMessage(content: string) {
     id: "system",
   } as const;
 }
+
+const StyledMain = styled("main", {
+  base: {
+    width: "100%",
+    maxWidth: "800px",
+    padding: "10rem",
+    marginInline: "auto",
+    marginBottom: "100rem",
+
+    display: "flex",
+    flexDirection: "column",
+    gap: "10rem",
+  },
+});
 
 export default function Home() {
   const endOfPageRef = useRef<HTMLDivElement>(null);
@@ -116,46 +131,31 @@ export default function Home() {
         }}
       />
 
-      <main>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            maxWidth: "800px",
-            width: "100%",
-            padding: "10rem",
-            gap: "10rem",
-            marginInline: "auto",
-            marginBottom: "100rem",
+      <StyledMain>
+        <SystemPrompt value={systemValue} onChange={handleSystemInput} />
+        <Messages
+          hasError={Boolean(error)}
+          messages={messages}
+          onDelete={handleDelete}
+          onRetry={reload}
+        />
+        <Prompt
+          disabledReplay={messages.length < 2}
+          input={input}
+          isLoading={isLoading}
+          onChange={handleInputChange}
+          onClickStop={stop}
+          onSubmit={(event) => {
+            if (input === "") {
+              event.preventDefault();
+              reload();
+            } else {
+              handleSubmit(event);
+            }
           }}
-        >
-          <SystemPrompt value={systemValue} onChange={handleSystemInput} />
-
-          <Messages
-            hasError={Boolean(error)}
-            messages={messages}
-            onDelete={handleDelete}
-            onRetry={reload}
-          />
-
-          <Prompt
-            disabledReplay={messages.length < 2}
-            input={input}
-            isLoading={isLoading}
-            onChange={handleInputChange}
-            onClickStop={stop}
-            onSubmit={(event) => {
-              if (input === "") {
-                event.preventDefault();
-                reload();
-              } else {
-                handleSubmit(event);
-              }
-            }}
-          />
-        </div>
+        />
         <div ref={endOfPageRef} />
-      </main>
+      </StyledMain>
 
       {/* DIALOGS */}
       {/* ================ */}
