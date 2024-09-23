@@ -2,24 +2,18 @@
 
 import { useChat, type Message as MessageType } from "ai/react";
 import { cloneDeep, debounce } from "lodash";
-import {
-  ChangeEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEventHandler, useCallback, useRef, useState } from "react";
 import superjson from "superjson";
-import useLocalStorageState from "use-local-storage-state";
-import { VStack } from "../../styled-system/jsx";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 import { History } from "./components/History";
 import { Messages } from "./components/Messages";
-import { Navigation } from "./components/Navigation";
+import { Actions } from "./components/Actions";
 import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
+import { useScrollToTarget } from "@/hooks/useScrollToTarget";
+import { useHistory } from "@/hooks/useHistory";
 
 function createSystemMessage(content: string) {
   return {
@@ -38,6 +32,7 @@ export default function Home() {
   const [systemValue, setSystemValue] = useState(
     "You are a concise assistant.",
   );
+
   const {
     messages,
     setMessages,
@@ -52,70 +47,16 @@ export default function Home() {
     keepLastMessageOnError: true,
     initialMessages: [createSystemMessage(systemValue)],
   });
-  const [conversationHistory, setConversationHistory] = useLocalStorageState<
-    Array<MessageType[]>
-  >("history", {
-    defaultValue: [],
-    serializer: superjson,
-  });
-  const [lastHistoryUpdate, setLastHistoryUpdate] = useState(0);
 
-  // Scroll to bottom while message loads
-  useEffect(() => {
-    let scrollingInterval: number | undefined;
+  const [conversationHistory, setConversationHistory] = useHistory(
+    isLoading,
+    messages,
+  );
 
-    if (isLoading) {
-      scrollingInterval = window.setInterval(() => {
-        endOfPageRef.current?.scrollIntoView();
-      }, 100);
-    } else {
-      clearInterval(scrollingInterval);
-    }
-
-    return () => {
-      clearInterval(scrollingInterval);
-    };
-  }, [isLoading]);
-
-  // Keep history in sync
-  useEffect(() => {
-    const latestMessageDate =
-      messages[messages.length - 1].createdAt?.valueOf();
-    if (
-      !isLoading &&
-      latestMessageDate &&
-      lastHistoryUpdate < latestMessageDate
-    ) {
-      const firstMessageDate = messages
-        .find((message) => message.role === "user")
-        ?.createdAt?.valueOf();
-      if (firstMessageDate) {
-        setConversationHistory((history) => {
-          const nextHistory = cloneDeep(history);
-          const index = nextHistory.findIndex(
-            (messages) => messages[1].createdAt?.valueOf() === firstMessageDate,
-          );
-
-          // Already exists
-          if (index >= 0) {
-            nextHistory[index] = messages;
-          } else {
-            nextHistory.push(messages);
-          }
-
-          setLastHistoryUpdate(Date.now());
-          return nextHistory;
-        });
-      }
-    }
-  }, [isLoading, lastHistoryUpdate, messages, setConversationHistory]);
-
-  const handleDelete = (id: string) => {
-    setMessages(messages.filter((message) => message.id !== id));
-  };
+  useScrollToTarget(isLoading, endOfPageRef);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateSystemMessage = useCallback(
+  const syncSystemMessage = useCallback(
     debounce((content: string) => {
       setMessages((innerMessages) => {
         const systemIndex = innerMessages.findIndex(
@@ -133,21 +74,25 @@ export default function Home() {
     [setMessages],
   );
 
+  const handleDelete = (id: string) => {
+    setMessages(messages.filter((message) => message.id !== id));
+  };
+
   const handleSystemInput: ChangeEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
     setSystemValue(event.target.value);
-    updateSystemMessage(event.target.value);
+    syncSystemMessage(event.target.value);
   };
 
   return (
     <>
-      <Navigation
-        conversationHistory={conversationHistory}
+      <Actions
+        disabledHistoryActions={Object.keys(conversationHistory).length === 0}
         onDeleteHistory={() => {
           setShowDeleteConfirmation(true);
         }}
-        onHistory={() => {
+        onShowHistory={() => {
           setShowHistory(true);
         }}
         onLoad={async () => {
@@ -172,47 +117,48 @@ export default function Home() {
       />
 
       <main>
-        <VStack>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              maxWidth: "800px",
-              width: "100%",
-              padding: "10rem",
-              gap: "10rem",
-              marginBottom: "100rem",
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            maxWidth: "800px",
+            width: "100%",
+            padding: "10rem",
+            gap: "10rem",
+            marginInline: "auto",
+            marginBottom: "100rem",
+          }}
+        >
+          <SystemPrompt value={systemValue} onChange={handleSystemInput} />
+
+          <Messages
+            hasError={Boolean(error)}
+            messages={messages}
+            onDelete={handleDelete}
+            onRetry={reload}
+          />
+
+          <Prompt
+            disabledReplay={messages.length < 2}
+            input={input}
+            isLoading={isLoading}
+            onChange={handleInputChange}
+            onClickStop={stop}
+            onSubmit={(event) => {
+              if (input === "") {
+                event.preventDefault();
+                reload();
+              } else {
+                handleSubmit(event);
+              }
             }}
-          >
-            <SystemPrompt value={systemValue} onChange={handleSystemInput} />
-
-            <Messages
-              hasError={Boolean(error)}
-              messages={messages}
-              onDelete={handleDelete}
-              onRetry={reload}
-            />
-
-            <Prompt
-              disabledReplay={messages.length < 2}
-              input={input}
-              isLoading={isLoading}
-              onChange={handleInputChange}
-              onClickStop={stop}
-              onSubmit={(event) => {
-                if (input === "") {
-                  event.preventDefault();
-                  reload();
-                } else {
-                  handleSubmit(event);
-                }
-              }}
-            />
-          </div>
-        </VStack>
+          />
+        </div>
         <div ref={endOfPageRef} />
       </main>
 
+      {/* DIALOGS */}
+      {/* ================ */}
       <History
         activeHistoryEntry={activeHistoryEntry}
         conversationHistory={conversationHistory}
