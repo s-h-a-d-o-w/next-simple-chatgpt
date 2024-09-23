@@ -80,6 +80,7 @@ function Code(
 
             fontSize: "md",
             fontWeight: 500,
+            textShadow: "none",
           }),
           style: fonts.robotoMono.style,
         }}
