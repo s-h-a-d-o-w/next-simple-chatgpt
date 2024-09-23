@@ -1,5 +1,6 @@
 "use client";
 
+import { Prompt } from "@/components/Prompt";
 import { useChat, type Message as MessageType } from "ai/react";
 import { cloneDeep, debounce } from "lodash";
 import {
@@ -11,15 +12,12 @@ import {
 } from "react";
 import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
-import { css } from "../../styled-system/css";
 import { styled, VStack } from "../../styled-system/jsx";
 import { Button } from "../components/Button";
 import { DeleteConfirmationModal } from "../components/DeleteConfirmationModal";
 import { History } from "../components/History";
-import { IconButton } from "../components/IconButton";
 import { Message } from "../components/Message";
 import { Navigation } from "../components/Navigation";
-import Spinner from "../components/Spinner";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
 
@@ -29,6 +27,25 @@ const StyledInput = styled("textarea", {
   base: {
     border: "1px solid black",
     padding: "4rem 8rem",
+  },
+});
+
+const StyledMessageContainer = styled("div", {
+  base: {
+    width: "95%",
+    sm: {
+      width: "80%",
+    },
+  },
+  variants: {
+    isUser: {
+      true: {
+        alignSelf: "flex-start",
+      },
+      false: {
+        alignSelf: "flex-end",
+      },
+    },
   },
 });
 
@@ -206,88 +223,38 @@ export default function Home() {
             </form>
 
             {messages.map((message) => (
-              <Message
+              <StyledMessageContainer
                 key={message.id}
-                handleDelete={handleDelete}
-                className={
-                  message.role === "user"
-                    ? css({ width: "80%", alignSelf: "flex-start" })
-                    : css({ width: "80%", alignSelf: "flex-end" })
-                }
-                {...message}
-              />
+                isUser={message.role === "user"}
+              >
+                <Message handleDelete={handleDelete} {...message} />
+              </StyledMessageContainer>
             ))}
 
             {error && (
-              <>
-                <div>An error occurred.</div>
+              <div style={{ alignSelf: "flex-end" }}>
+                An error occurred.{" "}
                 <Button type="button" onClick={() => reload()}>
                   Retry
                 </Button>
-              </>
+              </div>
             )}
 
-            <div
-              style={{
-                position: "fixed",
-                bottom: 0,
-                left: 0,
-                right: 0,
-
-                display: "flex",
-                justifyContent: "center",
+            <Prompt
+              disabledReplay={messages.length < 2}
+              input={input}
+              isLoading={isLoading}
+              onChange={handleInputChange}
+              onClickStop={stop}
+              onSubmit={(event) => {
+                if (input === "") {
+                  event.preventDefault();
+                  reload();
+                } else {
+                  handleSubmit(event);
+                }
               }}
-            >
-              <form
-                onSubmit={(event) => {
-                  if (input === "") {
-                    event.preventDefault();
-                    reload();
-                  } else {
-                    handleSubmit(event);
-                  }
-                }}
-                className={css({
-                  display: "flex",
-                  maxWidth: "800px",
-                  width: "100%",
-                  padding: "10rem",
-
-                  alignItems: "center",
-                  gap: "10rem",
-                  backgroundColor: "amber.50",
-                  boxShadow: "lg",
-                })}
-              >
-                <StyledInput
-                  name="prompt"
-                  placeholder="Leave empty to re-run."
-                  value={input}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  style={{ flexGrow: 1 }}
-                />
-
-                {isLoading ? (
-                  <>
-                    <Spinner />
-                    <IconButton
-                      name="stop"
-                      type="button"
-                      onClick={() => stop()}
-                    />
-                  </>
-                ) : input ? (
-                  <IconButton name="up" type="submit" />
-                ) : (
-                  <IconButton
-                    name="replay"
-                    type="submit"
-                    disabled={messages.length < 2}
-                  />
-                )}
-              </form>
-            </div>
+            />
           </div>
         </VStack>
         <div ref={endOfPageRef} />
