@@ -25,27 +25,6 @@ const StyledActions = styled("div", {
   },
 });
 
-function BuildInfo() {
-  return (
-    <div
-      className={css({
-        fontSize: "sm",
-      })}
-    >
-      | Built:{" "}
-      {process.env.BUILD_TIMESTAMP
-        ? new Date(parseInt(process.env.BUILD_TIMESTAMP, 10)).toLocaleString()
-        : "unknown build time"}{" "}
-      |{" "}
-      {process.env.NODE_ENV !== "production" && (
-        <>
-          Last update: <HmrTimestamp /> |
-        </>
-      )}
-    </div>
-  );
-}
-
 export function Actions({
   disabledHistoryActions,
   onDeleteHistory,
@@ -56,7 +35,15 @@ export function Actions({
 }: Props) {
   return (
     <StyledActions>
-      <BuildInfo />
+      {process.env.NODE_ENV !== "production" && (
+        <div
+          className={css({
+            fontSize: "sm",
+          })}
+        >
+          Last update: <HmrTimestamp />
+        </div>
+      )}
       <Button onClick={onReset}>Reset</Button>
       <Button disabled={disabledHistoryActions} onClick={onShowHistory}>
         History
