@@ -11,37 +11,15 @@ import {
 } from "react";
 import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
-import { styled, VStack } from "../../styled-system/jsx";
-import { Button } from "../components/Button";
-import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
-import { History } from "./components/History";
-import { Message } from "../components/Message";
-import { Navigation } from "./components/Navigation";
+import { VStack } from "../../styled-system/jsx";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
-import { SystemPrompt } from "./components/SystemPrompt";
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
+import { History } from "./components/History";
+import { Messages } from "./components/Messages";
+import { Navigation } from "./components/Navigation";
 import { Prompt } from "./components/Prompt";
-
-// const DEBUG = true;
-
-const StyledMessageContainer = styled("div", {
-  base: {
-    width: "95%",
-    sm: {
-      width: "80%",
-    },
-  },
-  variants: {
-    isUser: {
-      true: {
-        alignSelf: "flex-start",
-      },
-      false: {
-        alignSelf: "flex-end",
-      },
-    },
-  },
-});
+import { SystemPrompt } from "./components/SystemPrompt";
 
 function createSystemMessage(content: string) {
   return {
@@ -208,23 +186,12 @@ export default function Home() {
           >
             <SystemPrompt value={systemValue} onChange={handleSystemInput} />
 
-            {messages.map((message) => (
-              <StyledMessageContainer
-                key={message.id}
-                isUser={message.role === "user"}
-              >
-                <Message handleDelete={handleDelete} {...message} />
-              </StyledMessageContainer>
-            ))}
-
-            {error && (
-              <div style={{ alignSelf: "flex-end" }}>
-                An error occurred.{" "}
-                <Button type="button" onClick={() => reload()}>
-                  Retry
-                </Button>
-              </div>
-            )}
+            <Messages
+              hasError={Boolean(error)}
+              messages={messages}
+              onDelete={handleDelete}
+              onRetry={reload}
+            />
 
             <Prompt
               disabledReplay={messages.length < 2}

@@ -10,8 +10,8 @@ import { fonts } from "@/utils/fonts";
 type Props = MessageType & {
   className?: string;
   fullHeight?: boolean;
-  handleDelete?: (id: string) => void;
   onClick?: () => void;
+  onDelete?: (id: string) => void;
 };
 
 export const StyledMessage = styled("div", {
@@ -125,7 +125,7 @@ export function Message({
   fullHeight = true,
   content,
   className,
-  handleDelete,
+  onDelete,
   onClick,
 }: Props) {
   return role === "system" ? null : (
@@ -142,7 +142,7 @@ export function Message({
           {content.replace(/\n/g, "  \n")}
         </MemoizedReactMarkdown>
       </div>
-      {handleDelete && <Button onClick={() => handleDelete(id)}>Delete</Button>}
+      {onDelete && <Button onClick={() => onDelete(id)}>Delete</Button>}
     </StyledMessage>
   );
 }
