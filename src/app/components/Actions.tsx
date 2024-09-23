@@ -1,12 +1,11 @@
 import { css } from "../../../styled-system/css";
 import { Button } from "../../components/Button";
 import HmrTimestamp from "./HmrTimestamp";
-import { type Message as MessageType } from "ai/react";
 
 type Props = {
-  conversationHistory: MessageType[][];
+  disabledHistoryActions: boolean;
   onDeleteHistory: () => void;
-  onHistory: () => void;
+  onShowHistory: () => void;
   onLoad: () => void;
   onReset: () => void;
   onSave: () => void;
@@ -14,10 +13,10 @@ type Props = {
 
 const isDev = process.env.NODE_ENV !== "production";
 
-export function Navigation({
-  conversationHistory,
+export function Actions({
+  disabledHistoryActions,
   onDeleteHistory,
-  onHistory,
+  onShowHistory,
   onLoad,
   onReset,
   onSave,
@@ -51,16 +50,10 @@ export function Navigation({
         )}
       </div>
       <Button onClick={onReset}>Reset</Button>
-      <Button
-        disabled={Object.keys(conversationHistory).length === 0}
-        onClick={onHistory}
-      >
+      <Button disabled={disabledHistoryActions} onClick={onShowHistory}>
         History
       </Button>
-      <Button
-        disabled={Object.keys(conversationHistory).length === 0}
-        onClick={onDeleteHistory}
-      >
+      <Button disabled={disabledHistoryActions} onClick={onDeleteHistory}>
         Delete History
       </Button>
       <Button onClick={onLoad}>Load</Button>
