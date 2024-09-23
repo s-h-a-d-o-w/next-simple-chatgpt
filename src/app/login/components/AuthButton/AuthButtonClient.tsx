@@ -1,8 +1,8 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../Button";
-import Spinner from "../Spinner";
+import { Button } from "../../../../components/Button";
+import Spinner from "../../../../components/Spinner";
 import { ReactNode } from "react";
 import { signIn, signOut } from "./authActions";
 
