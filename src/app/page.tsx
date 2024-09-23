@@ -241,12 +241,10 @@ export default function Home() {
       <DeleteConfirmationModal
         isOpen={showDeleteConfirmation}
         onConfirm={() => {
-          console.log("ok");
-          // setConversationHistory([]);
+          setConversationHistory([]);
           setShowDeleteConfirmation(false);
         }}
         onClose={() => {
-          console.log("cancel");
           setShowDeleteConfirmation(false);
         }}
       />
