@@ -10,7 +10,7 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 ## Prerequisites
 
-- A GitHub oauth app
+- A GitHub OAuth app
 - ChatGPT API key
 
 ## Getting started (dev)
@@ -31,4 +31,3 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility.
 - Why HTTPS? Because of `ClipboardItem`. Browsers make an exception for `localhost` but not other devices on the LAN. (To spare others the pain: `nginx` and `http-proxy` don't work. Only the experimental Next.js method. At least with things like server actions and redirects.)
-- Auth.js [claims that they can figure out address the user uses](https://authjs.dev/getting-started/deployment#auth_url). But [it actually can't always](https://github.com/nextauthjs/next-auth/issues/10928#issuecomment-2247877624). When visiting the server from a different machine on a LAN, `AUTH_URL` has to be set to `http://<IP>:3000/api/auth`.
