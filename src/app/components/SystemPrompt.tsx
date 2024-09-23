@@ -1,5 +1,5 @@
 import { ChangeEventHandler } from "react";
-import { StyledTextarea } from "./StyledTextarea";
+import { Textarea } from "../../components/Textarea";
 
 type Props = {
   onChange: ChangeEventHandler<HTMLTextAreaElement>;
@@ -10,7 +10,7 @@ export function SystemPrompt({ onChange, value }: Props) {
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
       <div>System</div>
-      <StyledTextarea
+      <Textarea
         name="prompt"
         value={value}
         onChange={onChange}

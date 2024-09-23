@@ -1,11 +1,11 @@
 import { formatDistance } from "date-fns/formatDistance";
-import { Button } from "./Button";
 import { type Message as MessageType } from "ai/react";
-import { css } from "../../styled-system/css";
-import { Message } from "./Message";
-import { styled } from "../../styled-system/jsx";
-import { IconButton } from "./IconButton";
-import { Dialog } from "./Dialog";
+import { Button } from "@/components/Button";
+import { Dialog } from "@/components/Dialog";
+import { IconButton } from "@/components/IconButton";
+import { Message } from "@/components/Message";
+import { styled } from "../../../styled-system/jsx";
+import { css } from "../../../styled-system/css";
 
 type Props = {
   conversationHistory: MessageType[][];

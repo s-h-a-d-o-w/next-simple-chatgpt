@@ -1,6 +1,6 @@
-import { css } from "../../styled-system/css";
-import { Button } from "./Button";
-import { Dialog } from "./Dialog";
+import { Dialog } from "@/components/Dialog";
+import { css } from "../../../styled-system/css";
+import { Button } from "@/components/Button";
 
 export function DeleteConfirmationModal({
   isOpen,

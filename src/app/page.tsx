@@ -1,6 +1,5 @@
 "use client";
 
-import { Prompt } from "@/components/Prompt";
 import { useChat, type Message as MessageType } from "ai/react";
 import { cloneDeep, debounce } from "lodash";
 import {
@@ -14,13 +13,14 @@ import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
 import { styled, VStack } from "../../styled-system/jsx";
 import { Button } from "../components/Button";
-import { DeleteConfirmationModal } from "../components/DeleteConfirmationModal";
-import { History } from "../components/History";
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
+import { History } from "./components/History";
 import { Message } from "../components/Message";
-import { Navigation } from "../components/Navigation";
+import { Navigation } from "./components/Navigation";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
-import { SystemPrompt } from "@/components/SystemPrompt";
+import { SystemPrompt } from "./components/SystemPrompt";
+import { Prompt } from "./components/Prompt";
 
 // const DEBUG = true;
 

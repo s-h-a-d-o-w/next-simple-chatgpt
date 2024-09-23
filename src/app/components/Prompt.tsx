@@ -1,9 +1,9 @@
 import { useChat } from "ai/react";
 import { FormEvent } from "react";
-import { css } from "../../styled-system/css";
-import { IconButton } from "./IconButton";
-import Spinner from "./Spinner";
-import { StyledTextarea } from "./StyledTextarea";
+import { css } from "../../../styled-system/css";
+import { IconButton } from "../../components/IconButton";
+import Spinner from "../../components/Spinner";
+import { Textarea } from "../../components/Textarea";
 
 type Props = {
   disabledReplay: boolean;
@@ -48,7 +48,7 @@ export function Prompt({
           boxShadow: "lg",
         })}
       >
-        <StyledTextarea
+        <Textarea
           name="prompt"
           placeholder="Leave empty to re-run."
           value={input}
