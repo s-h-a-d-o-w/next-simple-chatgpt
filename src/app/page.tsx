@@ -15,6 +15,17 @@ import { SystemPrompt } from "./components/SystemPrompt";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
 import { useHistory } from "@/hooks/useHistory";
 import { styled } from "../../styled-system/jsx";
+import { isDev } from "@/utils/consts";
+
+if (!isDev) {
+  const buildInfo = process.env.NEXT_PUBLIC_BUILD_INFO?.split(",");
+  if (buildInfo) {
+    console.log(
+      new Date(parseInt(buildInfo[0], 10)).toLocaleString(),
+      buildInfo[1],
+    );
+  }
+}
 
 function createSystemMessage(content: string) {
   return {
