@@ -22,7 +22,7 @@ export function AuthButtonClient({
   return (
     <form action={action}>
       <PendingServerAction>
-        <Button>{isSignedIn ? "signOut" : "signIn"}</Button>
+        <Button>{isSignedIn ? "Sign out" : "Sign in"}</Button>
       </PendingServerAction>
     </form>
   );
