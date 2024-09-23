@@ -65,6 +65,8 @@ function Code(
   const match = /language-(\w+)/.exec(className || "");
   const type = "text/plain";
   const blob = new Blob([text], { type });
+
+  // Only works with HTTPS and on localhost.
   const clipboardItem = [new ClipboardItem({ [type]: blob })];
   return (
     <div style={{ position: "relative" }}>
