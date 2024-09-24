@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
+    "analyze": "cross-env ANALYZE=true next build",
+    "prebuild": "rimraf .next",
     "build": "tsx ./scripts/generateBuildTimestamp && next build",
     "create-certificate": "pnpm tsx ./scripts/createCertificate",
     "predev": "rimraf .next",
@@ -32,6 +37,7 @@
     "use-local-storage-state": "^19.4.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.13",
     "@pandacss/dev": "^0.46",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20",
@@ -41,6 +47,7 @@
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "^14.2.5",
     "eslint-config-prettier": "^9.1.0",
