@@ -1,6 +1,6 @@
 import { Message as MessageType } from "ai";
 import { styled } from "../../../styled-system/jsx";
-import { Message } from "@/components/Message";
+import { Message } from "@/app/components/Message";
 import { Button } from "@/components/Button";
 
 const StyledMessage = styled("div", {

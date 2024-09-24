@@ -3,7 +3,7 @@ import { type Message as MessageType } from "ai/react";
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
 import { IconButton } from "@/components/IconButton";
-import { Message } from "@/components/Message";
+import { Message } from "@/app/components/Message";
 import { styled } from "../../../styled-system/jsx";
 import { css } from "../../../styled-system/css";
 import { Messages } from "./Messages";

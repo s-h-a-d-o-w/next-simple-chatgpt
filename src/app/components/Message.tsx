@@ -1,11 +1,12 @@
 import { type Message as MessageType } from "ai/react";
-import { Button } from "./Button";
-import { styled } from "../../styled-system/jsx";
+import { Button } from "../../components/Button";
+import { styled } from "../../../styled-system/jsx";
 import ReactMarkdown, { ExtraProps, type Options } from "react-markdown";
 import { ClassAttributes, HTMLAttributes, memo, useState } from "react";
-import { Prism } from "react-syntax-highlighter";
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css";
 import { fonts } from "@/utils/fonts";
+import { PrismAsyncLight as Prism } from "react-syntax-highlighter";
+import prismStyle from "react-syntax-highlighter/dist/esm/styles/prism/prism";
 
 type Props = MessageType & {
   className?: string;
@@ -81,7 +82,8 @@ function Code(
   return (
     <div style={{ position: "relative" }}>
       <Prism
-        language={match?.[1]}
+        style={prismStyle}
+        language={match?.[1] || ""}
         wrapLongLines
         codeTagProps={{
           className: css({
