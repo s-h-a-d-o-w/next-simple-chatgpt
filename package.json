@@ -18,11 +18,13 @@
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
     "prepare": "concurrently \"panda codegen\" \"husky\"",
     "start": "next start",
+    "start:local": "concurrently \"next start\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3001 --target 3000\"",
     "typecheck": "tsc"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.54",
     "ai": "^3.3.19",
+    "concurrently": "^8.2.2",
     "date-fns": "^3.6.0",
     "lodash": "^4.17.21",
     "next": "14.2.5",
@@ -46,7 +48,6 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
-    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "^14.2.5",

@@ -10,7 +10,7 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 ## Prerequisites
 
-- A GitHub OAuth app
+- A GitHub OAuth app (provides ID and SECRET values for `.env`)
 - ChatGPT API key
 
 ## Getting started (dev)
@@ -22,6 +22,17 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 - Create your `.env.local` based on `.env.schema`
 - `pnpm dev`
 - Ignore Next.js claiming `Network:      http://<IP>:3000` - it's `https`.
+
+## Using local production bundle
+
+- Create a certificate for `localhost` using `mkcert`
+- Put/uncomment the `AUTH_URL` in your `.env.local`
+- Create another OAuth app for localhost, put its ID and SECRET into your `.env.local`
+- `pnpm build`
+- `pnpm start:local` (Will probably ask you about installing `local-ssl-proxy` the first time)
+- Wait for `Started proxy: https://localhost:3001 → http://localhost:3000`
+
+(Thanks to [Miguel Oller for this](https://www.makeswift.com/blog/accessing-your-local-nextjs-dev-server-using-https)!)
 
 ## TODO
 
