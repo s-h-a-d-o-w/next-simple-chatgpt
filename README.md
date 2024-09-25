@@ -23,14 +23,14 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 - `pnpm dev`
 - Ignore Next.js claiming `Network:      http://<IP>:3000` - it's `https`.
 
-## Using local production bundle
+## Using production bundle locally
 
-- Create a certificate for `localhost` using `mkcert`
-- Put/uncomment the `AUTH_URL` in your `.env.local`
-- Create another OAuth app for localhost, put its ID and SECRET into your `.env.local`
-- `pnpm build`
-- `pnpm start:local` (Will probably ask you about installing `local-ssl-proxy` the first time)
-- Wait for `Started proxy: https://localhost:3001 → http://localhost:3000`
+1. Create a certificate for `localhost` using `mkcert`
+1. (If using via LAN: Put/uncomment the `AUTH_URL` in your `.env.local`. You will get a certificate warning in the browser, since localhost and IP don't match. I don't see a way of avoiding that. Running `next start` with IP instead of localhost results in `Request failed to proxy: ECONNREFUSED`.)
+1. Create another OAuth app for localhost, put its ID and SECRET into your `.env.local`
+1. `pnpm build`
+1. `pnpm start:local` (Will probably ask you about installing `local-ssl-proxy` the first time)
+1. Wait for `Started proxy: https://localhost:3000 → http://localhost:3001`
 
 (Thanks to [Miguel Oller for this](https://www.makeswift.com/blog/accessing-your-local-nextjs-dev-server-using-https)!)
 
@@ -42,3 +42,4 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility.
 - Why HTTPS? Because of `ClipboardItem`. Browsers make an exception for `localhost` but not other devices on the LAN. (To spare others the pain: `nginx` and `http-proxy` don't work. Only the experimental Next.js method. At least with things like server actions and redirects.)
+- Prod on LAN: Trying to use `next start -H <IP>\" \"npx local-ssl-proxy\"` results in Request failed to proxy: ECONNREFUSED. Only `localhost` works.

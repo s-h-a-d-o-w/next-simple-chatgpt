@@ -18,7 +18,7 @@
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
     "prepare": "concurrently \"panda codegen\" \"husky\"",
     "start": "next start",
-    "start:local": "concurrently \"next start\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3001 --target 3000\"",
+    "start:local": "concurrently \"next start -p 3001\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3000 --target 3001\"",
     "typecheck": "tsc"
   },
   "dependencies": {
