@@ -1,11 +1,11 @@
 import { rename } from "node:fs/promises";
 import { getLocalIp } from "./getLocalIp.js";
-import { $ } from "execa";
 import { existsSync, mkdirSync } from "node:fs";
+import { execSync } from "node:child_process";
 
 const localIp = getLocalIp();
 
-await $(`mkcert ${localIp}`);
+execSync(`mkcert ${localIp}`);
 
 if (!existsSync("certificates")) {
   mkdirSync("certificates");
