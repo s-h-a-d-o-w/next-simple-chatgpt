@@ -13,6 +13,11 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 - A GitHub OAuth app (provides ID and SECRET values for `.env`)
 - ChatGPT API key
 
+## Getting started (vercel/docker)
+
+- Add secrets either on vercel or in your docker environment based on `.env.schema`
+- Deploy 🚀
+
 ## Getting started (dev)
 
 - Clone, install dependencies
@@ -42,4 +47,3 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility.
 - Why HTTPS? Because of `ClipboardItem`. Browsers make an exception for `localhost` but not other devices on the LAN. (To spare others the pain: `nginx` and `http-proxy` don't work. Only the experimental Next.js method. At least with things like server actions and redirects.)
-- Prod on LAN: Trying to use `next start -H <IP>\" \"npx local-ssl-proxy\"` results in Request failed to proxy: ECONNREFUSED. Only `localhost` works.
