@@ -1,3 +1,5 @@
+<p align="center"><img src="./assets/logo.png" width="100px" /></p>
+
 # next-simple-chatgpt
 
 A very simple ChatGPT UI that I created because one can't use the ChatGPT playground on more than 2 or 3 devices at the same time *and* their captcha implementation has some accessibility problems. Also, I was skeptical to trust "random" projects on GitHub with my ChatGPT data to begin with and then one of the popular UI projects here uses obscure dependencies and triggered Windows Defender.
