@@ -140,9 +140,10 @@ export function Message({
   onDelete,
   onClick,
 }: Props) {
+  const isUser = role === "user";
   return role === "system" ? null : (
     <StyledMessage
-      variant={role === "user" ? "user" : undefined}
+      variant={isUser ? "user" : undefined}
       key={id}
       className={className}
       onClick={onClick}
@@ -155,7 +156,14 @@ export function Message({
           {content.replace(/\n/g, "  \n")}
         </MemoizedReactMarkdown>
       </div>
-      {onDelete && <Button onClick={() => onDelete(id)}>Delete</Button>}
+      {onDelete && (
+        <Button
+          onClick={() => onDelete(id)}
+          style={{ alignSelf: isUser ? undefined : "flex-end" }}
+        >
+          Delete
+        </Button>
+      )}
     </StyledMessage>
   );
 }
