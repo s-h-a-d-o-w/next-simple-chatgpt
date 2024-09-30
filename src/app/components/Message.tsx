@@ -152,8 +152,7 @@ export function Message({
     >
       <div style={{ flexGrow: 1 }}>
         <MemoizedReactMarkdown components={components}>
-          {/* Markdown obviously swallows \n */}
-          {content.replace(/\n/g, "  \n")}
+          {content}
         </MemoizedReactMarkdown>
       </div>
       {onDelete && (
