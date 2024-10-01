@@ -6,6 +6,8 @@ A very simple ChatGPT UI that I created because one can't use the ChatGPT playgr
 
 I'm using relatively few dependencies that front-end engineers are likely familiar with.
 
+(And I've specifically decided against making API keys configurable by the user via the UI and making it available to everybody because I would advise to only enter your API keys in environment that you control or that's a well-known, likely secure platform. I don't know how secure my servers are, so I don't want to get other people's API keys on there... 😅)
+
 ## UX Decisions
 
 - No support for attachments because I never discuss images with ChatGPT.
