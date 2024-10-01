@@ -1,4 +1,5 @@
 "use client";
+// Runs on the client so that we can display a spinner while login/logout is being processed
 
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../../../../components/Button";
