@@ -2,8 +2,8 @@ import { auth } from "@/auth";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText } from "ai";
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+// Allow streaming responses up to 120 seconds
+export const maxDuration = 120;
 
 const whitelist = process.env.WHITELIST?.split(",");
 
