@@ -121,6 +121,26 @@ function Code(
 
 const components: Options["components"] = {
   code: Code,
+  li: ({ children }) => (
+    <li
+      style={{
+        listStyleType: "disc",
+        listStylePosition: "outside",
+        marginLeft: "16rem",
+      }}
+    >
+      {children}
+    </li>
+  ),
+  p: ({ children }) => (
+    <p
+      style={{
+        display: "inline",
+      }}
+    >
+      {children}
+    </p>
+  ),
 };
 
 const MemoizedReactMarkdown = memo(
