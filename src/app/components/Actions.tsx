@@ -3,6 +3,7 @@ import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
 import { Button } from "../../components/Button";
 import HmrTimestamp from "./HmrTimestamp";
+import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
 
 type Props = {
   disabledHistoryActions: boolean;
@@ -54,6 +55,7 @@ export function Actions({
       </Button>
       <Button onClick={onLoad}>Load</Button>
       <Button onClick={onSave}>Save</Button>
+      <AuthButtonClient isSignedIn />
     </StyledActions>
   );
 }
