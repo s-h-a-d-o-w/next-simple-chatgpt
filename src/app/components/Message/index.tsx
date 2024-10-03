@@ -1,6 +1,6 @@
 import { type Message as MessageType } from "ai/react";
 import { memo } from "react";
-import ReactMarkdown, { type Options } from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import { styled } from "../../../../styled-system/jsx";
 import { Button } from "../../../components/Button";
 import { padNewlines } from "./padNewlines";
@@ -56,21 +56,6 @@ export const StyledMessage = styled("div", {
   },
 });
 
-const components: Options["components"] = {
-  code: Code,
-  li: ({ children }) => (
-    <li
-      style={{
-        listStyleType: "disc",
-        listStylePosition: "outside",
-        marginLeft: "16rem",
-      }}
-    >
-      {children}
-    </li>
-  ),
-};
-
 const MemoizedReactMarkdown = memo(
   ReactMarkdown,
   (prevProps, nextProps) =>
@@ -99,7 +84,11 @@ export function Message({
       shortened={shortened}
     >
       <div style={{ flexGrow: 1 }}>
-        <MemoizedReactMarkdown components={components}>
+        <MemoizedReactMarkdown
+          components={{
+            code: Code,
+          }}
+        >
           {padNewlines(content)}
         </MemoizedReactMarkdown>
       </div>

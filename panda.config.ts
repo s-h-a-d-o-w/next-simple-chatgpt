@@ -25,8 +25,23 @@ const globalCss = defineGlobalStyles({
     fontSize: "md",
     mt: "4rem",
   },
+
+  // markdown styles
   "li > p": {
     display: "inline",
+  },
+  "ol, ul": {
+    marginBottom: "24rem",
+  },
+  li: {
+    listStylePosition: "outside",
+    marginLeft: "16rem",
+  },
+  "ol > li": {
+    listStyleType: "decimal",
+  },
+  "ul > li": {
+    listStyleType: "disc",
   },
 });
 
