@@ -25,6 +25,9 @@ const globalCss = defineGlobalStyles({
     fontSize: "md",
     mt: "4rem",
   },
+  "li > p": {
+    display: "inline",
+  },
 });
 
 export default defineConfig({

@@ -19,6 +19,7 @@
     "prepare": "concurrently \"panda codegen\" \"husky\"",
     "start": "next start",
     "start:local": "concurrently \"next start -p 3001\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3000 --target 3001\"",
+    "test": "vitest",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -57,6 +58,7 @@
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.1.2"
   }
 }
