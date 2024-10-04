@@ -185,6 +185,7 @@ export default function Home() {
         }}
         onRestoreHistoryEntry={() => {
           if (activeHistoryEntry) {
+            setSystemValue(activeHistoryEntry[0].content);
             setMessages(activeHistoryEntry);
             setActiveHistoryEntry(undefined);
             setShowHistory(false);
