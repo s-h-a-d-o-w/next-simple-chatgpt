@@ -18,8 +18,8 @@ import { styled } from "../../styled-system/jsx";
 import { isDev } from "@/utils/consts";
 
 if (!isDev) {
-  const buildInfo = process.env.NEXT_PUBLIC_BUILD_INFO?.split(",");
-  if (buildInfo) {
+  const buildInfo = process.env["NEXT_PUBLIC_BUILD_INFO"]?.split(",");
+  if (buildInfo && buildInfo[0]) {
     console.log(
       new Date(parseInt(buildInfo[0], 10)).toLocaleString(),
       buildInfo[1],
@@ -85,11 +85,11 @@ export default function Home() {
   const syncSystemMessage = useCallback(
     debounce((content: string) => {
       setMessages((innerMessages) => {
-        const systemIndex = innerMessages.findIndex(
+        const nextMessages = cloneDeep(innerMessages);
+        const systemIndex = nextMessages.findIndex(
           (message) => message.role === "system",
         );
-        const nextMessages = cloneDeep(innerMessages);
-        if (systemIndex >= 0) {
+        if (systemIndex >= 0 && nextMessages[systemIndex]) {
           nextMessages[systemIndex].content = content;
         } else {
           nextMessages.unshift(createSystemMessage(content));
@@ -184,7 +184,7 @@ export default function Home() {
           setConversationHistory(nextHistory);
         }}
         onRestoreHistoryEntry={() => {
-          if (activeHistoryEntry) {
+          if (activeHistoryEntry?.[0]) {
             setSystemValue(activeHistoryEntry[0].content);
             setMessages(activeHistoryEntry);
             setActiveHistoryEntry(undefined);

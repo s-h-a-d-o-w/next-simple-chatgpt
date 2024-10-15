@@ -5,7 +5,7 @@ import { convertToCoreMessages, streamText } from "ai";
 // Allow streaming responses up to 60 seconds
 export const maxDuration = 60;
 
-const whitelist = process.env.WHITELIST?.split(",");
+const whitelist = process.env["WHITELIST"]?.split(",");
 
 export const POST = auth(async (req) => {
   if (

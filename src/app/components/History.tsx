@@ -68,49 +68,51 @@ export function History({
         {conversationHistory
           .slice(0)
           .reverse()
-          .map((messages, index) => (
-            <div key={index}>
-              <div
-                className={css({
-                  fontSize: "sm",
-                })}
-              >
-                {messages[1].createdAt
-                  ? formatDistance(messages[1].createdAt, new Date(), {
-                      addSuffix: true,
-                    })
-                  : ""}
-              </div>
-              <div style={{ position: "relative" }}>
-                <Message
-                  {...messages[1]}
-                  fullHeight={false}
-                  shortened
-                  onClick={() => {
-                    onSetActiveHistoryEntry(messages);
-                  }}
-                />
-                <IconButton
-                  name="delete"
-                  type="button"
-                  iconSize="md"
-                  ghost
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    const index = conversationHistory.findIndex(
-                      (_messages) => _messages === messages,
-                    );
-                    onDeleteHistoryEntry(index);
-                  }}
+          .map((messages, index) =>
+            !messages[1] ? null : (
+              <div key={index}>
+                <div
                   className={css({
-                    position: "absolute",
-                    top: "8rem",
-                    right: "8rem",
+                    fontSize: "sm",
                   })}
-                />
+                >
+                  {messages[1]?.createdAt
+                    ? formatDistance(messages[1].createdAt, new Date(), {
+                        addSuffix: true,
+                      })
+                    : ""}
+                </div>
+                <div style={{ position: "relative" }}>
+                  <Message
+                    {...messages[1]}
+                    fullHeight={false}
+                    shortened
+                    onClick={() => {
+                      onSetActiveHistoryEntry(messages);
+                    }}
+                  />
+                  <IconButton
+                    name="delete"
+                    type="button"
+                    iconSize="md"
+                    ghost
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      const index = conversationHistory.findIndex(
+                        (_messages) => _messages === messages,
+                      );
+                      onDeleteHistoryEntry(index);
+                    }}
+                    className={css({
+                      position: "absolute",
+                      top: "8rem",
+                      right: "8rem",
+                    })}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ),
+          )}
       </StyledHistory>
 
       {activeHistoryEntry && (

@@ -16,7 +16,7 @@ export function useHistory(isLoading: boolean, messages: MessageType[]) {
   // Keep history in sync as messages arive
   useEffect(() => {
     const latestMessageDate =
-      messages[messages.length - 1].createdAt?.valueOf();
+      messages[messages.length - 1]?.createdAt?.valueOf();
     if (
       !isLoading &&
       latestMessageDate &&
@@ -29,7 +29,8 @@ export function useHistory(isLoading: boolean, messages: MessageType[]) {
         setConversationHistory((history) => {
           const nextHistory = cloneDeep(history);
           const index = nextHistory.findIndex(
-            (messages) => messages[1].createdAt?.valueOf() === firstMessageDate,
+            (messages) =>
+              messages[1]?.createdAt?.valueOf() === firstMessageDate,
           );
 
           // Already exists
