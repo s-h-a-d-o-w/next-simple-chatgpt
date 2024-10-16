@@ -10,6 +10,7 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 ## UX Decisions
 
+- White-list authentication exists so that one can have it publicly available without random people being able to use it. (Maybe I'll remove it at some point and require users to enter the ChatGPT API key client-side instead. But... for now, it seems safer to me for everybody to just run their own instance of this. E.g. vercel free plan is sufficient.)
 - No support for attachments because I never discuss images with ChatGPT.
 
 ## Prerequisites
