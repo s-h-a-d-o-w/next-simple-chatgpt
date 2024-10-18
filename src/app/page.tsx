@@ -149,6 +149,7 @@ export default function Home() {
           messages={messages}
           onDelete={handleDelete}
           onRetry={reload}
+          showCopyAll
         />
         <Prompt
           disabledReplay={messages.length < 2}

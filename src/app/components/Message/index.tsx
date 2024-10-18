@@ -1,5 +1,5 @@
 import { type Message as MessageType } from "ai/react";
-import { memo } from "react";
+import { memo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { styled } from "../../../../styled-system/jsx";
 import { Button } from "../../../components/Button";
@@ -12,6 +12,7 @@ type Props = MessageType & {
   onClick?: () => void;
   onDelete?: (id: string) => void;
   shortened?: boolean;
+  showCopyAll?: boolean;
 };
 
 export const StyledMessage = styled("div", {
@@ -68,12 +69,21 @@ export function Message({
   id,
   fullHeight = true,
   shortened = false,
+  showCopyAll = false,
   content,
   className,
   onDelete,
   onClick,
 }: Props) {
   const isUser = role === "user";
+
+  const [hasCopied, setHasCopied] = useState(false);
+  const type = "text/plain";
+  const blob = new Blob([content], { type });
+
+  // Only works with HTTPS and on localhost.
+  const clipboardItem = showCopyAll && [new ClipboardItem({ [type]: blob })];
+
   return role === "system" ? null : (
     <StyledMessage
       variant={isUser ? "user" : undefined}
@@ -92,14 +102,29 @@ export function Message({
           {padNewlines(content)}
         </MemoizedReactMarkdown>
       </div>
-      {onDelete && (
-        <Button
-          onClick={() => onDelete(id)}
-          style={{ alignSelf: isUser ? undefined : "flex-end" }}
-        >
-          Delete
-        </Button>
-      )}
+      <div
+        style={{
+          alignSelf: isUser ? undefined : "flex-end",
+          display: "flex",
+          gap: "12rem",
+        }}
+      >
+        {onDelete && <Button onClick={() => onDelete(id)}>Delete</Button>}
+        {showCopyAll && clipboardItem && (
+          <Button
+            disabled={hasCopied}
+            onClick={() => {
+              navigator.clipboard.write(clipboardItem);
+              setHasCopied(true);
+              setTimeout(() => {
+                setHasCopied(false);
+              }, 1000);
+            }}
+          >
+            {hasCopied ? "Done" : "Copy"}
+          </Button>
+        )}
+      </div>
     </StyledMessage>
   );
 }
