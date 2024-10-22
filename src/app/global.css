@@ -7,3 +7,7 @@ html {
 * {
   border-radius: 4rem;
 }
+
+a {
+  text-decoration: underline;
+}
