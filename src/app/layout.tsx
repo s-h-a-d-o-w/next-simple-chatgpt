@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 const Body = styled("body", {
   base: {
+    minWidth: "300rem",
     backgroundColor: "amber.50",
     fontSize: "lg",
   },
