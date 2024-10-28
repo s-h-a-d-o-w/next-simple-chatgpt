@@ -4,20 +4,25 @@ export function useScrollToTarget(
   doScroll: boolean,
   target: RefObject<HTMLElement>,
 ) {
-  // Scroll to bottom while message loads
   useEffect(() => {
-    let scrollingInterval: number | undefined;
+    let stopScrolling: boolean = false;
 
     if (doScroll) {
-      scrollingInterval = window.setInterval(() => {
-        target.current?.scrollIntoView();
-      }, 100);
+      const scrollToTarget = () => {
+        requestAnimationFrame(() => {
+          target.current?.scrollIntoView();
+          if (!stopScrolling) {
+            scrollToTarget();
+          }
+        });
+      };
+      scrollToTarget();
     } else {
-      clearInterval(scrollingInterval);
+      stopScrolling = true;
     }
 
     return () => {
-      clearInterval(scrollingInterval);
+      stopScrolling = true;
     };
   }, [doScroll, target]);
 }
