@@ -17,10 +17,7 @@ export function useScrollToTarget(
         });
       };
 
-      // Slow devices might not paint the stop button correctly if we start scrolling immediately
-      setTimeout(() => {
-        scrollToTarget();
-      }, 100);
+      scrollToTarget();
     } else {
       stopScrolling = true;
     }
