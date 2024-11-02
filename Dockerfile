@@ -9,7 +9,7 @@ WORKDIR /app
 # Building presumably already happened
 COPY . .
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 ENV NODE_ENV production
 ENV PORT 80

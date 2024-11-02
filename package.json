@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "20"
+    "node": ">=20"
   },
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
@@ -16,7 +16,7 @@
     "lint": "next lint --ignore-path .gitignore",
     "panda:watch": "panda --watch",
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
-    "prepare": "concurrently \"panda codegen\" \"husky\"",
+    "prepare": "panda codegen",
     "start": "next start",
     "start:local": "concurrently \"next start -p 3001\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3000 --target 3001\"",
     "test": "vitest",

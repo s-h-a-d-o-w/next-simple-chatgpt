@@ -1,13 +1,17 @@
+
 #!/bin/bash
 set -e
 
 export CAPROVER_APP=simple-chatgpt
 export CAPROVER_TAR_FILE=./caprover_deployment.tar
+set -a
+source .env.local
+set +a
 
 pnpm build
 
 echo "Creating archive out of repo and build artifacts..."
-tar -cf ./caprover_deployment.tar --exclude=.idea --exclude=coverage/* --exclude=node_modules/* .
+tar --exclude='.next/cache' -cf ./caprover_deployment.tar Dockerfile .next package.json pnpm-lock.yaml
 
 echo "Deploying to machine 01..."
 export CAPROVER_URL=$CAPROVER_MACHINE_01
