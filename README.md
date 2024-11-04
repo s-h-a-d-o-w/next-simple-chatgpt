@@ -25,13 +25,14 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 ## Getting started (dev)
 
-- Clone, install dependencies
-- Install `mkcert`
-- Run `pnpm create-certificate`
-- (Optional: If you want to access the UI from mobile devices on your LAN, I would recommend installing mkcert's CA certificate. Best ask an AI how. 😄)
-- Create your `.env.local` based on `.env.schema`
-- `pnpm dev`
-- Ignore Next.js claiming `Network:      http://<IP>:3000` - it's `https`.
+> Note: WSL is not supported! (I'm usually all for WSL. But in this case, due to the certificate and authentication requirements (and me wanting to be able test from other devices on my LAN), it's not really something that can be done easily.)
+
+1. Clone, install dependencies
+2. Install `mkcert`
+3. Run `pnpm create-certificate`
+4. (Optional: If you want to access the UI from mobile devices on your LAN, I would recommend installing mkcert's CA certificate. Best ask an AI how. 😄)
+5. Create your `.env.local` based on `.env.schema`
+6. `pnpm dev` (Ignore Next.js claiming `Network:      http://<IP>:3000` - it's `https`.)
 
 ## Using production bundle locally
 

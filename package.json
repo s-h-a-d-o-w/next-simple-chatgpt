@@ -8,11 +8,9 @@
   },
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
-    "prebuild": "rimraf .next",
-    "build": "tsx ./scripts/generateBuildTimestamp && next build",
+    "build": "rimraf .next && tsx ./scripts/generateBuildTimestamp && next build",
     "create-certificate": "pnpm tsx ./scripts/createCertificate",
-    "predev": "rimraf .next",
-    "dev": "concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",
+    "dev": "tsx ./scripts/checkWsl && rimraf .next && concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",
     "lint": "next lint --ignore-path .gitignore",
     "panda:watch": "panda --watch",
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
