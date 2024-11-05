@@ -2,11 +2,19 @@
 
 import { Centered } from "@/components/Centered";
 
-export default function Error() {
+export default function GlobalError() {
   // In a commercial project, we would obviously send error details to some error tracking service.
 
-  console.log("Maybe the history got corrupted?");
-  console.log(localStorage.getItem("history"));
+  const history = localStorage.getItem("history");
+  if (history) {
+    try {
+      JSON.parse(history);
+    } catch (_) {
+      // This has happened to me once but I've not been able to reproduce it.
+      console.error("History might be corrupted:");
+      console.error(history);
+    }
+  }
 
   return (
     <Centered>
