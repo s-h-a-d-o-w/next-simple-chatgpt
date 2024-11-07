@@ -9,7 +9,8 @@ WORKDIR /app
 # Building presumably already happened
 COPY . .
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+# --ignore-scripts because of panda. The full source code is not included in the tarball and so panda would fail.
+RUN pnpm install --ignore-scripts
 
 ENV NODE_ENV production
 ENV PORT 80
