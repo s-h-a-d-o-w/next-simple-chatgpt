@@ -18,10 +18,11 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 - A GitHub OAuth app (provides ID and SECRET values for `.env`)
 - ChatGPT API key
 
-## Getting started (vercel/docker)
+## Getting started
 
-- Add secrets either on vercel or in your docker environment based on `.env.schema`
-- Deploy 🚀
+- Add secrets to whatever environment you will run this in based on `.env.schema`.
+- (At least with the combination of CapRover and cloudflare for HTTPS, it is necessary to tick "WebSocket support" in the app settings in CapRover for streaming to work. I don't know why, since that is done via fetch, not websockets but that's what I've observed.)
+- Deploy like any node app. 🚀 (See `Dockerfile`, `deploy.sh` and the github workflow for inspiration if you're not using a platform that automatically does these things for you.)
 
 ## Getting started (dev)
 
