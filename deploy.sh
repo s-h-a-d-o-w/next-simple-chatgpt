@@ -1,12 +1,13 @@
-
 #!/bin/bash
 set -e
 
-export CAPROVER_APP=simple-chatgpt
+export CAPROVER_APP=next-simple-chatgpt
 export CAPROVER_TAR_FILE=./caprover_deployment.tar
-set -a
-source .env.local
-set +a
+if [ -f .env.local ]; then
+  set -a
+  source .env.local
+  set +a
+fi
 
 pnpm build
 
@@ -15,10 +16,10 @@ tar --exclude='.next/cache' -cf ./caprover_deployment.tar Dockerfile .next packa
 
 echo "Deploying to machine 01..."
 export CAPROVER_URL=$CAPROVER_MACHINE_01
-caprover deploy > /dev/null
+npx caprover deploy > /dev/null
 
 echo "Deploying to machine 02..."
 export CAPROVER_URL=$CAPROVER_MACHINE_02
-caprover deploy > /dev/null
+npx caprover deploy > /dev/null
 
 rm caprover_deployment.tar
