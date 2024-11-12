@@ -18,7 +18,7 @@ export default function GlobalError() {
 
   return (
     <Centered>
-      <div style={{ width: "75%", maxWidth: "400rem", textAlign: "center" }}>
+      <div style={{ width: "80%", maxWidth: "400rem", textAlign: "center" }}>
         If this was a commercial project, I&apos;d say something like: &quot;We
         have encountered an unexpected error. It has been reported automatically
         but if you keep experiencing this please reach out to support.&quot;

@@ -1,21 +1,11 @@
 import Link from "next/link";
 import { styled } from "../../../styled-system/jsx";
 import { AuthButton } from "./components/AuthButton";
+import { Centered } from "@/components/Centered";
 
 const StyledMain = styled("main", {
   base: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
-const StyledContainer = styled("div", {
-  base: {
+    width: "80%",
     maxWidth: "400rem",
     display: "flex",
     flexDirection: "column",
@@ -25,8 +15,8 @@ const StyledContainer = styled("div", {
 
 export default function Login() {
   return (
-    <StyledMain>
-      <StyledContainer>
+    <Centered>
+      <StyledMain>
         <h1>This is a private app.</h1>
         <p>
           If you aren&apos;t on the whitelist, you will not be able to sign in!
@@ -38,7 +28,7 @@ export default function Login() {
           .
         </p>
         <AuthButton />
-      </StyledContainer>
-    </StyledMain>
+      </StyledMain>
+    </Centered>
   );
 }
