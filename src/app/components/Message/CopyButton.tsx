@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { IconButton } from "@/components/IconButton";
 import { useState } from "react";
 
 type Props = {
@@ -18,7 +18,9 @@ export function CopyButton({ className, content }: Props) {
   ];
 
   return !clipboardItem ? null : (
-    <Button
+    <IconButton
+      name={hasCopied ? "check" : "copy"}
+      iconSize="md"
       className={className}
       disabled={hasCopied}
       onClick={() => {
@@ -28,13 +30,6 @@ export function CopyButton({ className, content }: Props) {
           setHasCopied(false);
         }, 1000);
       }}
-      // style={{
-      //   position: "absolute",
-      //   top: 0,
-      //   right: 0,
-      // }}
-    >
-      {hasCopied ? "Done" : "Copy"}
-    </Button>
+    />
   );
 }

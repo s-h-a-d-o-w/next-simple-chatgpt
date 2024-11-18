@@ -2,10 +2,10 @@ import { type Message as MessageType } from "ai/react";
 import { memo } from "react";
 import ReactMarkdown from "react-markdown";
 import { styled } from "../../../../styled-system/jsx";
-import { Button } from "../../../components/Button";
 import { Code } from "./Code";
 import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
+import { IconButton } from "@/components/IconButton";
 
 type Props = MessageType & {
   className?: string;
@@ -103,7 +103,13 @@ export function Message({
           gap: "12rem",
         }}
       >
-        {onDelete && <Button onClick={() => onDelete(id)}>Delete</Button>}
+        {onDelete && (
+          <IconButton
+            name="delete"
+            iconSize="md"
+            onClick={() => onDelete(id)}
+          />
+        )}
         {showCopyAll && <CopyButton content={content} />}
       </div>
     </StyledMessage>

@@ -50,7 +50,7 @@ export const Button = styled("button", {
       md: {
         width: "md",
         height: "md",
-        padding: "4rem",
+        padding: "6rem",
       },
       xl: {
         width: "xl",

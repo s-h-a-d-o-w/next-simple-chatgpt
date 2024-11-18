@@ -1,4 +1,16 @@
-import { MdArrowUpward, MdDelete, MdReplay, MdStop } from "react-icons/md";
+import {
+  MdCheck,
+  MdContentCopy,
+  MdArrowUpward,
+  MdOutlineDelete,
+  MdReplay,
+  MdStop,
+  MdFileDownload,
+  MdFileUpload,
+  MdLogout,
+  MdHistory,
+  MdCached,
+} from "react-icons/md";
 import { Button } from "./Button";
 import { css } from "../../styled-system/css";
 import { ComponentProps } from "../../styled-system/types";
@@ -8,8 +20,15 @@ type Props = ComponentProps<typeof Button> & {
 };
 
 const iconMap = {
-  delete: MdDelete,
+  check: MdCheck,
+  copy: MdContentCopy,
+  delete: MdOutlineDelete,
+  history: MdHistory,
+  load: MdFileUpload,
+  logout: MdLogout,
   replay: MdReplay,
+  reset: MdCached,
+  save: MdFileDownload,
   stop: MdStop,
   up: MdArrowUpward,
 } as const;

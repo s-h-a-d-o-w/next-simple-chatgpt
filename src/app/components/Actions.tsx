@@ -1,9 +1,9 @@
 import { isDev } from "@/utils/consts";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
-import { Button } from "../../components/Button";
 import HmrTimestamp from "./HmrTimestamp";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
+import { IconButton } from "@/components/IconButton";
 
 type Props = {
   disabledHistoryActions: boolean;
@@ -46,15 +46,21 @@ export function Actions({
           Last update: <HmrTimestamp />
         </div>
       )}
-      <Button onClick={onReset}>Reset</Button>
-      <Button disabled={disabledHistoryActions} onClick={onShowHistory}>
-        History
-      </Button>
-      <Button disabled={disabledHistoryActions} onClick={onDeleteHistory}>
-        Delete History
-      </Button>
-      <Button onClick={onLoad}>Load</Button>
-      <Button onClick={onSave}>Save</Button>
+      <IconButton name="reset" iconSize="md" onClick={onReset} />
+      <IconButton
+        name="history"
+        iconSize="md"
+        disabled={disabledHistoryActions}
+        onClick={onShowHistory}
+      />
+      <IconButton
+        name="delete"
+        iconSize="md"
+        disabled={disabledHistoryActions}
+        onClick={onDeleteHistory}
+      />
+      <IconButton name="load" iconSize="md" onClick={onLoad} />
+      <IconButton name="save" iconSize="md" onClick={onSave} />
       <AuthButtonClient isSignedIn />
     </StyledActions>
   );

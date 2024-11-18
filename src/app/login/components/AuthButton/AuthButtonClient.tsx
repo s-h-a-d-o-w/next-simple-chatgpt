@@ -7,7 +7,7 @@ import Spinner from "../../../../components/Spinner";
 import { ReactNode } from "react";
 import { signIn, signOut } from "./authActions";
 import { FaGithub } from "react-icons/fa6";
-import { IoLogOut } from "react-icons/io5";
+import { IconButton } from "@/components/IconButton";
 
 function PendingServerAction({ children }: { children: ReactNode }) {
   const { pending } = useFormStatus();
@@ -39,13 +39,13 @@ export function AuthButtonClient({
   return (
     <form action={action} style={isSignedIn ? { lineHeight: 0 } : {}}>
       <PendingServerAction>
-        <Button>
-          {isSignedIn ? (
-            <IoLogOut style={{ height: "21rem" }} />
-          ) : (
+        {isSignedIn ? (
+          <IconButton name="logout" iconSize="md" />
+        ) : (
+          <Button>
             <SignInButton />
-          )}
-        </Button>
+          </Button>
+        )}
       </PendingServerAction>
     </form>
   );
