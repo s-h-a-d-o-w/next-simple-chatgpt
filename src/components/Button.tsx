@@ -48,9 +48,16 @@ export const Button = styled("button", {
         padding: "4rem",
       },
       md: {
-        width: "md",
-        height: "md",
-        padding: "6rem",
+        base: {
+          width: "lg",
+          height: "lg",
+          padding: "8rem",
+        },
+        xl: {
+          width: "md",
+          height: "md",
+          padding: "6rem",
+        },
       },
       xl: {
         width: "xl",
