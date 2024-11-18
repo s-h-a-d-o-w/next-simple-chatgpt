@@ -2,7 +2,7 @@
 
 # next-simple-chatgpt
 
-![video demo](https://github.com/s-h-a-d-o-w/next-simple-chatgpt/raw/refs/heads/master/assets/demo.mp4)
+![screenshot](./assets/screenshot.png)
 
 A very simple ChatGPT UI that I created because one can't use the ChatGPT playground on more than 2 or 3 devices at the same time *and* their captcha implementation has some accessibility problems. Also, I was skeptical to trust "random" projects on GitHub with my ChatGPT data to begin with and then one of the popular UI projects here uses obscure dependencies and triggered Windows Defender.
 
