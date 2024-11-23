@@ -7,6 +7,8 @@ import { Message } from "@/app/components/Message";
 import { styled } from "../../../styled-system/jsx";
 import { css } from "../../../styled-system/css";
 import { Messages } from "./Messages";
+import { debounce } from "lodash";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -53,6 +55,15 @@ const StyledHistory = styled("div", {
   },
 });
 
+const StyledSearchInput = styled("input", {
+  base: {
+    width: "100%",
+    padding: "8rem",
+    border: "1px solid black",
+    borderRadius: "md",
+  },
+});
+
 export function History({
   activeHistoryEntry,
   conversationHistory,
@@ -62,10 +73,53 @@ export function History({
   onRestoreHistoryEntry,
   onSetActiveHistoryEntry,
 }: Props) {
+  const [searchTerms, setSearchTerms] = useState<string[]>();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (
+      isOpen &&
+      searchInputRef.current &&
+      !/Mobi|Android/i.test(navigator.userAgent)
+    ) {
+      searchInputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setSearchTerms(value === "" ? undefined : value.toLowerCase().split(" "));
+    }, 200),
+    [],
+  );
+
+  const filteredHistory = !searchTerms
+    ? conversationHistory
+    : conversationHistory.filter((messages) => {
+        return searchTerms.every((term) =>
+          messages
+            .map(({ content }) => content.toLowerCase())
+            .join(" ")
+            .includes(term),
+        );
+      });
+
   return (
-    <Dialog isModal={false} isOpen={isOpen} onClose={onClose}>
+    <Dialog
+      suppressNativeFocus
+      isModal={false}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <StyledHistory align="right">
-        {conversationHistory
+        <StyledSearchInput
+          ref={searchInputRef}
+          type="text"
+          placeholder="Search..."
+          onChange={(e) => debouncedSearch(e.target.value)}
+        />
+        {filteredHistory
           .slice(0)
           .reverse()
           .map((messages, index) =>

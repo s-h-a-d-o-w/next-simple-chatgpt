@@ -17,6 +17,10 @@ type Props = {
    * Only applies to non-modal dialogs.
    **/
   showBackdrop?: boolean;
+  /**
+   * Prevents the native behavior of autofocusing the first input when opened.
+   **/
+  suppressNativeFocus?: boolean;
 };
 
 const dialogClosed: SystemStyleObject = {
@@ -141,6 +145,7 @@ export function Dialog({
   isOpen,
   onClose,
   showBackdrop = true,
+  suppressNativeFocus = false,
 }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [portalRoot, setPortalRoot] = useState<HTMLElement>();
@@ -163,10 +168,15 @@ export function Dialog({
       } else {
         dialogElement.show();
       }
+
+      if (suppressNativeFocus) {
+        dialogElement.setAttribute("tabindex", "-1");
+        dialogElement.focus();
+      }
     } else {
       dialogElement.close();
     }
-  }, [isModal, isOpen]);
+  }, [isModal, isOpen, suppressNativeFocus]);
 
   return portalRoot
     ? createPortal(
