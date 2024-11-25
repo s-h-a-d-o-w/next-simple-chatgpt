@@ -1,7 +1,6 @@
 import { useChat } from "ai/react";
 import { FormEvent } from "react";
 import { IconButton } from "../../components/IconButton";
-import Spinner from "../../components/Spinner";
 import { Textarea } from "../../components/Textarea";
 import { styled } from "../../../styled-system/jsx";
 
@@ -67,10 +66,14 @@ export function Prompt({
         />
 
         {isLoading ? (
-          <>
-            <Spinner />
-            <IconButton name="stop" type="button" onClick={onClickStop} />
-          </>
+          <IconButton
+            name="stop"
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              onClickStop();
+            }}
+          />
         ) : input ? (
           <IconButton name="up" type="submit" />
         ) : (
