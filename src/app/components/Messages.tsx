@@ -47,7 +47,7 @@ export function Messages({
       ))}
       {hasError && (
         <div style={{ alignSelf: "flex-end" }}>
-          An error occurred.{" "}
+          An error occurred. If it keeps happening, please try refreshing the page.{" "}
           <Button type="button" onClick={onRetry}>
             Retry
           </Button>
