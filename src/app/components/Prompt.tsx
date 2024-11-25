@@ -52,6 +52,7 @@ export function Prompt({
     <StyledPrompt>
       <StyledForm onSubmit={onSubmit}>
         <Textarea
+          autoFocus
           name="prompt"
           placeholder="Leave empty to re-run."
           value={input}
