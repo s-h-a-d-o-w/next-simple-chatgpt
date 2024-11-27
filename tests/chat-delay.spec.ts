@@ -11,7 +11,7 @@ test("chat has acceptable delay until stream starts", async ({ page }) => {
 
   const start = Date.now();
   await page.getByRole("main").getByRole("button").click();
-  await page.getByTestId("message-1-assistant").waitFor();
+  await page.getByTestId("message-loading").waitFor();
   const durationUntilResponse = Date.now() - start;
   console.log("durationUntilResponse:", durationUntilResponse);
 
