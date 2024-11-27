@@ -6,12 +6,11 @@ import { convertToCoreMessages, streamText } from "ai";
 export const maxDuration = 60;
 
 const whitelist = process.env["WHITELIST"]?.split(",");
+export const isTest = Boolean(process.env["CI"]);
 
 export const POST = auth(async (req) => {
-  if (
-    !req.auth?.user?.email ||
-    (req.auth?.user?.email && !whitelist?.includes(req.auth.user.email))
-  ) {
+  const isUserWhitelisted = whitelist?.includes(String(req.auth?.user?.email));
+  if (!isTest && !isUserWhitelisted) {
     // In a production app, e.g. sentry would be great here for context logging.
     throw new Error("Unauthorized access attempt to /api/chat! ");
   }

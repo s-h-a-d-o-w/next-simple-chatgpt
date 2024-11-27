@@ -1,7 +1,7 @@
-import { Message as MessageType } from "ai";
-import { styled } from "../../../styled-system/jsx";
 import { Message } from "@/app/components/Message";
 import { Button } from "@/components/Button";
+import { Message as MessageType } from "ai";
+import { styled } from "../../../styled-system/jsx";
 
 const MessageContainer = styled("div", {
   base: {
@@ -23,6 +23,7 @@ const MessageContainer = styled("div", {
 });
 
 type Props = {
+  isLoading: boolean;
   messages: MessageType[];
 
   hasError?: boolean;
@@ -33,6 +34,7 @@ type Props = {
 
 export function Messages({
   hasError,
+  isLoading,
   messages,
   onDelete,
   onRetry,
@@ -40,14 +42,34 @@ export function Messages({
 }: Props) {
   return (
     <>
-      {messages.map((message) => (
-        <MessageContainer key={message.id} isUser={message.role === "user"}>
-          <Message onDelete={onDelete} showCopyAll={showCopyAll} {...message} />
+      {messages
+        .filter((message) => message.role !== "system")
+        .map((message, idx) => (
+          <MessageContainer
+            data-testid={`message-${idx}-${message.role}`}
+            key={message.id}
+            isUser={message.role === "user"}
+          >
+            <Message
+              onDelete={onDelete}
+              showCopyAll={showCopyAll}
+              {...message}
+            />
+          </MessageContainer>
+        ))}
+      {isLoading && messages[messages.length - 1]?.role === "user" && (
+        <MessageContainer
+          data-testid={`message-loading`}
+          key={`message-loading`}
+          isUser={false}
+        >
+          <Message content="" id="message-loading" role="assistant" />
         </MessageContainer>
-      ))}
+      )}
       {hasError && (
         <div style={{ alignSelf: "flex-end" }}>
-          An error occurred. If it keeps happening, please try refreshing the page.{" "}
+          An error occurred. If it keeps happening, please try refreshing the
+          page.{" "}
           <Button type="button" onClick={onRetry}>
             Retry
           </Button>

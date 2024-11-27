@@ -6,6 +6,7 @@ import { Code } from "./Code";
 import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
 import { IconButton } from "@/components/IconButton";
+import Spinner from "@/components/Spinner";
 
 type Props = MessageType & {
   className?: string;
@@ -88,30 +89,36 @@ export function Message({
       shortened={shortened}
     >
       <div style={{ flexGrow: 1 }}>
-        <MemoizedReactMarkdown
-          components={{
-            code: Code,
+        {content === "" ? (
+          <Spinner />
+        ) : (
+          <MemoizedReactMarkdown
+            components={{
+              code: Code,
+            }}
+          >
+            {padNewlines(content)}
+          </MemoizedReactMarkdown>
+        )}
+      </div>
+      {(onDelete || showCopyAll) && (
+        <div
+          style={{
+            alignSelf: isUser ? undefined : "flex-end",
+            display: "flex",
+            gap: "12rem",
           }}
         >
-          {padNewlines(content)}
-        </MemoizedReactMarkdown>
-      </div>
-      <div
-        style={{
-          alignSelf: isUser ? undefined : "flex-end",
-          display: "flex",
-          gap: "12rem",
-        }}
-      >
-        {onDelete && (
-          <IconButton
-            name="delete"
-            iconSize="md"
-            onClick={() => onDelete(id)}
-          />
-        )}
-        {showCopyAll && <CopyButton content={content} />}
-      </div>
+          {onDelete && (
+            <IconButton
+              name="delete"
+              iconSize="md"
+              onClick={() => onDelete(id)}
+            />
+          )}
+          {showCopyAll && <CopyButton content={content} />}
+        </div>
+      )}
     </StyledMessage>
   );
 }
