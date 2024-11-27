@@ -23,10 +23,10 @@ const MessageContainer = styled("div", {
 });
 
 type Props = {
-  isLoading: boolean;
   messages: MessageType[];
 
   hasError?: boolean;
+  isLoading?: boolean;
   onDelete?: (id: string) => void;
   onRetry?: () => void;
   showCopyAll?: boolean;
