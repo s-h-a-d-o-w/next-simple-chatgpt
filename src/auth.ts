@@ -5,7 +5,7 @@ const whitelist = process.env["WHITELIST"]?.split(",");
 export const isTest = Boolean(process.env["CI"]);
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  trustHost: true,
+  trustHost: isTest,
   providers: !isTest
     ? [GitHub]
     : [
