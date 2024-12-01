@@ -2,13 +2,7 @@
 
 import { useChat, type Message as MessageType } from "ai/react";
 import { cloneDeep, debounce } from "lodash";
-import {
-  ChangeEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEventHandler, useCallback, useRef, useState } from "react";
 import superjson from "superjson";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
@@ -54,8 +48,6 @@ const StyledMain = styled("main", {
     gap: "10rem",
   },
 });
-
-let start: number = 0;
 
 export default function Home() {
   const endOfPageRef = useRef<HTMLDivElement>(null);
@@ -119,12 +111,6 @@ export default function Home() {
     syncSystemMessage(event.target.value);
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      console.log("delay until stream: " + (Date.now() - start));
-    }
-  }, [isLoading]);
-
   return (
     <>
       <Actions
@@ -173,7 +159,6 @@ export default function Home() {
           onChange={handleInputChange}
           onClickStop={stop}
           onSubmit={(event) => {
-            start = Date.now();
             if (input === "") {
               event.preventDefault();
               reload();
