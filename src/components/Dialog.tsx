@@ -58,7 +58,6 @@ const transition: SystemStyleObject = {
 
 const StyledDialog = styled("dialog", {
   base: {
-    // ...dialogClosed,
     transitionProperty: "height,opacity,transform,display,overlay",
     ...transition,
 
@@ -69,8 +68,6 @@ const StyledDialog = styled("dialog", {
     },
 
     _open: {
-      // ...dialogOpened,
-
       _backdrop: {
         ...backdropOpened,
       },
@@ -78,8 +75,6 @@ const StyledDialog = styled("dialog", {
 
     _starting: {
       _open: {
-        // ...dialogClosed,
-
         _backdrop: {
           ...backdropClosed,
         },
@@ -108,7 +103,6 @@ const StyledDialog = styled("dialog", {
         },
       },
       false: {
-        // for non-modal
         margin: 0,
         top: 0,
         width: "100%",
