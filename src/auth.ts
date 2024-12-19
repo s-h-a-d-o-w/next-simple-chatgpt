@@ -8,6 +8,7 @@ const trustHost = isTest ? { trustHost: true } : {};
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...trustHost,
+  secret: process.env["AUTH_SECRET"],
   providers: !isTest
     ? [GitHub]
     : [

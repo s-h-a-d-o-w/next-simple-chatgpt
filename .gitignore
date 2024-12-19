@@ -1,5 +1,7 @@
 .env
 **/*.css.d.ts
+/playwright-report
+/test-results
 
 # dependencies
 /node_modules
