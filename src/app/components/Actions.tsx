@@ -4,10 +4,13 @@ import { styled } from "../../../styled-system/jsx";
 import HmrTimestamp from "./HmrTimestamp";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
 import { IconButton } from "@/components/IconButton";
+import { ModelSelector } from "./ModelSelector";
 
 type Props = {
   disabledHistoryActions: boolean;
+  model: string;
   onDeleteHistory: () => void;
+  onModelChange: (model: string) => void;
   onShowHistory: () => void;
   onLoad: () => void;
   onReset: () => void;
@@ -29,7 +32,9 @@ const StyledActions = styled("div", {
 
 export function Actions({
   disabledHistoryActions,
+  model,
   onDeleteHistory,
+  onModelChange,
   onShowHistory,
   onLoad,
   onReset,
@@ -46,6 +51,7 @@ export function Actions({
           Last update: <HmrTimestamp />
         </div>
       )}
+      <ModelSelector value={model} onChange={onModelChange} />
       <IconButton name="reset" iconSize="md" onClick={onReset} />
       <IconButton
         name="history"

@@ -1,16 +1,15 @@
 "use client";
 // Runs on the client so that we can display a spinner while login/logout is being processed
 
-import { useFormState, useFormStatus } from "react-dom";
+import { IconButton } from "@/components/IconButton";
+import { ReactNode, useActionState } from "react";
+import { FaGithub } from "react-icons/fa6";
 import { Button } from "../../../../components/Button";
 import Spinner from "../../../../components/Spinner";
-import { ReactNode } from "react";
 import { signIn, signOut } from "./authActions";
-import { FaGithub } from "react-icons/fa6";
-import { IconButton } from "@/components/IconButton";
 
 function PendingServerAction({ children }: { children: ReactNode }) {
-  const { pending } = useFormStatus();
+  const [, , pending] = useActionState(signIn, undefined);
 
   return pending ? <Spinner /> : children;
 }
@@ -34,7 +33,7 @@ export function AuthButtonClient({
 }: {
   isSignedIn?: boolean;
 }) {
-  const [, action] = useFormState(isSignedIn ? signOut : signIn, undefined);
+  const [, action] = useActionState(isSignedIn ? signOut : signIn, undefined);
 
   return (
     <form action={action} style={isSignedIn ? { lineHeight: 0 } : {}}>

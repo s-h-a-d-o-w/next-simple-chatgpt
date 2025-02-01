@@ -17,10 +17,20 @@ export const POST = auth(async (req) => {
 
   const payload = await req.json();
 
-  const result = await streamText({
-    model: openai("gpt-4-turbo"),
+  const result = streamText({
+    model: openai(payload.model),
     messages: convertToCoreMessages(payload.messages),
+    providerOptions: {
+      openai: {
+        reasoningEffort: "low",
+      },
+    },
   });
 
-  return result.toDataStreamResponse();
+  return result.toDataStreamResponse({
+    getErrorMessage(error) {
+      console.log(error);
+      return "An error occurred.";
+    },
+  });
 });

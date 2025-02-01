@@ -22,8 +22,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^0.0.54",
-    "ai": "^4.0.20",
+    "@ai-sdk/openai": "^1.1.9",
+    "ai": "^4.1.16",
     "concurrently": "^8.2.2",
     "date-fns": "^3.6.0",
     "lodash": "^4.17.21",

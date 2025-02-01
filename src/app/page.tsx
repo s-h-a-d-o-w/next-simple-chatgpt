@@ -2,7 +2,13 @@
 
 import { useChat, type Message as MessageType } from "ai/react";
 import { cloneDeep, debounce } from "lodash";
-import { ChangeEventHandler, useCallback, useRef, useState } from "react";
+import {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import superjson from "superjson";
 import { loadJsonFile } from "../utils/loadJsonFile";
 import { saveJsonFile } from "../utils/saveJsonFile";
@@ -16,6 +22,7 @@ import { useScrollToTarget } from "@/hooks/useScrollToTarget";
 import { useHistory } from "@/hooks/useHistory";
 import { styled } from "../../styled-system/jsx";
 import { isDev } from "@/utils/consts";
+import useLocalStorageState from "use-local-storage-state";
 
 if (!isDev) {
   const buildInfo = process.env["NEXT_PUBLIC_BUILD_INFO"]?.split(",");
@@ -55,6 +62,9 @@ export default function Home() {
   const [showHistory, setShowHistory] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [activeHistoryEntry, setActiveHistoryEntry] = useState<MessageType[]>();
+  const [model, setModel] = useLocalStorageState<string>("model", {
+    defaultValue: "gpt-4-turbo",
+  });
   const [systemValue, setSystemValue] = useState(
     "You are a concise assistant.",
   );
@@ -72,7 +82,16 @@ export default function Home() {
   } = useChat({
     keepLastMessageOnError: true,
     initialMessages: [createSystemMessage(systemValue)],
+    body: {
+      model,
+    },
   });
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+    }
+  }, [error]);
 
   const [conversationHistory, setConversationHistory] = useHistory(
     isLoading,
@@ -115,9 +134,11 @@ export default function Home() {
     <>
       <Actions
         disabledHistoryActions={Object.keys(conversationHistory).length === 0}
+        model={model}
         onDeleteHistory={() => {
           setShowDeleteConfirmation(true);
         }}
+        onModelChange={setModel}
         onShowHistory={() => {
           setShowHistory(true);
         }}
