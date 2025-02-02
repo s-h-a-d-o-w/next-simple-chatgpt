@@ -9,6 +9,8 @@ WORKDIR /app
 # Building presumably already happened
 COPY . .
 
+# See: https://github.com/nodejs/corepack/issues/612#issuecomment-2629496091
+RUN npm install -g corepack@latest
 # --ignore-scripts because of panda. The full source code is not included in the tarball and so panda would fail.
 RUN pnpm install --ignore-scripts
 
