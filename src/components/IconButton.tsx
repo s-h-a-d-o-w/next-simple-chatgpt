@@ -35,9 +35,9 @@ const iconMap = {
 
 export function IconButton({ name, iconSize = "xl", ...rest }: Props) {
   const Icon = iconMap[name];
-
+  const { "aria-label": ariaLabel, ...otherProps } = rest;
   return (
-    <Button iconSize={iconSize} {...rest}>
+    <Button iconSize={iconSize} aria-label={ariaLabel ?? name} {...otherProps}>
       <Icon
         className={css({
           width: "100%",

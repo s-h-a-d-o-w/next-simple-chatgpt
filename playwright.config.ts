@@ -31,9 +31,10 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
+  // We can't re-use the dev server because authentication would be a problem.
+  // Mocking authentication requires running the server in "CI mode".
   webServer: {
-    command: "cross-env CI=true pnpm start",
+    command: "pnpm cross-env CI=true pnpm start",
     url: baseURL,
     stdout: "pipe",
     stderr: "pipe",

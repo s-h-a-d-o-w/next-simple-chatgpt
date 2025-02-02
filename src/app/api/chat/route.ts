@@ -20,11 +20,14 @@ export const POST = auth(async (req) => {
   const result = streamText({
     model: openai(payload.model),
     messages: convertToCoreMessages(payload.messages),
-    providerOptions: {
-      openai: {
-        reasoningEffort: "low",
-      },
-    },
+    providerOptions:
+      payload.model === "o3-mini"
+        ? {
+            openai: {
+              reasoningEffort: "low",
+            },
+          }
+        : undefined,
   });
 
   return result.toDataStreamResponse({
