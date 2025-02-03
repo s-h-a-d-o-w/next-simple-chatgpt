@@ -65,8 +65,12 @@ export default function Home() {
   const [model, setModel] = useLocalStorageState<string>("model", {
     defaultValue: "gpt-4-turbo",
   });
-  const [systemValue, setSystemValue] = useState(
-    "You are a concise assistant.",
+  const [systemValue, setSystemValue] = useLocalStorageState<string>(
+    "system-message",
+    {
+      defaultValue:
+        "You are a concise assistant. Use markdown for your responses.",
+    },
   );
 
   const {
