@@ -23,11 +23,43 @@ jobs:
         node-version: 22
     - name: Install, test, deploy
       run: |
-        pnpm install --frozen-lockfile
+        pnpm install
         pnpm test
-        sh deploy.sh
+        pnpm build
       env:
         CAPROVER_PASSWORD: ${{ secrets.CAPROVER_PASSWORD }}
         CAPROVER_MACHINE_01: ${{ secrets.CAPROVER_MACHINE_01 }}
         CAPROVER_MACHINE_02: ${{ secrets.CAPROVER_MACHINE_02 }}
         CI: true
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+            registry: ghcr.io
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Preset Image Name
+      run: echo "IMAGE_URL=$(echo ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:$(echo ${{ github.sha }} | cut -c1-7) | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+    - name: Build and push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ env.IMAGE_URL }}
+    - name: Deploy Image to CapRrover
+      uses: caprover/deploy-from-github@v1.1.2
+      with:
+        server: "${{ secrets.CAPROVER_MACHINE_01 }}"
+        app: "next-simple-chatgpt"
+        token: "${{ secrets.CAPROVER_APP_TOKEN_01 }}"
+        image: ${{ env.IMAGE_URL }}
+    - name: Deploy Image to CapRrover
+      uses: caprover/deploy-from-github@v1.1.2
+      with:
+        server: "${{ secrets.CAPROVER_MACHINE_02 }}"
+        app: "next-simple-chatgpt"
+        token: "${{ secrets.CAPROVER_APP_TOKEN_02 }}"
+        image: ${{ env.IMAGE_URL }}
