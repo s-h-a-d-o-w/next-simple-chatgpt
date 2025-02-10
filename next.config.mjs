@@ -1,6 +1,3 @@
-import bundleAnalyzer from "@next/bundle-analyzer";
-
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -8,5 +5,5 @@ const nextConfig = {
 };
 
 export default process.env.ANALYZE === "true"
-  ? bundleAnalyzer()(nextConfig)
+  ? (await import("@next/bundle-analyzer")).default()(nextConfig)
   : nextConfig;
