@@ -35,5 +35,8 @@ export const POST = auth(async (req) => {
       console.log(error);
       return "An error occurred.";
     },
+    headers: {
+      "X-Accel-Buffering": "no",
+    },
   });
 });
