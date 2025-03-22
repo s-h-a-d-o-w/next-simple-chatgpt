@@ -1,6 +1,6 @@
 "use client";
 
-import { useChat, type Message as MessageType } from "ai/react";
+import { useChat, type Message as MessageType } from "@ai-sdk/react";
 import { cloneDeep, debounce } from "lodash";
 import {
   ChangeEventHandler,
@@ -79,7 +79,7 @@ export default function Home() {
     input,
     handleInputChange,
     handleSubmit,
-    isLoading,
+    status,
     stop,
     error,
     reload,
@@ -90,6 +90,8 @@ export default function Home() {
       model,
     },
   });
+
+  const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     if (error) {
