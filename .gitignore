@@ -3,6 +3,7 @@
 /playwright-report
 /test-results
 /.vscode
+playground.ts
 
 # dependencies
 /node_modules
