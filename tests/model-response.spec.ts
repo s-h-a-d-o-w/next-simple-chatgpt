@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { models } from "@/utils/consts";
 
 test("each model generates a valid response", async ({ page }) => {
   await page.goto("/");
@@ -6,10 +7,10 @@ test("each model generates a valid response", async ({ page }) => {
   await page.getByRole("button", { name: "Sign in with Test" }).click();
 
   const promptInput = page.getByPlaceholder("Leave empty to re-run.");
-  const models = ["gpt-4-turbo", "o3-mini"];
+  const modelIds = Object.keys(models);
 
-  for (const model of models) {
-    await page.selectOption("select", model);
+  for (const modelId of modelIds) {
+    await page.selectOption("select", modelId);
 
     await promptInput.fill("Hello");
     await promptInput.press("Control+Enter");

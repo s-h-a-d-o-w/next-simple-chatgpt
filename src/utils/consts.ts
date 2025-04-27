@@ -1,2 +1,25 @@
 export const isDev = process.env["NODE_ENV"] !== "production";
 export const isServer = typeof window === "undefined";
+
+export const models = {
+  "gpt-4.1": {
+    name: "GPT-4.1",
+    input: 2,
+    output: 8,
+  },
+  "gpt-4-turbo": {
+    name: "GPT-4 Turbo",
+    input: 10,
+    output: 30,
+  },
+  "o4-mini": {
+    name: "o4 mini",
+    input: 1.1,
+    output: 4.4,
+  },
+  "o3-mini": {
+    name: "o3 mini",
+    input: 1.1,
+    output: 4.4,
+  },
+} as const;
