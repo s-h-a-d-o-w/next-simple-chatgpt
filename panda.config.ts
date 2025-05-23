@@ -68,9 +68,6 @@ export default defineConfig({
           "3xl": { value: "24rem" },
           "4xl": { value: "36rem" },
         },
-        shadows: {
-          lg: { value: "rgb(38, 57, 77) 0px 20px 30px -10px" },
-        },
       },
     },
   },

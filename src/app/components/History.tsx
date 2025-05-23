@@ -31,7 +31,8 @@ const StyledHistory = styled("div", {
     overflow: "auto",
     backgroundColor: "amber.50",
     padding: "12rem",
-    boxShadow: "lg",
+    border: "1px solid token(colors.amber.900)",
+    boxShadow: "token(colors.amber.900) 1px 1px 0px 0px",
 
     display: "flex",
     flexDirection: "column",

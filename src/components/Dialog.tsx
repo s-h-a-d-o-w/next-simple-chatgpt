@@ -90,7 +90,7 @@ const StyledDialog = styled("dialog", {
 
         // Modals get more opinionated styling because unlike non-modal content, they will always look the same.
         backgroundColor: "amber.50",
-        boxShadow: "lg",
+        // boxShadow: "lg",
 
         ...modalClosed,
         _open: {

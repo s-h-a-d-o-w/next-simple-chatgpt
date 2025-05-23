@@ -11,6 +11,9 @@ const StyledDeleteConfirmationModal = styled("div", {
     justifyContent: "center",
     alignItems: "center",
     gap: "8rem",
+
+    boxShadow: "token(colors.amber.900) 1px 1px 0px 0px",
+    border: "1px solid token(colors.amber.900)",
   },
 });
 
