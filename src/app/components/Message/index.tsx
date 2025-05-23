@@ -7,6 +7,7 @@ import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
 import { IconButton } from "@/components/IconButton";
 import Spinner from "@/components/Spinner";
+import remarkGfm from "remark-gfm";
 
 type Props = MessageType & {
   className?: string;
@@ -61,9 +62,7 @@ export const StyledMessage = styled("div", {
 
 const MemoizedReactMarkdown = memo(
   ReactMarkdown,
-  (prevProps, nextProps) =>
-    prevProps.children === nextProps.children &&
-    prevProps.className === nextProps.className,
+  (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 
 export function Message({
@@ -93,6 +92,7 @@ export function Message({
           <Spinner />
         ) : (
           <MemoizedReactMarkdown
+            remarkPlugins={[remarkGfm]}
             components={{
               code: Code,
             }}
