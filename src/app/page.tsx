@@ -48,7 +48,6 @@ const StyledMain = styled("main", {
     maxWidth: "800px",
     padding: "10rem",
     marginInline: "auto",
-    marginBottom: "100rem",
 
     display: "flex",
     flexDirection: "column",
