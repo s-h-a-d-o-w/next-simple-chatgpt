@@ -141,31 +141,12 @@ export default function Home() {
       <Actions
         disabledHistoryActions={Object.keys(conversationHistory).length === 0}
         model={model}
-        onDeleteHistory={() => {
-          setShowDeleteConfirmation(true);
-        }}
         onModelChange={setModel}
         onShowHistory={() => {
           setShowHistory(true);
         }}
-        onLoad={async () => {
-          try {
-            const history = superjson.parse(await loadJsonFile()) as Array<
-              MessageType[]
-            >;
-            setConversationHistory(history);
-          } catch {
-            // TODO: user cancelled or picked nonsense. should probably show error.
-          }
-        }}
         onReset={() => {
           setMessages([createSystemMessage(systemValue)]);
-        }}
-        onSave={() => {
-          saveJsonFile(
-            conversationHistory,
-            `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
-          );
         }}
       />
 
@@ -222,6 +203,25 @@ export default function Home() {
         }}
         onSetActiveHistoryEntry={(nextMessages) => {
           setActiveHistoryEntry(nextMessages);
+        }}
+        onDeleteHistory={() => {
+          setShowDeleteConfirmation(true);
+        }}
+        onLoad={async () => {
+          try {
+            const history = superjson.parse(await loadJsonFile()) as Array<
+              MessageType[]
+            >;
+            setConversationHistory(history);
+          } catch {
+            // TODO: user cancelled or picked nonsense. should probably show error.
+          }
+        }}
+        onSave={() => {
+          saveJsonFile(
+            conversationHistory,
+            `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+          );
         }}
       />
 

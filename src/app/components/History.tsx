@@ -17,6 +17,9 @@ type Props = {
   onDeleteHistoryEntry: (index: number) => void;
   onRestoreHistoryEntry: () => void;
   onSetActiveHistoryEntry: (messages?: MessageType[]) => void;
+  onDeleteHistory: () => void;
+  onLoad: () => void;
+  onSave: () => void;
 
   activeHistoryEntry?: MessageType[];
 };
@@ -64,6 +67,16 @@ const StyledSearchInput = styled("input", {
   },
 });
 
+const StyledHistoryActions = styled("div", {
+  base: {
+    display: "flex",
+    gap: "8rem",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: "8rem",
+  },
+});
+
 export function History({
   activeHistoryEntry,
   conversationHistory,
@@ -72,6 +85,9 @@ export function History({
   onDeleteHistoryEntry,
   onRestoreHistoryEntry,
   onSetActiveHistoryEntry,
+  onDeleteHistory,
+  onLoad,
+  onSave,
 }: Props) {
   const [searchTerms, setSearchTerms] = useState<string[]>();
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -113,12 +129,25 @@ export function History({
       onClose={onClose}
     >
       <StyledHistory align="right">
+        <StyledHistoryActions>
+          <IconButton
+            name="delete"
+            iconSize="md"
+            disabled={conversationHistory.length === 0}
+            onClick={onDeleteHistory}
+            label="Delete all"
+          />
+          <IconButton name="load" iconSize="md" onClick={onLoad} label="Load" />
+          <IconButton name="save" iconSize="md" onClick={onSave} label="Save" />
+        </StyledHistoryActions>
+
         <StyledSearchInput
           ref={searchInputRef}
           type="text"
           placeholder="Search..."
           onChange={(e) => debouncedSearch(e.target.value)}
         />
+
         {filteredHistory
           .slice(0)
           .reverse()

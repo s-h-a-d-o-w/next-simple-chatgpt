@@ -9,12 +9,9 @@ import { ModelSelector } from "./ModelSelector";
 type Props = {
   disabledHistoryActions: boolean;
   model: string;
-  onDeleteHistory: () => void;
   onModelChange: (model: string) => void;
   onShowHistory: () => void;
-  onLoad: () => void;
   onReset: () => void;
-  onSave: () => void;
 };
 
 const StyledActions = styled("div", {
@@ -33,12 +30,9 @@ const StyledActions = styled("div", {
 export function Actions({
   disabledHistoryActions,
   model,
-  onDeleteHistory,
   onModelChange,
   onShowHistory,
-  onLoad,
   onReset,
-  onSave,
 }: Props) {
   return (
     <StyledActions>
@@ -60,15 +54,6 @@ export function Actions({
         onClick={onShowHistory}
         label="History"
       />
-      <IconButton
-        name="delete"
-        iconSize="md"
-        disabled={disabledHistoryActions}
-        onClick={onDeleteHistory}
-        label="Delete history"
-      />
-      <IconButton name="load" iconSize="md" onClick={onLoad} label="Load" />
-      <IconButton name="save" iconSize="md" onClick={onSave} label="Save" />
       <AuthButtonClient isSignedIn />
     </StyledActions>
   );
