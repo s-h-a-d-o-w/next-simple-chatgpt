@@ -72,7 +72,6 @@ const StyledHistoryActions = styled("div", {
     display: "flex",
     gap: "8rem",
     justifyContent: "flex-end",
-    alignItems: "center",
     marginBottom: "8rem",
   },
 });

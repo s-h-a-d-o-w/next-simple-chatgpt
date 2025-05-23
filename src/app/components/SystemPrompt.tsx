@@ -9,8 +9,13 @@ type Props = {
 export function SystemPrompt({ onChange, value }: Props) {
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
-      <div>System</div>
-      <Textarea name="prompt" value={value} onChange={onChange} />
+      <div>System prompt</div>
+      <Textarea
+        name="prompt"
+        value={value}
+        onChange={onChange}
+        style={{ background: "white" }}
+      />
     </form>
   );
 }

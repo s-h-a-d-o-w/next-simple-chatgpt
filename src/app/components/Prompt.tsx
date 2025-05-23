@@ -7,6 +7,7 @@ import { styled } from "../../../styled-system/jsx";
 type Props = {
   disabledReplay: boolean;
   input: string;
+  isFirstPrompt: boolean;
   isLoading: boolean;
   onChange: ReturnType<typeof useChat>["handleInputChange"];
   onClickStop: () => void;
@@ -15,11 +16,6 @@ type Props = {
 
 const StyledPrompt = styled("div", {
   base: {
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    right: 0,
-
     display: "flex",
     justifyContent: "center",
   },
@@ -29,10 +25,8 @@ const StyledForm = styled("form", {
   base: {
     width: "100%",
     maxWidth: "800px",
-    padding: "10rem",
 
-    backgroundColor: "amber.50",
-    boxShadow: "lg",
+    backgroundColor: "transparent",
 
     display: "flex",
     alignItems: "center",
@@ -43,6 +37,7 @@ const StyledForm = styled("form", {
 export function Prompt({
   disabledReplay,
   input,
+  isFirstPrompt,
   isLoading,
   onChange,
   onClickStop,
@@ -54,7 +49,9 @@ export function Prompt({
         <Textarea
           autoFocus
           name="prompt"
-          placeholder="Leave empty to re-run."
+          placeholder={
+            isFirstPrompt ? "Enter your prompt here." : "Leave empty to re-run."
+          }
           value={input}
           onChange={onChange}
           onKeyDown={(event) => {

@@ -163,6 +163,7 @@ export default function Home() {
         <Prompt
           disabledReplay={messages.length < 2}
           input={input}
+          isFirstPrompt={messages.length === 1}
           isLoading={isLoading}
           onChange={handleInputChange}
           onClickStop={stop}
