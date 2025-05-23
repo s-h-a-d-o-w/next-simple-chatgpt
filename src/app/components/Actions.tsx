@@ -52,21 +52,23 @@ export function Actions({
         </div>
       )}
       <ModelSelector value={model} onChange={onModelChange} />
-      <IconButton name="reset" iconSize="md" onClick={onReset} />
+      <IconButton name="reset" iconSize="md" onClick={onReset} label="Reset" />
       <IconButton
         name="history"
         iconSize="md"
         disabled={disabledHistoryActions}
         onClick={onShowHistory}
+        label="History"
       />
       <IconButton
         name="delete"
         iconSize="md"
         disabled={disabledHistoryActions}
         onClick={onDeleteHistory}
+        label="Delete history"
       />
-      <IconButton name="load" iconSize="md" onClick={onLoad} />
-      <IconButton name="save" iconSize="md" onClick={onSave} />
+      <IconButton name="load" iconSize="md" onClick={onLoad} label="Load" />
+      <IconButton name="save" iconSize="md" onClick={onSave} label="Save" />
       <AuthButtonClient isSignedIn />
     </StyledActions>
   );

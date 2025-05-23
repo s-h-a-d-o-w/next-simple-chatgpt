@@ -17,6 +17,7 @@ import { ComponentProps } from "../../styled-system/types";
 
 type Props = ComponentProps<typeof Button> & {
   name: keyof typeof iconMap;
+  label?: string;
 };
 
 const iconMap = {
@@ -33,17 +34,23 @@ const iconMap = {
   up: MdArrowUpward,
 } as const;
 
-export function IconButton({ name, iconSize = "xl", ...rest }: Props) {
+export function IconButton({ name, iconSize = "xl", label, ...rest }: Props) {
   const Icon = iconMap[name];
   const { "aria-label": ariaLabel, ...otherProps } = rest;
   return (
-    <Button iconSize={iconSize} aria-label={ariaLabel ?? name} {...otherProps}>
+    <Button
+      iconSize={iconSize}
+      className={css({ display: "flex", alignItems: "center", gap: "4rem" })}
+      aria-label={ariaLabel ?? name}
+      {...otherProps}
+    >
       <Icon
         className={css({
-          width: "100%",
+          width: "auto",
           height: "100%",
         })}
       />
+      {label && <span className={css({ marginBottom: "-1px" })}>{label}</span>}
     </Button>
   );
 }

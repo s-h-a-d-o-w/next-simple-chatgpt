@@ -43,24 +43,20 @@ export const Button = styled("button", {
     },
     iconSize: {
       sm: {
-        width: "sm",
         height: "sm",
         padding: "4rem",
       },
       md: {
         base: {
-          width: "lg",
           height: "lg",
           padding: "8rem",
         },
         xl: {
-          width: "md",
           height: "md",
           padding: "6rem",
         },
       },
       xl: {
-        width: "xl",
         height: "xl",
         padding: "8rem",
       },

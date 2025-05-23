@@ -39,7 +39,7 @@ export function AuthButtonClient({
     <form action={action} style={isSignedIn ? { lineHeight: 0 } : {}}>
       <PendingServerAction>
         {isSignedIn ? (
-          <IconButton name="logout" iconSize="md" />
+          <IconButton name="logout" iconSize="md" label="Sign out" />
         ) : (
           <Button>
             <SignInButton />
