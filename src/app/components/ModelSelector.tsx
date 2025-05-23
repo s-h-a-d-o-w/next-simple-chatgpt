@@ -7,6 +7,8 @@ const StyledSelect = styled("select", {
     border: "1px solid black",
     backgroundColor: "white",
     cursor: "pointer",
+    maxWidth: "100%",
+    textOverflow: "ellipsis",
   },
 });
 
