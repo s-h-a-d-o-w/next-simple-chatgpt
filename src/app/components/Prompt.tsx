@@ -1,13 +1,16 @@
-import { useChat } from "ai/react";
 import { FormEvent, useCallback, useRef } from "react";
 import { IconButton } from "../../components/IconButton";
 import { Textarea } from "../../components/Textarea";
 import { styled } from "../../../styled-system/jsx";
 import { css } from "../../../styled-system/css";
 import Image from "next/image";
+import type { useChat, Message } from "@ai-sdk/react";
+import { getPdfjsLib } from "../../utils/getPdfjsLib";
+
+type Attachment = NonNullable<Message["experimental_attachments"]>[number];
 
 type Props = {
-  attachments: File[];
+  attachments: Attachment[];
   disabledReplay: boolean;
   input: string;
   isFirstPrompt: boolean;
@@ -16,7 +19,7 @@ type Props = {
   onClickStop: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 
-  onAddAttachments?: (files: File[]) => void;
+  onAddAttachments?: (files: Attachment[]) => void;
   onRemoveAttachment?: (index: number) => void;
 };
 
@@ -67,6 +70,43 @@ const StyledImagePreview = styled("div", {
   },
 });
 
+function convertFileToDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function convertPdfToImage(file: File): Promise<string[]> {
+  const pdfjsLib = await getPdfjsLib();
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({
+    data: arrayBuffer,
+  }).promise;
+
+  return await Promise.all(
+    Array.from({ length: pdf.numPages }, async (_, index) => {
+      const page = await pdf.getPage(index + 1);
+      const viewport = page.getViewport({ scale: 2 });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      await page.render({
+        canvasContext: context!,
+        viewport: viewport,
+      }).promise;
+
+      return canvas.toDataURL("image/png");
+    }),
+  );
+}
+
 export function Prompt({
   disabledReplay,
   input,
@@ -82,11 +122,37 @@ export function Prompt({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(event.target.files || []);
-      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+      const attachments = await Promise.all(
+        files.map(async (file) => {
+          if (file.type === "application/pdf") {
+            try {
+              return (await convertPdfToImage(file)).map((dataURL, index) => ({
+                name: `${file.name} - Page ${index + 1}`,
+                contentType: "image/png",
+                url: dataURL,
+              }));
+            } catch (error) {
+              // TODO: render error in ui
+              console.error("Error converting PDF to image:", error);
+              return [];
+            }
+          } else {
+            return [
+              {
+                name: file.name,
+                contentType: file.type,
+                url: await convertFileToDataURL(file),
+              },
+            ];
+          }
+        }),
+      );
 
-      onAddAttachments?.(imageFiles);
+      onAddAttachments?.(
+        attachments.flat().filter((file) => file !== undefined),
+      );
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -97,7 +163,6 @@ export function Prompt({
 
   const removeAttachment = useCallback(
     (index: number) => {
-      console.log("removeAttachment", index);
       onRemoveAttachment?.(index);
     },
     [onRemoveAttachment],
@@ -111,8 +176,8 @@ export function Prompt({
             {attachments.map((file, index) => (
               <StyledImagePreview key={index}>
                 <Image
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
+                  src={file.url}
+                  alt={file.name ?? `Image ${index + 1}`}
                   width={80}
                   height={80}
                 />
@@ -160,7 +225,7 @@ export function Prompt({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,application/pdf"
             multiple
             onChange={handleFileSelect}
             style={{ display: "none" }}
