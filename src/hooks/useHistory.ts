@@ -9,9 +9,12 @@ function stripAttachmentsFromMessages(messages: MessageType[]): MessageType[] {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ({ experimental_attachments, ...messageWithoutAttachments }) => ({
       ...messageWithoutAttachments,
-      content: `[Attachments: ${experimental_attachments?.map(
-        (attachment) => attachment.name,
-      )}] ${messageWithoutAttachments.content}`,
+      content:
+        experimental_attachments && experimental_attachments.length > 0
+          ? `[Attachments: ${experimental_attachments
+              .map((attachment) => attachment.name)
+              .join(", ")}] ${messageWithoutAttachments.content}`
+          : messageWithoutAttachments.content,
     }),
   );
 }
