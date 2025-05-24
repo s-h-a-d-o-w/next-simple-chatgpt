@@ -21,7 +21,7 @@ import { SystemPrompt } from "./components/SystemPrompt";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
 import { useHistory } from "@/hooks/useHistory";
 import { styled } from "../../styled-system/jsx";
-import { isDev } from "@/utils/consts";
+import { isDev, type models } from "@/utils/consts";
 import useLocalStorageState from "use-local-storage-state";
 
 if (!isDev) {
@@ -64,7 +64,7 @@ export default function Home() {
   const [attachments, setAttachments] = useState<
     NonNullable<MessageType["experimental_attachments"]>
   >([]);
-  const [model, setModel] = useLocalStorageState<string>("model", {
+  const [model, setModel] = useLocalStorageState<keyof typeof models>("model", {
     defaultValue: "gpt-4-turbo",
   });
   const [systemValue, setSystemValue] = useLocalStorageState<string>(
@@ -148,6 +148,7 @@ export default function Home() {
           setShowHistory(true);
         }}
         onReset={() => {
+          setAttachments([]);
           setMessages([createSystemMessage(systemValue)]);
         }}
       />
@@ -170,6 +171,8 @@ export default function Home() {
           onChange={handleInputChange}
           onClickStop={stop}
           attachments={attachments}
+          currentModel={model}
+          onModelChange={setModel}
           onAddAttachments={(newAttachments) => {
             setAttachments((previousAttachments) => [
               ...previousAttachments,

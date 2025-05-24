@@ -21,11 +21,14 @@ type Props = {
 export function ModelSelector({ value, onChange }: Props) {
   return (
     <StyledSelect value={value} onChange={(e) => onChange(e.target.value)}>
-      {Object.entries(models).map(([id, { name, input, output }]) => (
-        <option key={id} value={id}>
-          {name} (in: ${input}/out: ${output} per 1Mt)
-        </option>
-      ))}
+      {Object.entries(models).map(
+        ([id, { name, input, output, supportsAttachments }]) => (
+          <option key={id} value={id}>
+            {name} (in: ${input}/out: ${output} per 1Mt)
+            {supportsAttachments ? " 📎" : ""}
+          </option>
+        ),
+      )}
     </StyledSelect>
   );
 }

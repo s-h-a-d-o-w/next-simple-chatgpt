@@ -6,17 +6,20 @@ import { css } from "../../../styled-system/css";
 import Image from "next/image";
 import type { useChat, Message } from "@ai-sdk/react";
 import { getPdfjsLib } from "../../utils/getPdfjsLib";
+import { models } from "@/utils/consts";
 
 type Attachment = NonNullable<Message["experimental_attachments"]>[number];
 
 type Props = {
   attachments: Attachment[];
+  currentModel: keyof typeof models;
   disabledReplay: boolean;
   input: string;
   isFirstPrompt: boolean;
   isLoading: boolean;
   onChange: ReturnType<typeof useChat>["handleInputChange"];
   onClickStop: () => void;
+  onModelChange: (model: keyof typeof models) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 
   onAddAttachments?: (files: Attachment[]) => void;
@@ -108,6 +111,7 @@ async function convertPdfToImage(file: File): Promise<string[]> {
 }
 
 export function Prompt({
+  currentModel,
   disabledReplay,
   input,
   isFirstPrompt,
@@ -117,6 +121,7 @@ export function Prompt({
   onSubmit,
   attachments,
   onAddAttachments,
+  onModelChange,
   onRemoveAttachment,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -150,6 +155,10 @@ export function Prompt({
         }),
       );
 
+      if (!models[currentModel].supportsAttachments) {
+        onModelChange("gpt-4.1");
+      }
+
       onAddAttachments?.(
         attachments.flat().filter((file) => file !== undefined),
       );
@@ -158,7 +167,7 @@ export function Prompt({
         fileInputRef.current.value = "";
       }
     },
-    [onAddAttachments, fileInputRef],
+    [currentModel, onAddAttachments, onModelChange],
   );
 
   const removeAttachment = useCallback(

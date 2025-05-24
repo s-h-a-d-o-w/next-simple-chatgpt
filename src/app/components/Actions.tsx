@@ -1,4 +1,4 @@
-import { isDev } from "@/utils/consts";
+import { isDev, type models } from "@/utils/consts";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
 import HmrTimestamp from "./HmrTimestamp";
@@ -8,8 +8,8 @@ import { ModelSelector } from "./ModelSelector";
 
 type Props = {
   disabledHistoryActions: boolean;
-  model: string;
-  onModelChange: (model: string) => void;
+  model: keyof typeof models;
+  onModelChange: (model: keyof typeof models) => void;
   onShowHistory: () => void;
   onReset: () => void;
 };
@@ -44,7 +44,12 @@ export function Actions({
           Last update: <HmrTimestamp />
         </div>
       )}
-      <ModelSelector value={model} onChange={onModelChange} />
+      <ModelSelector
+        value={model}
+        onChange={(value) => {
+          onModelChange(value as keyof typeof models);
+        }}
+      />
       <IconButton name="reset" iconSize="md" onClick={onReset} label="Reset" />
       <IconButton
         name="history"
