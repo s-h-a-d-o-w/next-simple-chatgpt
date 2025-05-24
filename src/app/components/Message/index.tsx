@@ -13,6 +13,7 @@ import { Cell, HeaderCell, Row } from "./TableElements";
 type Props = MessageType & {
   className?: string;
   fullHeight?: boolean;
+  isLoading?: boolean;
   onClick?: () => void;
   onDelete?: (id: string) => void;
   shortened?: boolean;
@@ -66,9 +67,27 @@ const MemoizedReactMarkdown = memo(
   (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 
+const StyledAttachmentsContainer = styled("div", {
+  base: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8rem",
+    marginBottom: "8rem",
+  },
+});
+
+const StyledAttachmentImage = styled("img", {
+  base: {
+    width: "200rem",
+    height: "200rem",
+    border: "1px solid token(colors.amber.700)",
+  },
+});
+
 export function Message({
   role,
   id,
+  isLoading = false,
   fullHeight = true,
   shortened = false,
   showCopyAll = false,
@@ -76,6 +95,7 @@ export function Message({
   className,
   onDelete,
   onClick,
+  experimental_attachments,
 }: Props) {
   const isUser = role === "user";
 
@@ -88,27 +108,38 @@ export function Message({
       fullHeight={fullHeight}
       shortened={shortened}
     >
+      {experimental_attachments && experimental_attachments.length > 0 && (
+        <StyledAttachmentsContainer>
+          {experimental_attachments.map((attachment, index) => {
+            return (
+              <StyledAttachmentImage
+                key={index}
+                src={attachment.url}
+                alt={attachment.name || `Attachment ${index + 1}`}
+              />
+            );
+          })}
+        </StyledAttachmentsContainer>
+      )}
+
       <div style={{ flexGrow: 1 }}>
-        {content === "" ? (
-          <Spinner />
-        ) : (
-          <MemoizedReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              code: Code,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              th: HeaderCell,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              td: Cell,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              tr: Row,
-            }}
-          >
-            {padNewlines(content)}
-          </MemoizedReactMarkdown>
-        )}
+        <MemoizedReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            code: Code,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            th: HeaderCell,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            td: Cell,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            tr: Row,
+          }}
+        >
+          {padNewlines(content)}
+        </MemoizedReactMarkdown>
       </div>
-      {(onDelete || showCopyAll) && (
+
+      {(isLoading || onDelete || showCopyAll) && (
         <div
           style={{
             alignSelf: isUser ? undefined : "flex-end",
@@ -116,14 +147,15 @@ export function Message({
             gap: "12rem",
           }}
         >
-          {onDelete && (
+          {isLoading && <Spinner />}
+          {onDelete && !isLoading && (
             <IconButton
               name="delete"
               iconSize="md"
               onClick={() => onDelete(id)}
             />
           )}
-          {showCopyAll && <CopyButton content={content} />}
+          {showCopyAll && !isLoading && <CopyButton content={content} />}
         </div>
       )}
     </StyledMessage>

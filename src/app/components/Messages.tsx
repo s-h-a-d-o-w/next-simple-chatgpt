@@ -34,7 +34,7 @@ type Props = {
 
 export function Messages({
   hasError,
-  isLoading,
+  isLoading = false,
   messages,
   onDelete,
   onRetry,
@@ -51,6 +51,11 @@ export function Messages({
             isUser={message.role === "user"}
           >
             <Message
+              isLoading={
+                isLoading &&
+                message.role !== "user" &&
+                idx === messages.length - 2
+              }
               onDelete={onDelete}
               showCopyAll={showCopyAll}
               {...message}
@@ -63,7 +68,7 @@ export function Messages({
           key={`message-loading`}
           isUser={false}
         >
-          <Message content="" id="message-loading" role="assistant" />
+          <Message content="" id="message-loading" isLoading role="assistant" />
         </MessageContainer>
       )}
       {hasError && (

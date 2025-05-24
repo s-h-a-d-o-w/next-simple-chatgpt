@@ -4,6 +4,18 @@ import { useState, useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import superjson from "superjson";
 
+function stripAttachmentsFromMessages(messages: MessageType[]): MessageType[] {
+  return messages.map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ({ experimental_attachments, ...messageWithoutAttachments }) => ({
+      ...messageWithoutAttachments,
+      content: `[Attachments: ${experimental_attachments?.map(
+        (attachment) => attachment.name,
+      )}] ${messageWithoutAttachments.content}`,
+    }),
+  );
+}
+
 export function useHistory(isLoading: boolean, messages: MessageType[]) {
   const [conversationHistory, setConversationHistory] = useLocalStorageState<
     Array<MessageType[]>
@@ -33,11 +45,12 @@ export function useHistory(isLoading: boolean, messages: MessageType[]) {
               messages[1]?.createdAt?.valueOf() === firstMessageDate,
           );
 
-          // Already exists
+          const messagesWithoutAttachments =
+            stripAttachmentsFromMessages(messages);
           if (index >= 0) {
-            nextHistory[index] = messages;
+            nextHistory[index] = messagesWithoutAttachments;
           } else {
-            nextHistory.push(messages);
+            nextHistory.push(messagesWithoutAttachments);
           }
 
           setLastHistoryUpdate(Date.now());

@@ -10,6 +10,7 @@ import {
   MdLogout,
   MdHistory,
   MdCached,
+  MdImage,
 } from "react-icons/md";
 import { Button } from "./Button";
 import { css } from "../../styled-system/css";
@@ -25,6 +26,7 @@ const iconMap = {
   copy: MdContentCopy,
   delete: MdOutlineDelete,
   history: MdHistory,
+  image: MdImage,
   load: MdFileUpload,
   logout: MdLogout,
   replay: MdReplay,

@@ -2,7 +2,7 @@ import { RefObject, useEffect } from "react";
 
 export function useScrollToTarget(
   doScroll: boolean,
-  target: RefObject<HTMLElement>,
+  target: RefObject<HTMLElement | null>,
 ) {
   useEffect(() => {
     let stopScrolling: boolean = false;

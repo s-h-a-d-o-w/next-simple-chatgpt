@@ -2,7 +2,7 @@
 // Runs on the client so that we can display a spinner while login/logout is being processed
 
 import { IconButton } from "@/components/IconButton";
-import { ReactNode, useActionState } from "react";
+import { type ReactNode, useActionState } from "react";
 import { FaGithub } from "react-icons/fa6";
 import { Button } from "../../../../components/Button";
 import Spinner from "../../../../components/Spinner";

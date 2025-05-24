@@ -61,6 +61,7 @@ export default function Home() {
   const [showHistory, setShowHistory] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [activeHistoryEntry, setActiveHistoryEntry] = useState<MessageType[]>();
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [model, setModel] = useLocalStorageState<string>("model", {
     defaultValue: "gpt-4-turbo",
   });
@@ -166,12 +167,46 @@ export default function Home() {
           isLoading={isLoading}
           onChange={handleInputChange}
           onClickStop={stop}
-          onSubmit={(event) => {
-            if (input === "") {
-              event.preventDefault();
+          attachments={attachments}
+          onAddAttachments={(newAttachments) => {
+            setAttachments((previousAttachments) => [
+              ...previousAttachments,
+              ...newAttachments,
+            ]);
+          }}
+          onRemoveAttachment={(index) => {
+            setAttachments((previousAttachments) =>
+              previousAttachments.filter((_, i) => i !== index),
+            );
+          }}
+          onSubmit={async (event) => {
+            event.preventDefault();
+            if (input === "" && attachments.length === 0) {
               reload();
+              return;
             } else {
-              handleSubmit(event);
+              const convertFileToDataURL = (file: File): Promise<string> => {
+                return new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result as string);
+                  reader.onerror = reject;
+                  reader.readAsDataURL(file);
+                });
+              };
+
+              const processedAttachments = await Promise.all(
+                attachments.map(async (file) => ({
+                  name: file.name,
+                  contentType: file.type,
+                  url: await convertFileToDataURL(file),
+                })),
+              );
+
+              handleSubmit(event, {
+                experimental_attachments: processedAttachments,
+              });
+
+              setAttachments([]);
             }
           }}
         />

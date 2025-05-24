@@ -17,7 +17,6 @@ type Props = {
 const StyledActions = styled("div", {
   base: {
     padding: "12rem",
-    marginRight: "12rem",
 
     display: "flex",
     flexWrap: "wrap",
