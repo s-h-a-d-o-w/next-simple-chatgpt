@@ -84,7 +84,7 @@ const StyledAttachmentImage = styled("img", {
   },
 });
 
-export function Message({
+export const Message = memo(function Message({
   role,
   id,
   isLoading = false,
@@ -110,15 +110,13 @@ export function Message({
     >
       {experimental_attachments && experimental_attachments.length > 0 && (
         <StyledAttachmentsContainer>
-          {experimental_attachments.map((attachment, index) => {
-            return (
-              <StyledAttachmentImage
-                key={index}
-                src={attachment.url}
-                alt={attachment.name || `Attachment ${index + 1}`}
-              />
-            );
-          })}
+          {experimental_attachments.map((attachment, index) => (
+            <StyledAttachmentImage
+              key={index}
+              src={attachment.url}
+              alt={attachment.name || `Attachment ${index + 1}`}
+            />
+          ))}
         </StyledAttachmentsContainer>
       )}
 
@@ -160,4 +158,4 @@ export function Message({
       )}
     </StyledMessage>
   );
-}
+});
