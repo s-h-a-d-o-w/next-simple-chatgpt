@@ -69,7 +69,17 @@ export default defineConfig({
           "4xl": { value: "36rem" },
         },
         colors: {
-          brand: { value: "#d35cdb" },
+          brand: {
+            100: {
+              value: "#ed75f5",
+            },
+            500: {
+              value: "#d35cdb",
+            },
+            900: {
+              value: "#933793",
+            },
+          },
           gray: {
             50: { value: "oklch(0.985 0.0024 247.92)" },
             100: { value: "oklch(0.967 0.0024 247.92)" },

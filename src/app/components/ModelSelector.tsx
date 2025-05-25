@@ -27,6 +27,7 @@ const StyledImageIcon = styled(MdImage, {
     width: "auto",
     height: "100%",
     padding: "4rem",
+    pointerEvents: "none",
   },
 });
 

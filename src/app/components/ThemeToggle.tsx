@@ -41,16 +41,10 @@ const ToggleTrack = styled("div", {
     height: "24rem",
     borderRadius: "full !important",
     border: "2px solid",
-  },
-  variants: {
-    isDark: {
-      true: {
-        borderColor: "amber.800",
-      },
-      false: {
-        // borderColor: "gray.300",
-        borderColor: "amber.800",
-      },
+
+    borderColor: "amber.800",
+    _dark: {
+      borderColor: "brand.500",
     },
   },
 });
@@ -93,8 +87,7 @@ const ToggleThumb = styled("div", {
     transitionDuration: "200ms",
     transitionTimingFunction: "ease-in-out",
 
-    // backgroundColor: "gray.300",
-    backgroundColor: "amber.700",
+    backgroundColor: "amber.800",
     _dark: {
       backgroundColor: "gray.50",
     },
@@ -138,7 +131,7 @@ export function ThemeToggle() {
           onChange={toggleDarkMode}
           aria-label="Toggle dark mode"
         />
-        <ToggleTrack isDark={darkMode} />
+        <ToggleTrack />
         <IconContainer>
           <MoonIcon
             xmlns="http://www.w3.org/2000/svg"
