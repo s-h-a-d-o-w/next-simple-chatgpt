@@ -65,11 +65,8 @@ const StyledAttachmentsContainer = styled("div", {
 const StyledImagePreview = styled("div", {
   base: {
     position: "relative",
-    width: "80rem",
-    height: "80rem",
-    borderRadius: "8rem",
-    overflow: "hidden",
-    border: "1px solid token(colors.stone.300)",
+    width: "120rem",
+    height: "120rem",
   },
 });
 
@@ -187,8 +184,10 @@ export function Prompt({
                 <Image
                   src={file.url}
                   alt={file.name ?? `Image ${index + 1}`}
-                  width={80}
-                  height={80}
+                  fill
+                  style={{
+                    objectFit: "contain",
+                  }}
                 />
                 <IconButton
                   name="delete"

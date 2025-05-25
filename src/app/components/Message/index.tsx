@@ -9,6 +9,7 @@ import { Code } from "./Code";
 import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
 import { Cell, HeaderCell, Row } from "./TableElements";
+import Image from "next/image";
 
 type Props = MessageType & {
   className?: string;
@@ -76,11 +77,11 @@ const StyledAttachmentsContainer = styled("div", {
   },
 });
 
-const StyledAttachmentImage = styled("img", {
+const StyledImagePreview = styled("div", {
   base: {
-    width: "200rem",
-    height: "200rem",
-    border: "1px solid token(colors.amber.700)",
+    position: "relative",
+    width: "240rem",
+    height: "240rem",
   },
 });
 
@@ -110,12 +111,17 @@ export const Message = memo(function Message({
     >
       {experimental_attachments && experimental_attachments.length > 0 && (
         <StyledAttachmentsContainer>
-          {experimental_attachments.map((attachment, index) => (
-            <StyledAttachmentImage
-              key={index}
-              src={attachment.url}
-              alt={attachment.name || `Attachment ${index + 1}`}
-            />
+          {experimental_attachments.map(({ url, name }, index) => (
+            <StyledImagePreview key={index}>
+              <Image
+                src={url}
+                alt={name ?? `Image ${index + 1}`}
+                fill
+                style={{
+                  objectFit: "contain",
+                }}
+              />
+            </StyledImagePreview>
           ))}
         </StyledAttachmentsContainer>
       )}
