@@ -151,6 +151,13 @@ export default function Home() {
           setAttachments([]);
           setMessages([createSystemMessage(systemValue)]);
         }}
+        showAttachmentModelsOnly={
+          attachments.length > 0 ||
+          messages.some(
+            ({ experimental_attachments }) =>
+              experimental_attachments && experimental_attachments.length > 0,
+          )
+        }
       />
 
       <StyledMain>

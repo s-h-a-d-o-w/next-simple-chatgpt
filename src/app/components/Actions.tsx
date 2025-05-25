@@ -12,6 +12,7 @@ type Props = {
   onModelChange: (model: keyof typeof models) => void;
   onShowHistory: () => void;
   onReset: () => void;
+  showAttachmentModelsOnly: boolean;
 };
 
 const StyledActions = styled("div", {
@@ -32,6 +33,7 @@ export function Actions({
   onModelChange,
   onShowHistory,
   onReset,
+  showAttachmentModelsOnly,
 }: Props) {
   return (
     <StyledActions>
@@ -49,6 +51,7 @@ export function Actions({
         onChange={(value) => {
           onModelChange(value as keyof typeof models);
         }}
+        showAttachmentModelsOnly={showAttachmentModelsOnly}
       />
       <IconButton name="reset" iconSize="md" onClick={onReset} label="Reset" />
       <IconButton
