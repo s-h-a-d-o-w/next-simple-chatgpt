@@ -9,10 +9,13 @@ type Props = {
 
 const StyledTextArea = styled(Textarea, {
   base: {
-    background: "white",
+    borderLeftWidth: "2rem",
+
+    border: "2rem solid token(colors.amber.800)",
+    backgroundColor: "white",
     _dark: {
-      background: "black",
-      borderColor: "gray.50",
+      border: "none",
+      backgroundColor: "gray.700",
     },
   },
 });

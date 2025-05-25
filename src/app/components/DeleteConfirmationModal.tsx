@@ -14,6 +14,10 @@ const StyledDeleteConfirmationModal = styled("div", {
 
     boxShadow: "token(colors.amber.900) 1px 1px 0px 0px",
     border: "1px solid token(colors.amber.900)",
+    _dark: {
+      boxShadow: "none",
+      border: "none",
+    },
   },
 });
 

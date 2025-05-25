@@ -31,7 +31,7 @@ const StyledHistory = styled("div", {
     overflow: "auto",
     backgroundColor: "amber.50",
     padding: "12rem",
-    border: "1px solid token(colors.amber.900)",
+    border: "2px solid token(colors.amber.800)",
     boxShadow: "token(colors.amber.900) 1px 1px 0px 0px",
 
     display: "flex",
@@ -41,6 +41,8 @@ const StyledHistory = styled("div", {
     _dark: {
       backgroundColor: "gray.900",
       color: "gray.50",
+      border: "none",
+      boxShadow: "none",
     },
   },
 
@@ -84,10 +86,11 @@ const StyledSearchInput = styled("input", {
   base: {
     width: "100%",
     padding: "8rem",
-    border: "1px solid black",
-    borderRadius: "md",
 
+    backgroundColor: "white",
+    border: "2rem solid token(colors.amber.800)",
     _dark: {
+      backgroundColor: "gray.700",
       borderColor: "gray.50",
     },
   },

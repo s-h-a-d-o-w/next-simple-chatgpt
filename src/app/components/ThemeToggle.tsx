@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import useLocalStorageState from "use-local-storage-state";
 import { styled } from "../../../styled-system/jsx";
+import { useIsDarkMode } from "@/hooks/useDarkMode";
 
 function applyTheme(isDark: boolean) {
   if (isDark) {
@@ -42,8 +42,10 @@ const ToggleTrack = styled("div", {
     borderRadius: "full !important",
     border: "2px solid",
 
+    backgroundColor: "white",
     borderColor: "amber.800",
     _dark: {
+      backgroundColor: "gray.700",
       borderColor: "brand.500",
     },
   },
@@ -105,20 +107,15 @@ const ToggleThumb = styled("div", {
 });
 
 export function ThemeToggle() {
-  const [darkMode, setDarkMode] = useLocalStorageState("darkMode", {
-    defaultValue:
-      (typeof window !== "undefined" &&
-        window?.matchMedia?.("(prefers-color-scheme: dark)").matches) ||
-      false,
-  });
+  const [isDarkMode, setIsDarkMode] = useIsDarkMode();
 
   useEffect(() => {
-    applyTheme(darkMode);
-  }, [darkMode]);
+    applyTheme(isDarkMode);
+  }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
     applyTheme(newDarkMode);
   };
 
@@ -127,7 +124,7 @@ export function ThemeToggle() {
       <div style={{ position: "relative" }}>
         <HiddenInput
           type="checkbox"
-          checked={darkMode}
+          checked={isDarkMode}
           onChange={toggleDarkMode}
           aria-label="Toggle dark mode"
         />
@@ -152,7 +149,7 @@ export function ThemeToggle() {
             />
           </SunIcon>
         </IconContainer>
-        <ToggleThumb isDark={darkMode} />
+        <ToggleThumb isDark={isDarkMode} />
       </div>
     </ToggleLabel>
   );

@@ -5,7 +5,7 @@ import { MdImage } from "react-icons/md";
 const StyledSelect = styled("select", {
   base: {
     padding: "4rem 8rem",
-    border: "1px solid black",
+    border: "2rem solid token(colors.amber.800)",
     backgroundColor: "white",
     cursor: "pointer",
     width: "100%",
@@ -13,8 +13,8 @@ const StyledSelect = styled("select", {
     textOverflow: "ellipsis",
 
     _dark: {
-      borderColor: "gray.50",
-      backgroundColor: "black",
+      borderColor: "brand.500",
+      backgroundColor: "gray.700",
     },
   },
 });

@@ -36,19 +36,21 @@ export const StyledMessage = styled("div", {
     variant: {
       user: {
         backgroundColor: "amber.100",
-        border: "1px solid token(colors.amber.800)",
+        borderLeftWidth: "4rem",
 
+        borderColor: "amber.800",
         _dark: {
-          backgroundColor: "gray.800",
+          backgroundColor: "gray.700",
           borderColor: "brand.500",
         },
       },
       default: {
-        backgroundColor: "white",
-        border: "1px solid token(colors.stone.400)",
+        backgroundColor: "stone.100",
+        borderRightWidth: "4rem",
 
+        borderColor: "stone.400",
         _dark: {
-          backgroundColor: "gray.800",
+          backgroundColor: "gray.700",
           borderColor: "gray.100",
         },
       },
@@ -136,7 +138,7 @@ export const Message = memo(function Message({
         </StyledAttachmentsContainer>
       )}
 
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ width: "100%" }}>
         <MemoizedReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{

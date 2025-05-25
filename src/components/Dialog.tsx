@@ -94,7 +94,6 @@ const StyledDialog = styled("dialog", {
           backgroundColor: "gray.900",
           color: "gray.50",
         },
-        // boxShadow: "lg",
 
         ...modalClosed,
         _open: {

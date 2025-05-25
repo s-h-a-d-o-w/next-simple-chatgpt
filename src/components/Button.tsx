@@ -36,6 +36,9 @@ export const Button = styled("button", {
 
       _hover: {
         backgroundColor: "gray.200",
+        _dark: {
+          backgroundColor: "gray.200",
+        },
       },
     },
   },
