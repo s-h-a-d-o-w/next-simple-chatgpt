@@ -27,6 +27,13 @@ const StyledActions = styled("div", {
   },
 });
 
+const StyledButtonGroup = styled("div", {
+  base: {
+    display: "flex",
+    gap: "12rem",
+  },
+});
+
 export function Actions({
   disabledHistoryActions,
   model,
@@ -53,15 +60,22 @@ export function Actions({
         }}
         showAttachmentModelsOnly={showAttachmentModelsOnly}
       />
-      <IconButton name="reset" iconSize="md" onClick={onReset} label="Reset" />
-      <IconButton
-        name="history"
-        iconSize="md"
-        disabled={disabledHistoryActions}
-        onClick={onShowHistory}
-        label="History"
-      />
-      <AuthButtonClient isSignedIn />
+      <StyledButtonGroup>
+        <IconButton
+          name="reset"
+          iconSize="md"
+          onClick={onReset}
+          label="Reset"
+        />
+        <IconButton
+          name="history"
+          iconSize="md"
+          disabled={disabledHistoryActions}
+          onClick={onShowHistory}
+          label="History"
+        />
+        <AuthButtonClient isSignedIn />
+      </StyledButtonGroup>
     </StyledActions>
   );
 }

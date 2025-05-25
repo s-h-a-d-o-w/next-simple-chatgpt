@@ -9,7 +9,7 @@ const StyledSelect = styled("select", {
     backgroundColor: "white",
     cursor: "pointer",
     width: "100%",
-    maxWidth: "350rem",
+    maxWidth: "340rem",
     textOverflow: "ellipsis",
   },
 });

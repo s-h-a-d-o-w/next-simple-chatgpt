@@ -40,20 +40,36 @@ const StyledHistory = styled("div", {
   },
 
   variants: {
-    align: {
-      left: {
-        width: "58%",
-        height: "93%",
+    type: {
+      entry: {
+        width: "85%",
+        height: "43%",
 
-        top: "24rem",
         left: "16rem",
+        bottom: "16rem",
+
+        md: {
+          width: "58%",
+          height: "93%",
+
+          top: "24rem",
+          left: "16rem",
+        },
       },
-      right: {
-        width: "38%",
-        maxHeight: "80%",
+      overview: {
+        width: "85%",
+        maxHeight: "45%",
 
         top: "64rem",
         right: "16rem",
+
+        md: {
+          width: "38%",
+          maxHeight: "80%",
+
+          top: "64rem",
+          right: "16rem",
+        },
       },
     },
   },
@@ -128,7 +144,7 @@ export function History({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <StyledHistory align="right">
+      <StyledHistory type="overview">
         <StyledHistoryActions>
           <IconButton
             name="delete"
@@ -199,7 +215,7 @@ export function History({
       </StyledHistory>
 
       {activeHistoryEntry && (
-        <StyledHistory align="left">
+        <StyledHistory type="entry">
           <Button
             onClick={onRestoreHistoryEntry}
             style={{ alignSelf: "flex-end" }}
