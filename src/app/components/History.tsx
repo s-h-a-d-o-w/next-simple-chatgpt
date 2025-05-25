@@ -37,6 +37,11 @@ const StyledHistory = styled("div", {
     display: "flex",
     flexDirection: "column",
     gap: "8rem",
+
+    _dark: {
+      backgroundColor: "gray.900",
+      color: "gray.50",
+    },
   },
 
   variants: {
@@ -81,6 +86,10 @@ const StyledSearchInput = styled("input", {
     padding: "8rem",
     border: "1px solid black",
     borderRadius: "md",
+
+    _dark: {
+      borderColor: "gray.50",
+    },
   },
 });
 

@@ -11,6 +11,11 @@ const StyledSelect = styled("select", {
     width: "100%",
     maxWidth: "340rem",
     textOverflow: "ellipsis",
+
+    _dark: {
+      borderColor: "gray.50",
+      backgroundColor: "black",
+    },
   },
 });
 

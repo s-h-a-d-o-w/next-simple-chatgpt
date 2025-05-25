@@ -11,8 +11,13 @@ export const metadata: Metadata = {
 const Body = styled("body", {
   base: {
     minWidth: "300rem",
-    backgroundColor: "amber.50",
     fontSize: "lg",
+
+    backgroundColor: "amber.50",
+    _dark: {
+      backgroundColor: "gray.900",
+      color: "gray.50",
+    },
   },
 });
 

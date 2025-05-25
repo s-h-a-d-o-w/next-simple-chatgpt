@@ -5,6 +5,7 @@ import HmrTimestamp from "./HmrTimestamp";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
 import { IconButton } from "@/components/IconButton";
 import { ModelSelector } from "./ModelSelector";
+import { ThemeToggle } from "./ThemeToggle";
 
 type Props = {
   disabledHistoryActions: boolean;
@@ -75,6 +76,7 @@ export function Actions({
           label="History"
         />
         <AuthButtonClient isSignedIn />
+        <ThemeToggle />
       </StyledButtonGroup>
     </StyledActions>
   );

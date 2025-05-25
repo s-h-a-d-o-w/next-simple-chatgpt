@@ -37,10 +37,20 @@ export const StyledMessage = styled("div", {
       user: {
         backgroundColor: "amber.100",
         border: "1px solid token(colors.amber.700)",
+
+        _dark: {
+          backgroundColor: "gray.800",
+          borderColor: "amber.700",
+        },
       },
       default: {
         backgroundColor: "white",
         border: "1px solid token(colors.stone.400)",
+
+        _dark: {
+          backgroundColor: "gray.800",
+          borderColor: "gray.100",
+        },
       },
     },
     fullHeight: {
