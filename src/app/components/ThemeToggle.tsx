@@ -85,23 +85,15 @@ const ToggleThumb = styled("div", {
     width: "16rem",
     height: "16rem",
     borderRadius: "full !important",
-    transitionProperty: "transform",
+    transitionProperty: "left",
     transitionDuration: "200ms",
     transitionTimingFunction: "ease-in-out",
 
     backgroundColor: "amber.800",
+    left: "4rem",
     _dark: {
       backgroundColor: "gray.50",
-    },
-  },
-  variants: {
-    isDark: {
-      true: {
-        transform: "translateX(28rem)",
-      },
-      false: {
-        left: "4rem",
-      },
+      left: "28rem",
     },
   },
 });
@@ -149,7 +141,7 @@ export function ThemeToggle() {
             />
           </SunIcon>
         </IconContainer>
-        <ToggleThumb isDark={isDarkMode} />
+        <ToggleThumb />
       </div>
     </ToggleLabel>
   );
