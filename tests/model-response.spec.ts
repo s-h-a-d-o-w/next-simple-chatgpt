@@ -16,8 +16,7 @@ test("each model generates a valid response", async ({ page }) => {
     await promptInput.press("Control+Enter");
 
     const assistantMessage = page.locator('[data-testid$="-assistant"]');
-    const responseText = await assistantMessage.innerText();
-    expect(responseText.trim().length).toBeGreaterThan(0);
+    await expect(assistantMessage).toHaveText(/\S/);
 
     await page.getByRole("button", { name: "reset" }).click();
     await expect(

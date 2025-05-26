@@ -8,7 +8,7 @@
   },
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
-    "build": "del-cli .next && tsx ./scripts/generateBuildTimestamp && next build",
+    "build": "tsx ./scripts/generateBuildTimestamp && next build",
     "create-certificate": "pnpm tsx ./scripts/createCertificate",
     "dev": "tsx ./scripts/checkWsl && del-cli .next && concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",
     "lint": "next lint --ignore-path .gitignore",
@@ -18,7 +18,7 @@
     "start": "next start",
     "start:local": "concurrently \"next start -p 3001\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3000 --target 3001\"",
     "test": "vitest",
-    "test:e2e": "playwright test --ui",
+    "e2e": "playwright test --ui",
     "typecheck": "tsc",
     "playground": "tsx ./playground.ts"
   },
