@@ -1,3 +1,4 @@
+// Adds two spaces before all \n, so that markdown will actually do a line break. (Except for code blocks, where line breaks happen even without spaces.)
 export function padNewlines(input: string): string {
   let inSingleBacktick = false;
   let inTripleBacktick = false;

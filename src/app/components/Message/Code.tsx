@@ -1,16 +1,61 @@
+import { useIsDarkMode } from "@/hooks/useDarkMode";
 import { fonts } from "@/utils/fonts";
-import { ClassAttributes, HTMLAttributes } from "react";
+import { ClassAttributes, HTMLAttributes, memo } from "react";
 import { ExtraProps } from "react-markdown";
-import { Prism } from "react-syntax-highlighter";
-// import prismStyle from "react-syntax-highlighter/dist/esm/styles/prism/prism";
 import {
-  oneLight,
+  createElement,
+  Prism,
+  SyntaxHighlighterProps,
+} from "react-syntax-highlighter";
+import {
   oneDark,
+  oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { css } from "../../../../styled-system/css";
 import { token } from "../../../../styled-system/tokens";
 import { CopyButton } from "./CopyButton";
-import { useIsDarkMode } from "@/hooks/useDarkMode";
+import { styled } from "../../../../styled-system/jsx";
+
+type RendererProps = Parameters<
+  NonNullable<SyntaxHighlighterProps["renderer"]>
+>[0];
+
+type RowProps = Omit<Parameters<typeof createElement>[0], "key"> & {
+  _key: string | number;
+};
+
+const Row = memo(
+  function Row({ node, stylesheet, useInlineStyles, _key }: RowProps) {
+    return createElement({ node, stylesheet, useInlineStyles, key: _key });
+  },
+  (previous, next) => {
+    return (
+      previous.node.children === next.node.children ||
+      JSON.stringify(previous.node.children) ===
+        JSON.stringify(next.node.children)
+    );
+  },
+);
+
+function Renderer({ rows, stylesheet, useInlineStyles }: RendererProps) {
+  return rows.map((node, i) => (
+    <Row
+      key={`code-segement${i}`}
+      _key={`code-segement${i}`}
+      node={node}
+      stylesheet={stylesheet}
+      useInlineStyles={useInlineStyles}
+    />
+  ));
+}
+
+const StyledCopyButton = styled(CopyButton, {
+  base: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+  },
+});
 
 export function Code(
   props: ClassAttributes<HTMLElement> &
@@ -18,12 +63,12 @@ export function Code(
     ExtraProps,
 ) {
   const { children, className } = props;
-  const text = String(children);
+  const text = children ? String(children) : "";
   const [isDarkMode] = useIsDarkMode();
 
   // Inline code
   if (!text.includes("\n")) {
-    return <code className={className}>{children}</code>;
+    return <code className={className}>{text}</code>;
   }
 
   return (
@@ -45,17 +90,11 @@ export function Code(
           }),
           style: fonts.robotoMono.style,
         }}
+        renderer={Renderer}
       >
         {text}
       </Prism>
-      <CopyButton
-        content={text}
-        className={css({
-          position: "absolute",
-          top: 0,
-          right: 0,
-        })}
-      />
+      <StyledCopyButton content={text} />
     </div>
   );
 }

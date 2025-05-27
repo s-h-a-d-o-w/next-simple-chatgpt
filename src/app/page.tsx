@@ -108,8 +108,9 @@ export default function Home() {
 
   useScrollToTarget(isLoading, endOfPageRef);
 
+  // Syncs the system prompt into the array of messages when it changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const syncSystemMessage = useCallback(
+  const debouncedSyncSystemMessage = useCallback(
     debounce((content: string) => {
       setMessages((innerMessages) => {
         const nextMessages = cloneDeep(innerMessages);
@@ -131,12 +132,64 @@ export default function Home() {
     setMessages(messages.filter((message) => message.id !== id));
   };
 
-  const handleSystemInput: ChangeEventHandler<HTMLTextAreaElement> = (
+  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
     setSystemValue(event.target.value);
-    syncSystemMessage(event.target.value);
+    debouncedSyncSystemMessage(event.target.value);
   };
+
+  const handleCloseHistory = useCallback(() => {
+    setShowHistory(false);
+    setActiveHistoryEntry(undefined);
+  }, []);
+
+  const handleDeleteHistoryEntry = useCallback(
+    (index: number) => {
+      const nextHistory = cloneDeep(conversationHistory);
+      nextHistory.splice(index, 1);
+      setConversationHistory(nextHistory);
+    },
+    [conversationHistory, setConversationHistory],
+  );
+
+  const handleRestoreHistoryEntry = useCallback(() => {
+    if (activeHistoryEntry?.[0]) {
+      setSystemValue(activeHistoryEntry[0].content);
+      setMessages(activeHistoryEntry);
+      setActiveHistoryEntry(undefined);
+      setShowHistory(false);
+    }
+  }, [activeHistoryEntry, setSystemValue, setMessages]);
+
+  const handleSetActiveHistoryEntry = useCallback(
+    (nextMessages?: MessageType[]) => {
+      setActiveHistoryEntry(nextMessages);
+    },
+    [],
+  );
+
+  const handleDeleteHistory = useCallback(() => {
+    setShowDeleteConfirmation(true);
+  }, []);
+
+  const handleLoadHistory = useCallback(async () => {
+    try {
+      const history = superjson.parse(await loadJsonFile()) as Array<
+        MessageType[]
+      >;
+      setConversationHistory(history);
+    } catch {
+      // TODO: user cancelled or picked nonsense. should probably show error.
+    }
+  }, [setConversationHistory]);
+
+  const handleSaveHistory = useCallback(() => {
+    saveJsonFile(
+      conversationHistory,
+      `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+    );
+  }, [conversationHistory]);
 
   return (
     <>
@@ -161,7 +214,7 @@ export default function Home() {
       />
 
       <StyledMain>
-        <SystemPrompt value={systemValue} onChange={handleSystemInput} />
+        <SystemPrompt value={systemValue} onChange={handleChangeSystemInput} />
         <Messages
           hasError={Boolean(error)}
           isLoading={isLoading}
@@ -214,45 +267,13 @@ export default function Home() {
         activeHistoryEntry={activeHistoryEntry}
         conversationHistory={conversationHistory}
         isOpen={showHistory}
-        onClose={() => {
-          setShowHistory(false);
-          setActiveHistoryEntry(undefined);
-        }}
-        onDeleteHistoryEntry={(index) => {
-          const nextHistory = cloneDeep(conversationHistory);
-          nextHistory.splice(index, 1);
-          setConversationHistory(nextHistory);
-        }}
-        onRestoreHistoryEntry={() => {
-          if (activeHistoryEntry?.[0]) {
-            setSystemValue(activeHistoryEntry[0].content);
-            setMessages(activeHistoryEntry);
-            setActiveHistoryEntry(undefined);
-            setShowHistory(false);
-          }
-        }}
-        onSetActiveHistoryEntry={(nextMessages) => {
-          setActiveHistoryEntry(nextMessages);
-        }}
-        onDeleteHistory={() => {
-          setShowDeleteConfirmation(true);
-        }}
-        onLoad={async () => {
-          try {
-            const history = superjson.parse(await loadJsonFile()) as Array<
-              MessageType[]
-            >;
-            setConversationHistory(history);
-          } catch {
-            // TODO: user cancelled or picked nonsense. should probably show error.
-          }
-        }}
-        onSave={() => {
-          saveJsonFile(
-            conversationHistory,
-            `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
-          );
-        }}
+        onClose={handleCloseHistory}
+        onDeleteHistoryEntry={handleDeleteHistoryEntry}
+        onRestoreHistoryEntry={handleRestoreHistoryEntry}
+        onSetActiveHistoryEntry={handleSetActiveHistoryEntry}
+        onDeleteHistory={handleDeleteHistory}
+        onLoad={handleLoadHistory}
+        onSave={handleSaveHistory}
       />
 
       <DeleteConfirmationModal

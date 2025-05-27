@@ -8,7 +8,7 @@ import { styled } from "../../../styled-system/jsx";
 import { css } from "../../../styled-system/css";
 import { Messages } from "./Messages";
 import { debounce } from "lodash";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, memo } from "react";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -105,7 +105,7 @@ const StyledHistoryActions = styled("div", {
   },
 });
 
-export function History({
+export const History = memo(function History({
   activeHistoryEntry,
   conversationHistory,
   isOpen,
@@ -239,4 +239,4 @@ export function History({
       )}
     </Dialog>
   );
-}
+});

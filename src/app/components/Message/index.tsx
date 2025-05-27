@@ -1,7 +1,7 @@
 import { IconButton } from "@/components/IconButton";
 import Spinner from "@/components/Spinner";
 import { type Message as MessageType } from "ai/react";
-import { memo } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { styled } from "../../../../styled-system/jsx";
@@ -10,6 +10,9 @@ import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
 import { Cell, HeaderCell, Row } from "./TableElements";
 import Image from "next/image";
+import { throttle } from "lodash";
+
+const MESSAGE_STREAM_THROTTLE_DURATION = 500;
 
 type Props = MessageType & {
   className?: string;
@@ -111,6 +114,24 @@ export const Message = memo(function Message({
   experimental_attachments,
 }: Props) {
   const isUser = role === "user";
+  const [displayText, setDisplayText] = useState(content);
+
+  const throttledRef = useRef(
+    throttle((next: string) => {
+      setDisplayText(next);
+    }, MESSAGE_STREAM_THROTTLE_DURATION),
+  );
+
+  useEffect(() => {
+    throttledRef.current(content);
+  }, [content]);
+
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      throttledRef.current.cancel();
+    };
+  }, []);
 
   return role === "system" ? null : (
     <StyledMessage
@@ -151,7 +172,7 @@ export const Message = memo(function Message({
             tr: Row,
           }}
         >
-          {padNewlines(content)}
+          {padNewlines(displayText)}
         </MemoizedReactMarkdown>
       </div>
 
@@ -171,7 +192,7 @@ export const Message = memo(function Message({
               onClick={() => onDelete(id)}
             />
           )}
-          {showCopyAll && !isLoading && <CopyButton content={content} />}
+          {showCopyAll && !isLoading && <CopyButton content={displayText} />}
         </div>
       )}
     </StyledMessage>
