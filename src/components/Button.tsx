@@ -30,12 +30,16 @@ export const Button = styled("button", {
     },
 
     _disabled: {
-      backgroundColor: "gray.200",
-      color: "gray.500",
+      backgroundColor: "stone.200",
+      color: "stone.500",
       cursor: "default",
+      _dark: {
+        backgroundColor: "gray.200",
+        color: "gray.500",
+      },
 
       _hover: {
-        backgroundColor: "gray.200",
+        backgroundColor: "stone.200",
         _dark: {
           backgroundColor: "gray.200",
         },

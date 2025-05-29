@@ -5,6 +5,9 @@ import { css } from "../../../../styled-system/css";
 export const cellStyle = css({
   padding: "6rem 12rem",
   border: "1px solid token(colors.stone.400)",
+  _dark: {
+    border: "1px solid token(colors.gray.400)",
+  },
 });
 
 export const HeaderCell = ({
@@ -36,6 +39,9 @@ export const Cell = ({
 export const rowStyle = css({
   _even: {
     backgroundColor: "stone.200",
+    _dark: {
+      backgroundColor: "gray.600",
+    },
   },
 });
 
