@@ -14,7 +14,6 @@ import {
 import { css } from "../../../../styled-system/css";
 import { token } from "../../../../styled-system/tokens";
 import { CopyButton } from "./CopyButton";
-import { styled } from "../../../../styled-system/jsx";
 
 type RendererProps = Parameters<
   NonNullable<SyntaxHighlighterProps["renderer"]>
@@ -48,14 +47,6 @@ function Renderer({ rows, stylesheet, useInlineStyles }: RendererProps) {
     />
   ));
 }
-
-const StyledCopyButton = styled(CopyButton, {
-  base: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-  },
-});
 
 export function Code(
   props: ClassAttributes<HTMLElement> &
@@ -94,7 +85,14 @@ export function Code(
       >
         {text}
       </Prism>
-      <StyledCopyButton content={text} />
+      <CopyButton
+        content={text}
+        className={css({
+          position: "absolute",
+          top: 0,
+          right: 0,
+        })}
+      />
     </div>
   );
 }
