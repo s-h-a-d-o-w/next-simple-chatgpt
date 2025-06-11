@@ -7,14 +7,16 @@
     ],
     "allowJs": false,
     "skipLibCheck": true,
-    "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "target": "ESNext",
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "incremental": true,
+    "strict": true,
     "noImplicitAny": true, /* Enable error reporting for expressions and declarations with an implied 'any' type. */
     "strictNullChecks": true, /* When type checking, take into account 'null' and 'undefined'. */
     "strictFunctionTypes": true, /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
@@ -40,19 +42,15 @@
     },
     "types": [
       "vitest/globals"
-    ],
-    "incremental": true,
-    "target": "ESNext"
+    ]
   },
   "include": [
     "next-env.d.ts",
+    ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
+    "**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "scripts",
-    ".next"
+    "node_modules"
   ]
 }
