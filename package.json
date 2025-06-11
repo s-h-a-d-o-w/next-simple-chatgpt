@@ -30,7 +30,7 @@
     "date-fns": "^3.6.0",
     "lodash": "^4.17.21",
     "next": "^15.3.2",
-    "next-auth": "5.0.0-beta.25",
+    "next-auth": "5.0.0-beta.28",
     "pdfjs-dist": "^5.2.133",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.1.0",

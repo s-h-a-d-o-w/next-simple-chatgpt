@@ -6,7 +6,7 @@ import { convertToCoreMessages, streamText } from "ai";
 export const maxDuration = 60;
 
 const whitelist = process.env["WHITELIST"]?.split(",");
-export const isTest = Boolean(process.env["CI"]);
+const isTest = Boolean(process.env["CI"]);
 
 export const POST = auth(async (req) => {
   const isUserWhitelisted = whitelist?.includes(String(req.auth?.user?.email));
