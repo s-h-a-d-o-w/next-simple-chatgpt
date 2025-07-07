@@ -1,7 +1,6 @@
 import { styled } from "../../../styled-system/jsx";
 import { useStorageUsage } from "@/hooks/useStorageUsage";
 
-// @ts-expect-error bug in pandas type generation
 const StyledContainer = styled("div", {
   base: {
     display: "inline-flex",
@@ -22,7 +21,6 @@ const StyledContainer = styled("div", {
   },
 });
 
-// @ts-expect-error bug in pandas type generation
 const StyledPercentage = styled("div", {
   base: {
     position: "absolute",
