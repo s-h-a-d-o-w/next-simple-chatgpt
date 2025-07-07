@@ -39,7 +39,6 @@ const StyledPercentage = styled("div", {
 
 export function StorageUsageWheel() {
   const storageUsage = useStorageUsage();
-  // const storageUsage = 0.85;
   if (!storageUsage) {
     return null;
   }

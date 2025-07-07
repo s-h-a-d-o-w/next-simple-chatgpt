@@ -3,6 +3,7 @@ import { type Message as MessageType } from "ai/react";
 import { useState, useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import superjson from "superjson";
+import { useStorageUsage } from "./useStorageUsage";
 
 function stripAttachmentsFromMessages(messages: MessageType[]): MessageType[] {
   return messages.map(
@@ -43,14 +44,15 @@ export function useHistory(isLoading: boolean, messages: MessageType[]) {
       if (firstMessageDate) {
         setConversationHistory((history) => {
           const nextHistory = cloneDeep(history);
+          const messagesWithoutAttachments =
+            stripAttachmentsFromMessages(messages);
+
           const index = nextHistory.findIndex(
             (messages) =>
               messages[1]?.createdAt?.valueOf() === firstMessageDate,
           );
-
-          const messagesWithoutAttachments =
-            stripAttachmentsFromMessages(messages);
           if (index >= 0) {
+            // Change a history entry that already existed (like the most recent one).
             nextHistory[index] = messagesWithoutAttachments;
           } else {
             nextHistory.push(messagesWithoutAttachments);
@@ -62,6 +64,18 @@ export function useHistory(isLoading: boolean, messages: MessageType[]) {
       }
     }
   }, [isLoading, lastHistoryUpdate, messages, setConversationHistory]);
+
+  // Prune history if we're using too much storage.
+  const usedStorage = useStorageUsage();
+  useEffect(() => {
+    if (usedStorage && usedStorage > 1) {
+      setConversationHistory((history) => {
+        const total = history.length;
+        const removeCount = Math.ceil(total * 0.25);
+        return history.slice(removeCount);
+      });
+    }
+  }, [usedStorage, setConversationHistory]);
 
   return [conversationHistory, setConversationHistory] as const;
 }
