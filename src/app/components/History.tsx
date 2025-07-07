@@ -7,8 +7,10 @@ import { Message } from "@/app/components/Message";
 import { styled } from "../../../styled-system/jsx";
 import { css } from "../../../styled-system/css";
 import { Messages } from "./Messages";
+import { StorageUsageWheel } from "./StorageUsageWheel";
 import { debounce } from "lodash";
 import { useState, useCallback, useEffect, useRef, memo } from "react";
+import { isClientDebug, isDev } from "@/utils/consts";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -56,7 +58,7 @@ const StyledHistory = styled("div", {
         bottom: "16rem",
 
         md: {
-          width: "58%",
+          width: "52%",
           height: "93%",
 
           top: "24rem",
@@ -71,7 +73,7 @@ const StyledHistory = styled("div", {
         right: "16rem",
 
         md: {
-          width: "38%",
+          width: "43%",
           maxHeight: "80%",
 
           top: "64rem",
@@ -99,8 +101,8 @@ const StyledSearchInput = styled("input", {
 const StyledHistoryActions = styled("div", {
   base: {
     display: "flex",
-    gap: "8rem",
-    justifyContent: "flex-end",
+    justifyContent: isClientDebug ? "space-between" : "flex-end",
+    alignItems: "center",
     marginBottom: "8rem",
   },
 });
@@ -158,15 +160,29 @@ export const History = memo(function History({
     >
       <StyledHistory type="overview">
         <StyledHistoryActions>
-          <IconButton
-            name="delete"
-            iconSize="md"
-            disabled={conversationHistory.length === 0}
-            onClick={onDeleteHistory}
-            label="Delete all"
-          />
-          <IconButton name="load" iconSize="md" onClick={onLoad} label="Load" />
-          <IconButton name="save" iconSize="md" onClick={onSave} label="Save" />
+          {/* We prune storage automatically, so this is just for debugging. */}
+          {(isDev || isClientDebug) && <StorageUsageWheel />}
+          <div style={{ display: "flex", gap: "8rem" }}>
+            <IconButton
+              name="delete"
+              iconSize="md"
+              disabled={conversationHistory.length === 0}
+              onClick={onDeleteHistory}
+              label="Delete all"
+            />
+            <IconButton
+              name="load"
+              iconSize="md"
+              onClick={onLoad}
+              label="Load"
+            />
+            <IconButton
+              name="save"
+              iconSize="md"
+              onClick={onSave}
+              label="Save"
+            />
+          </div>
         </StyledHistoryActions>
 
         <StyledSearchInput

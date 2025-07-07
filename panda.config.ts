@@ -56,6 +56,9 @@ export default defineConfig({
 
   theme: {
     extend: {
+      breakpoints: {
+        xs: "380px",
+      },
       tokens: {
         fontSizes: {
           "2xs": { value: "8rem" },

@@ -1,3 +1,4 @@
+import { isDev } from "@/utils/consts";
 import { useEffect, useState } from "react";
 
 // eslint-disable-next-line @next/next/no-assign-module-variable
@@ -11,7 +12,7 @@ const HmrTimestamp = () => {
   const [lastUpdate, setLastUpdate] = useState<Date>();
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development" && module.hot) {
+    if (isDev && module.hot) {
       const updateTimestamp = () => {
         setLastUpdate(new Date());
       };
