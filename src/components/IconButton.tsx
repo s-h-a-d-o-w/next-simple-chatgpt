@@ -42,7 +42,12 @@ export function IconButton({ name, iconSize = "xl", label, ...rest }: Props) {
   return (
     <Button
       iconSize={iconSize}
-      className={css({ display: "flex", alignItems: "center", gap: "4rem" })}
+      className={css({
+        display: "flex",
+        alignItems: "center",
+        gap: "4rem",
+        whiteSpace: "nowrap",
+      })}
       aria-label={ariaLabel ?? name}
       {...otherProps}
     >

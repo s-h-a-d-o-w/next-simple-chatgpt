@@ -31,6 +31,8 @@ const StyledActions = styled("div", {
 const StyledButtonGroup = styled("div", {
   base: {
     display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
     gap: "12rem",
   },
 });
