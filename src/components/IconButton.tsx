@@ -60,7 +60,7 @@ export function IconButton({ name, iconSize = "xl", label, ...rest }: Props) {
   return (
     <StyledButton
       iconSize={iconSize}
-      aria-label={ariaLabel ?? name}
+      aria-label={ariaLabel ?? label ?? name}
       {...otherProps}
     >
       <Icon
