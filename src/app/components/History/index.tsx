@@ -1,16 +1,12 @@
-import { formatDistance } from "date-fns/formatDistance";
-import { type Message as MessageType } from "ai/react";
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
-import { IconButton } from "@/components/IconButton";
-import { Message } from "@/app/components/Message";
-import { styled } from "../../../styled-system/jsx";
-import { css } from "../../../styled-system/css";
-import { Messages } from "./Messages";
-import { StorageUsageWheel } from "./StorageUsageWheel";
+import { type Message as MessageType } from "ai/react";
 import { debounce } from "lodash";
-import { useState, useCallback, useEffect, useRef, memo } from "react";
-import { isClientDebug, isDev } from "@/utils/consts";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { styled } from "../../../../styled-system/jsx";
+import { Messages } from "../Messages";
+import { HistoryHeader } from "./HistoryHeader";
+import { ShortenedEntry } from "./ShortenedEntry";
 
 type Props = {
   conversationHistory: MessageType[][];
@@ -98,15 +94,6 @@ const StyledSearchInput = styled("input", {
   },
 });
 
-const StyledHistoryActions = styled("div", {
-  base: {
-    display: "flex",
-    justifyContent: isClientDebug ? "space-between" : "flex-end",
-    alignItems: "center",
-    marginBottom: "8rem",
-  },
-});
-
 export const History = memo(function History({
   activeHistoryEntry,
   conversationHistory,
@@ -159,31 +146,12 @@ export const History = memo(function History({
       onClose={onClose}
     >
       <StyledHistory type="overview">
-        <StyledHistoryActions>
-          {/* We prune storage automatically, so this is just for debugging. */}
-          {(isDev || isClientDebug) && <StorageUsageWheel />}
-          <div style={{ display: "flex", gap: "8rem" }}>
-            <IconButton
-              name="delete"
-              iconSize="md"
-              disabled={conversationHistory.length === 0}
-              onClick={onDeleteHistory}
-              label="Delete all"
-            />
-            <IconButton
-              name="load"
-              iconSize="md"
-              onClick={onLoad}
-              label="Load"
-            />
-            <IconButton
-              name="save"
-              iconSize="md"
-              onClick={onSave}
-              label="Save"
-            />
-          </div>
-        </StyledHistoryActions>
+        <HistoryHeader
+          conversationHistory={conversationHistory}
+          onDeleteHistory={onDeleteHistory}
+          onLoad={onLoad}
+          onSave={onSave}
+        />
 
         <StyledSearchInput
           ref={searchInputRef}
@@ -197,47 +165,19 @@ export const History = memo(function History({
           .reverse()
           .map((messages, index) =>
             !messages[1] ? null : (
-              <div key={index}>
-                <div
-                  className={css({
-                    fontSize: "sm",
-                  })}
-                >
-                  {messages[1]?.createdAt
-                    ? formatDistance(messages[1].createdAt, new Date(), {
-                        addSuffix: true,
-                      })
-                    : ""}
-                </div>
-                <div style={{ position: "relative" }}>
-                  <Message
-                    {...messages[1]}
-                    fullHeight={false}
-                    shortened
-                    onClick={() => {
-                      onSetActiveHistoryEntry(messages);
-                    }}
-                  />
-                  <IconButton
-                    name="delete"
-                    type="button"
-                    iconSize="md"
-                    ghost
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      const index = conversationHistory.findIndex(
-                        (_messages) => _messages === messages,
-                      );
-                      onDeleteHistoryEntry(index);
-                    }}
-                    className={css({
-                      position: "absolute",
-                      top: "8rem",
-                      right: "8rem",
-                    })}
-                  />
-                </div>
-              </div>
+              <ShortenedEntry
+                key={index}
+                message={messages[1]}
+                onDeleteHistoryEntry={() => {
+                  const index = conversationHistory.findIndex(
+                    (_messages) => _messages === messages,
+                  );
+                  onDeleteHistoryEntry(index);
+                }}
+                onSetActiveHistoryEntry={() => {
+                  onSetActiveHistoryEntry(messages);
+                }}
+              />
             ),
           )}
       </StyledHistory>

@@ -21,18 +21,9 @@ import { SystemPrompt } from "./components/SystemPrompt";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
 import { useHistory } from "@/hooks/useHistory";
 import { styled } from "../../styled-system/jsx";
-import { isDev, type models } from "@/utils/consts";
+import { type ModelKey } from "@/utils/consts";
 import useLocalStorageState from "use-local-storage-state";
-
-if (!isDev) {
-  const buildInfo = process.env["NEXT_PUBLIC_BUILD_INFO"]?.split(",");
-  if (buildInfo && buildInfo[0]) {
-    console.log(
-      new Date(parseInt(buildInfo[0], 10)).toLocaleString(),
-      buildInfo[1],
-    );
-  }
-}
+import "../utils/logBuildInfo";
 
 function createSystemMessage(content: string) {
   return {
@@ -64,7 +55,7 @@ export default function Home() {
   const [attachments, setAttachments] = useState<
     NonNullable<MessageType["experimental_attachments"]>
   >([]);
-  const [model, setModel] = useLocalStorageState<keyof typeof models>("model", {
+  const [model, setModel] = useLocalStorageState<ModelKey>("model", {
     defaultValue: "gpt-4-turbo",
   });
   const [systemValue, setSystemValue] = useLocalStorageState<string>(
@@ -92,7 +83,6 @@ export default function Home() {
       model,
     },
   });
-
   const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
@@ -128,9 +118,12 @@ export default function Home() {
     [setMessages],
   );
 
-  const handleDelete = (id: string) => {
-    setMessages(messages.filter((message) => message.id !== id));
-  };
+  const handleDeleteMessage = useCallback(
+    (id: string) => {
+      setMessages(messages.filter((message) => message.id !== id));
+    },
+    [messages, setMessages],
+  );
 
   const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = (
     event,
@@ -219,7 +212,7 @@ export default function Home() {
           hasError={Boolean(error)}
           isLoading={isLoading}
           messages={messages}
-          onDelete={handleDelete}
+          onDelete={handleDeleteMessage}
           onRetry={reload}
           showCopyAll
         />

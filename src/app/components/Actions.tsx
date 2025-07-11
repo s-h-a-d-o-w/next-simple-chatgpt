@@ -1,16 +1,16 @@
-import { isDev, type models } from "@/utils/consts";
+import { IconButton } from "@/components/IconButton";
+import { isDev, type ModelKey } from "@/utils/consts";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
-import HmrTimestamp from "./HmrTimestamp";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
-import { IconButton } from "@/components/IconButton";
+import HmrTimestamp from "./HmrTimestamp";
 import { ModelSelector } from "./ModelSelector";
 import { ThemeToggle } from "./ThemeToggle";
 
 type Props = {
   disabledHistoryActions: boolean;
-  model: keyof typeof models;
-  onModelChange: (model: keyof typeof models) => void;
+  model: ModelKey;
+  onModelChange: (model: ModelKey) => void;
   onShowHistory: () => void;
   onReset: () => void;
   showAttachmentModelsOnly: boolean;
@@ -59,7 +59,7 @@ export function Actions({
       <ModelSelector
         value={model}
         onChange={(value) => {
-          onModelChange(value as keyof typeof models);
+          onModelChange(value as ModelKey);
         }}
         showAttachmentModelsOnly={showAttachmentModelsOnly}
       />

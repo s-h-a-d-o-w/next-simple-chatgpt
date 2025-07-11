@@ -1,6 +1,15 @@
 "use client";
 
-import { Centered } from "@/components/Centered";
+import { CenteredMain } from "@/components/CenteredMain";
+import { styled } from "../../styled-system/jsx";
+
+const StyledMessage = styled("div", {
+  base: {
+    width: "80%",
+    maxWidth: "400rem",
+    textAlign: "center",
+  },
+});
 
 export default function GlobalError() {
   // In a commercial project, we would obviously send error details to some error tracking service.
@@ -17,12 +26,12 @@ export default function GlobalError() {
   }
 
   return (
-    <Centered>
-      <div style={{ width: "80%", maxWidth: "400rem", textAlign: "center" }}>
+    <CenteredMain>
+      <StyledMessage>
         If this was a commercial project, I&apos;d say something like: &quot;We
         have encountered an unexpected error. It has been reported automatically
         but if you keep experiencing this please reach out to support.&quot;
-      </div>
-    </Centered>
+      </StyledMessage>
+    </CenteredMain>
   );
 }

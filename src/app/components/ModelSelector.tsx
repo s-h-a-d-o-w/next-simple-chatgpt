@@ -1,6 +1,6 @@
-import { models } from "@/utils/consts";
-import { styled } from "../../../styled-system/jsx";
+import { models, type ModelKey } from "@/utils/consts";
 import { MdImage } from "react-icons/md";
+import { styled } from "../../../styled-system/jsx";
 
 const StyledSelect = styled("select", {
   base: {
@@ -41,8 +41,8 @@ const StyledSelectContainer = styled("div", {
 });
 
 type Props = {
-  value: keyof typeof models;
-  onChange: (value: keyof typeof models) => void;
+  value: ModelKey;
+  onChange: (value: ModelKey) => void;
   showAttachmentModelsOnly: boolean;
 };
 
@@ -55,7 +55,7 @@ export function ModelSelector({
     <StyledSelectContainer>
       <StyledSelect
         value={value}
-        onChange={(e) => onChange(e.target.value as keyof typeof models)}
+        onChange={(e) => onChange(e.target.value as ModelKey)}
       >
         {Object.entries(models)
           .filter(([_, { supportsAttachments }]) =>

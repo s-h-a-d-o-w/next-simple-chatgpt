@@ -29,3 +29,4 @@ export const models = {
     supportsAttachments: false,
   },
 } as const;
+export type ModelKey = keyof typeof models;

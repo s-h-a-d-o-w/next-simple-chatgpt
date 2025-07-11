@@ -1,9 +1,9 @@
-import { Centered } from "@/components/Centered";
+import { CenteredMain } from "@/components/CenteredMain";
 
 export default function Login() {
   return (
-    <Centered>
+    <CenteredMain>
       Access denied. You are not on our list of permitted users.
-    </Centered>
+    </CenteredMain>
   );
 }

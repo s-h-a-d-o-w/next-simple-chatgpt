@@ -1,6 +1,6 @@
 import { styled } from "../../styled-system/jsx";
 
-export const Centered = styled("main", {
+export const CenteredMain = styled("main", {
   base: {
     position: "absolute",
     width: "100%",

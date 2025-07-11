@@ -11,16 +11,14 @@ const isTest = Boolean(process.env["CI"]);
 export const POST = auth(async (req) => {
   const isUserWhitelisted = whitelist?.includes(String(req.auth?.user?.email));
   if (!isTest && !isUserWhitelisted) {
-    // In a production app, e.g. sentry would be great here for context logging.
     throw new Error("Unauthorized access attempt to /api/chat! ");
   }
 
-  const payload = await req.json();
-
+  const { model, messages } = await req.json();
   const result = streamText({
-    model: openai(payload.model),
-    messages: convertToCoreMessages(payload.messages),
-    providerOptions: ["o3-mini", "o4-mini"].includes(payload.model)
+    model: openai(model),
+    messages: convertToCoreMessages(messages),
+    providerOptions: ["o3-mini", "o4-mini"].includes(model)
       ? {
           openai: {
             reasoningEffort: "low",

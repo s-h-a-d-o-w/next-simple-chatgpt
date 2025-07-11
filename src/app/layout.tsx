@@ -2,6 +2,7 @@ import "./global.css";
 import type { Metadata } from "next";
 import { styled } from "../../styled-system/jsx";
 import { fonts } from "@/utils/fonts";
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Simple ChatGPT UI",
@@ -20,11 +21,7 @@ const Body = styled("body", {
   },
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html className={fonts.aleo.className} lang="en">
       <Body>{children}</Body>

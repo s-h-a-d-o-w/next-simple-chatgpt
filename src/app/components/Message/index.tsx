@@ -1,16 +1,16 @@
 import { IconButton } from "@/components/IconButton";
 import Spinner from "@/components/Spinner";
+import { useThrottledValue } from "@/hooks/useThrottledValue";
 import { type Message as MessageType } from "ai/react";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useDeferredValue } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { styled } from "../../../../styled-system/jsx";
+import { AttachmentPreviews } from "./AttachmentPreviews";
 import { Code } from "./Code";
 import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
 import { Cell, HeaderCell, Row } from "./TableElements";
-import Image from "next/image";
-import { throttle } from "lodash";
 
 const MESSAGE_STREAM_THROTTLE_DURATION = 500;
 
@@ -65,16 +65,11 @@ export const StyledMessage = styled("div", {
     },
     shortened: {
       true: {
-        // Not going to obsess over the fact that `cursor` should probably be in its own variant. Instead, might avoid Panda CSS in the future.
         cursor: "pointer",
         maxHeight: "115rem",
         overflowY: "hidden",
       },
     },
-  },
-
-  defaultVariants: {
-    variant: "default",
   },
 });
 
@@ -83,24 +78,20 @@ const MemoizedReactMarkdown = memo(
   (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 
-const StyledAttachmentsContainer = styled("div", {
-  base: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8rem",
-    marginBottom: "8rem",
-  },
-});
+function MessageWithThrottling({ content, ...props }: Props) {
+  // Throttle to be economical (mobile device batteries)
+  const throttledContent = useThrottledValue(
+    content,
+    MESSAGE_STREAM_THROTTLE_DURATION,
+  );
+  // Defer in case a low power device is unable to fully render within that window.
+  // Otherwise, e.g. aborting while streaming wouldn't be possible.
+  const displayText = useDeferredValue(throttledContent);
 
-const StyledImagePreview = styled("div", {
-  base: {
-    position: "relative",
-    width: "240rem",
-    height: "240rem",
-  },
-});
+  return <MessageWithoutThrottling content={displayText} {...props} />;
+}
 
-export const Message = memo(function Message({
+const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
   role,
   id,
   isLoading = false,
@@ -114,28 +105,10 @@ export const Message = memo(function Message({
   experimental_attachments,
 }: Props) {
   const isUser = role === "user";
-  const [displayText, setDisplayText] = useState(content);
-
-  const throttledRef = useRef(
-    throttle((next: string) => {
-      setDisplayText(next);
-    }, MESSAGE_STREAM_THROTTLE_DURATION),
-  );
-
-  useEffect(() => {
-    throttledRef.current(content);
-  }, [content]);
-
-  useEffect(() => {
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      throttledRef.current.cancel();
-    };
-  }, []);
 
   return role === "system" ? null : (
     <StyledMessage
-      variant={isUser ? "user" : undefined}
+      variant={isUser ? "user" : "default"}
       key={id}
       className={className}
       onClick={onClick}
@@ -143,20 +116,7 @@ export const Message = memo(function Message({
       shortened={shortened}
     >
       {experimental_attachments && experimental_attachments.length > 0 && (
-        <StyledAttachmentsContainer>
-          {experimental_attachments.map(({ url, name }, index) => (
-            <StyledImagePreview key={index}>
-              <Image
-                src={url}
-                alt={name ?? `Image ${index + 1}`}
-                fill
-                style={{
-                  objectFit: "contain",
-                }}
-              />
-            </StyledImagePreview>
-          ))}
-        </StyledAttachmentsContainer>
+        <AttachmentPreviews attachments={experimental_attachments} />
       )}
 
       <div style={{ width: "100%" }}>
@@ -172,7 +132,7 @@ export const Message = memo(function Message({
             tr: Row,
           }}
         >
-          {padNewlines(displayText)}
+          {padNewlines(content)}
         </MemoizedReactMarkdown>
       </div>
 
@@ -185,16 +145,24 @@ export const Message = memo(function Message({
           }}
         >
           {isLoading && <Spinner />}
-          {onDelete && !isLoading && (
+          {!isLoading && onDelete && (
             <IconButton
               name="delete"
               iconSize="md"
               onClick={() => onDelete(id)}
             />
           )}
-          {showCopyAll && !isLoading && <CopyButton content={displayText} />}
+          {!isLoading && showCopyAll && <CopyButton content={content} />}
         </div>
       )}
     </StyledMessage>
   );
 });
+
+export function Message({ isLoading = false, ...props }: Props) {
+  return isLoading ? (
+    <MessageWithThrottling {...props} />
+  ) : (
+    <MessageWithoutThrottling {...props} />
+  );
+}

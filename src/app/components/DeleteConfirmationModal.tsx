@@ -2,6 +2,13 @@ import { Dialog } from "@/components/Dialog";
 import { Button } from "@/components/Button";
 import { styled } from "../../../styled-system/jsx";
 
+const StyledButtonContainer = styled("div", {
+  base: {
+    display: "flex",
+    gap: "16rem",
+  },
+});
+
 const StyledDeleteConfirmationModal = styled("div", {
   base: {
     padding: "32rem",
@@ -33,8 +40,8 @@ export function DeleteConfirmationModal({
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <StyledDeleteConfirmationModal>
-        <div>Do you really want to delete your history?</div>
-        <div style={{ display: "flex", gap: "16rem" }}>
+        Do you really want to delete your history?
+        <StyledButtonContainer>
           <Button onClick={onConfirm}>Yes</Button>
           <Button
             ref={(element) => {
@@ -45,7 +52,7 @@ export function DeleteConfirmationModal({
           >
             No
           </Button>
-        </div>
+        </StyledButtonContainer>
       </StyledDeleteConfirmationModal>
     </Dialog>
   );

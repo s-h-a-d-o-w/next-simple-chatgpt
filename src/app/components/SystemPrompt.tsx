@@ -7,6 +7,13 @@ type Props = {
   value: string;
 };
 
+const StyledForm = styled("form", {
+  base: {
+    display: "flex",
+    flexDirection: "column",
+  },
+});
+
 const StyledTextArea = styled(Textarea, {
   base: {
     borderLeftWidth: "2rem",
@@ -22,9 +29,9 @@ const StyledTextArea = styled(Textarea, {
 
 export function SystemPrompt({ onChange, value }: Props) {
   return (
-    <form style={{ display: "flex", flexDirection: "column" }}>
+    <StyledForm>
       <div>System prompt</div>
       <StyledTextArea name="prompt" value={value} onChange={onChange} />
-    </form>
+    </StyledForm>
   );
 }

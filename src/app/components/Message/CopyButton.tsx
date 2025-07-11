@@ -1,5 +1,5 @@
 import { IconButton } from "@/components/IconButton";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type Props = {
   content: string;
@@ -7,15 +7,23 @@ type Props = {
   className?: string;
 };
 
+const COPY_STATUS_TIMEOUT = 1000;
+
 export function CopyButton({ className, content }: Props) {
   const [hasCopied, setHasCopied] = useState(false);
-  const type = "text/plain";
-  const blob = new Blob([content], { type });
 
   // Only works with HTTPS.
-  const clipboardItem = typeof window !== "undefined" && [
-    new ClipboardItem({ [type]: blob }),
-  ];
+  const clipboardItem = useMemo(
+    () =>
+      typeof window !== "undefined"
+        ? [
+            new ClipboardItem({
+              "text/plain": new Blob([content], { type: "text/plain" }),
+            }),
+          ]
+        : undefined,
+    [content],
+  );
 
   return !clipboardItem ? null : (
     <IconButton
@@ -28,7 +36,7 @@ export function CopyButton({ className, content }: Props) {
         setHasCopied(true);
         setTimeout(() => {
           setHasCopied(false);
-        }, 1000);
+        }, COPY_STATUS_TIMEOUT);
       }}
     />
   );

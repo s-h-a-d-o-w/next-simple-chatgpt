@@ -12,9 +12,11 @@ import {
   MdCached,
   MdImage,
 } from "react-icons/md";
+import { FaGithub } from "react-icons/fa6";
 import { Button } from "./Button";
 import { css } from "../../styled-system/css";
 import { ComponentProps } from "../../styled-system/types";
+import { styled } from "../../styled-system/jsx";
 
 type Props = ComponentProps<typeof Button> & {
   name: keyof typeof iconMap;
@@ -34,20 +36,30 @@ const iconMap = {
   save: MdFileDownload,
   stop: MdStop,
   up: MdArrowUpward,
+  github: FaGithub,
 } as const;
+
+const StyledButton = styled(Button, {
+  base: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6rem",
+    whiteSpace: "nowrap",
+  },
+});
+
+const StyledLabel = styled("span", {
+  base: {
+    marginBottom: "-1px",
+  },
+});
 
 export function IconButton({ name, iconSize = "xl", label, ...rest }: Props) {
   const Icon = iconMap[name];
   const { "aria-label": ariaLabel, ...otherProps } = rest;
   return (
-    <Button
+    <StyledButton
       iconSize={iconSize}
-      className={css({
-        display: "flex",
-        alignItems: "center",
-        gap: "4rem",
-        whiteSpace: "nowrap",
-      })}
       aria-label={ariaLabel ?? name}
       {...otherProps}
     >
@@ -57,7 +69,7 @@ export function IconButton({ name, iconSize = "xl", label, ...rest }: Props) {
           height: "100%",
         })}
       />
-      {label && <span className={css({ marginBottom: "-1px" })}>{label}</span>}
-    </Button>
+      {label && <StyledLabel>{label}</StyledLabel>}
+    </StyledButton>
   );
 }

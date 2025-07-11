@@ -3,6 +3,16 @@ import { Button } from "@/components/Button";
 import { Message as MessageType } from "ai";
 import { styled } from "../../../styled-system/jsx";
 
+type Props = {
+  messages: MessageType[];
+
+  hasError?: boolean;
+  isLoading?: boolean;
+  onDelete?: (id: string) => void;
+  onRetry?: () => void;
+  showCopyAll?: boolean;
+};
+
 const MessageContainer = styled("div", {
   base: {
     width: "95%",
@@ -22,23 +32,13 @@ const MessageContainer = styled("div", {
   },
 });
 
-type Props = {
-  messages: MessageType[];
-
-  hasError?: boolean;
-  isLoading?: boolean;
-  onDelete?: (id: string) => void;
-  onRetry?: () => void;
-  showCopyAll?: boolean;
-};
-
 export function Messages({
   hasError,
-  isLoading = false,
   messages,
   onDelete,
   onRetry,
   showCopyAll,
+  isLoading = false,
 }: Props) {
   return (
     <>

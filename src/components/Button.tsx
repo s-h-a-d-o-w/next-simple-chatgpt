@@ -1,10 +1,4 @@
 import { styled } from "../../styled-system/jsx";
-import { SystemStyleObject } from "../../styled-system/types";
-
-const transition: SystemStyleObject = {
-  transitionDuration: "0.15s",
-  transitionTimingFunction: "ease-out",
-};
 
 export const Button = styled("button", {
   base: {
@@ -19,7 +13,8 @@ export const Button = styled("button", {
       color: "white",
     },
 
-    ...transition,
+    transitionDuration: "0.15s",
+    transitionTimingFunction: "ease-out",
     transitionProperty: "background-color,opacity",
 
     _hover: {

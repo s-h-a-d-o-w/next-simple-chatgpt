@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { styled } from "../../../styled-system/jsx";
 import { AuthButton } from "./components/AuthButton";
-import { Centered } from "@/components/Centered";
+import { CenteredMain } from "@/components/CenteredMain";
 
-const StyledMain = styled("main", {
+const StyledMessage = styled("div", {
   base: {
     width: "80%",
     maxWidth: "400rem",
@@ -15,8 +15,8 @@ const StyledMain = styled("main", {
 
 export default function Login() {
   return (
-    <Centered>
-      <StyledMain>
+    <CenteredMain>
+      <StyledMessage>
         <h1>This is a private app.</h1>
         <p>
           If you aren&apos;t on the whitelist, you will not be able to sign in!
@@ -28,7 +28,7 @@ export default function Login() {
           .
         </p>
         <AuthButton />
-      </StyledMain>
-    </Centered>
+      </StyledMessage>
+    </CenteredMain>
   );
 }
