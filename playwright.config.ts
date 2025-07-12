@@ -11,7 +11,7 @@ const baseURL = isAuthoring
  */
 export default defineConfig({
   testDir: "./tests",
-  globalSetup: isAuthoring ? "./playwright.setup.ts" : undefined,
+  globalSetup: "./playwright.setup.ts",
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env["CI"],
