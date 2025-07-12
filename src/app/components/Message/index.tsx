@@ -150,7 +150,7 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
               onClick={() => onDelete(id)}
             />
           )}
-          {!isLoading && showCopyAll && <CopyButton content={content} />}
+          {!isLoading && showCopyAll && <CopyButton>{content}</CopyButton>}
         </div>
       )}
     </StyledMessage>

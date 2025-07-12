@@ -98,7 +98,7 @@ export function Code(
       >
         {text}
       </Prism>
-      <StyledCopyButton content={text} />
+      <StyledCopyButton>{text}</StyledCopyButton>
     </div>
   );
 }
