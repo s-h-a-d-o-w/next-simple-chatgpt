@@ -44,7 +44,9 @@ export const Messages = memo(function Messages({
   return (
     <>
       {messages
-        .filter((message) => message.role !== "system")
+        .filter(
+          (message) => message.role !== "system" && message.content !== "",
+        )
         .map((message, idx) => (
           <MessageContainer
             data-testid={`message-${idx}-${message.role}`}
@@ -55,6 +57,7 @@ export const Messages = memo(function Messages({
               isLoading={
                 isLoading &&
                 message.role !== "user" &&
+                // -2 because of system message that we've excluded above
                 idx === messages.length - 2
               }
               onDelete={onDelete}
@@ -63,15 +66,6 @@ export const Messages = memo(function Messages({
             />
           </MessageContainer>
         ))}
-      {isLoading && messages[messages.length - 1]?.role === "user" && (
-        <MessageContainer
-          data-testid={`message-loading`}
-          key={`message-loading`}
-          isUser={false}
-        >
-          <Message content="" id="message-loading" isLoading role="assistant" />
-        </MessageContainer>
-      )}
       {hasError && (
         <div style={{ alignSelf: "flex-end" }}>
           An error occurred. If it keeps happening, please try refreshing the
