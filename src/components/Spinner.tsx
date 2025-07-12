@@ -29,7 +29,7 @@ const SpinnerImplementation = styled("div", {
 
 function Spinner(props: HTMLAttributes<HTMLDivElement>) {
   return (
-    <SpinnerContainer {...props}>
+    <SpinnerContainer {...props} role="status" aria-label="Loading...">
       <SpinnerImplementation />
     </SpinnerContainer>
   );
