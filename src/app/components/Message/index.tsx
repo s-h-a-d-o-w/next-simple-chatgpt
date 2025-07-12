@@ -1,5 +1,4 @@
 import { IconButton } from "@/components/IconButton";
-import Spinner from "@/components/Spinner";
 import { useThrottledValue } from "@/hooks/useThrottledValue";
 import { type Message as MessageType } from "ai/react";
 import { memo, useDeferredValue } from "react";
@@ -144,7 +143,6 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
             gap: "12rem",
           }}
         >
-          {isLoading && <Spinner />}
           {!isLoading && onDelete && (
             <IconButton
               name="delete"
@@ -161,8 +159,8 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
 
 export function Message({ isLoading = false, ...props }: Props) {
   return isLoading ? (
-    <MessageWithThrottling {...props} />
+    <MessageWithThrottling isLoading={isLoading} {...props} />
   ) : (
-    <MessageWithoutThrottling {...props} />
+    <MessageWithoutThrottling isLoading={isLoading} {...props} />
   );
 }
