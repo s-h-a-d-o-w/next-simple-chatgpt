@@ -1,6 +1,11 @@
 import { auth } from "@/auth";
 import { openai } from "@ai-sdk/openai";
-import { convertToCoreMessages, streamText } from "ai";
+import { convertToCoreMessages, streamText, type Message } from "ai";
+
+export type ChatRequest = {
+  model: string;
+  messages: Message[];
+};
 
 // Allow streaming responses up to 60 seconds
 export const maxDuration = 60;
@@ -14,7 +19,7 @@ export const POST = auth(async (req) => {
     throw new Error("Unauthorized access attempt to /api/chat! ");
   }
 
-  const { model, messages } = await req.json();
+  const { model, messages } = (await req.json()) as ChatRequest;
   const result = streamText({
     model: openai(model),
     messages: convertToCoreMessages(messages),
@@ -29,6 +34,7 @@ export const POST = auth(async (req) => {
 
   return result.toDataStreamResponse({
     getErrorMessage(error) {
+      // Would add error reporting service integration in commercial product here.
       console.log(error);
       return "An error occurred.";
     },

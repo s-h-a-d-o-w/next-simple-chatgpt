@@ -24,6 +24,7 @@ import { styled } from "../../styled-system/jsx";
 import { type ModelKey } from "@/utils/consts";
 import useLocalStorageState from "use-local-storage-state";
 import "../utils/logBuildInfo";
+import type { ChatRequest } from "./api/chat/route";
 
 function createSystemMessage(content: string) {
   return {
@@ -81,7 +82,7 @@ export default function Home() {
     initialMessages: [createSystemMessage(systemValue)],
     body: {
       model,
-    },
+    } satisfies Omit<ChatRequest, "messages">,
   });
   const isLoading = status === "submitted" || status === "streaming";
 
