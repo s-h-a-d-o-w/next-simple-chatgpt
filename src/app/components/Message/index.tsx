@@ -122,6 +122,7 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
         <MemoizedReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
+            pre: ({ children }) => children,
             code: Code,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             th: HeaderCell,

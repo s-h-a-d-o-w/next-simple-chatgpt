@@ -1,6 +1,7 @@
 .env
 **/*.css.d.ts
 /playwright-report
+/playwright.state.json
 /test-results
 /.vscode
 playground.ts

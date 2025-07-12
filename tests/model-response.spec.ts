@@ -1,28 +1,23 @@
 import { test, expect } from "@playwright/test";
 import { models } from "@/utils/consts";
 
-test("each model generates a valid response", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Sign in with GitHub" }).click();
-  await page.getByRole("button", { name: "Sign in with Test" }).click();
+for (const modelId of Object.keys(models)) {
+  test(`Model ${modelId} generates a valid response`, async ({ page }) => {
+    await page.goto("/");
 
-  const promptInput = page.getByPlaceholder("Enter your prompt here.");
-  const modelIds = Object.keys(models);
-
-  for (const modelId of modelIds) {
     await page.selectOption("select", modelId);
 
+    const promptInput = page.getByPlaceholder("Enter your prompt here.");
     await promptInput.fill("Hello");
     await promptInput.press("Control+Enter");
 
     const assistantMessage = page.locator('[data-testid$="-assistant"]');
+    await assistantMessage.waitFor({ state: "visible" });
     await expect(assistantMessage).toHaveText(/\S/);
 
     await page.getByRole("button", { name: "reset" }).click();
     await expect(
       page.getByPlaceholder("Enter your prompt here."),
     ).toBeVisible();
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-});
+  });
+}

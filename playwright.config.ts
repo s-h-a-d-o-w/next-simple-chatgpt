@@ -1,13 +1,17 @@
 import { defineConfig, devices } from "@playwright/test";
+import { getLocalIp } from "./scripts/getLocalIp";
 
-const baseURL = "http://localhost:3000";
+const isAuthoring = process.env["E2E_AUTHORING"] === "true";
+const baseURL = isAuthoring
+  ? `https://${getLocalIp()}:3000`
+  : "http://localhost:3000";
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: "./tests",
-  /* Run tests in files in parallel */
+  globalSetup: isAuthoring ? "./playwright.setup.ts" : undefined,
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env["CI"],
@@ -18,6 +22,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL,
+    storageState: "playwright.state.json",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -34,7 +39,8 @@ export default defineConfig({
   // We can't re-use the dev server because authentication would be a problem.
   // Mocking authentication requires running the server in "CI mode".
   webServer: {
-    command: "pnpm cross-env CI=true pnpm start",
+    ignoreHTTPSErrors: true,
+    command: isAuthoring ? "pnpm dev" : "pnpm start",
     url: baseURL,
     stdout: "pipe",
     stderr: "pipe",
