@@ -1,5 +1,10 @@
 "use client";
 
+import "../styles/prism-theme.css";
+
+import { useHistory } from "@/hooks/useHistory";
+import { useScrollToTarget } from "@/hooks/useScrollToTarget";
+import { type ModelKey } from "@/utils/consts";
 import { useChat, type Message as MessageType } from "@ai-sdk/react";
 import { cloneDeep, debounce } from "lodash";
 import {
@@ -10,21 +15,18 @@ import {
   useState,
 } from "react";
 import superjson from "superjson";
+import useLocalStorageState from "use-local-storage-state";
+import { styled } from "../../styled-system/jsx";
 import { loadJsonFile } from "../utils/loadJsonFile";
+import "../utils/logBuildInfo";
 import { saveJsonFile } from "../utils/saveJsonFile";
+import type { ChatRequest } from "./api/chat/route";
+import { Actions } from "./components/Actions";
 import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
 import { History } from "./components/History";
 import { Messages } from "./components/Messages";
-import { Actions } from "./components/Actions";
 import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
-import { useScrollToTarget } from "@/hooks/useScrollToTarget";
-import { useHistory } from "@/hooks/useHistory";
-import { styled } from "../../styled-system/jsx";
-import { type ModelKey } from "@/utils/consts";
-import useLocalStorageState from "use-local-storage-state";
-import "../utils/logBuildInfo";
-import type { ChatRequest } from "./api/chat/route";
 
 function createSystemMessage(content: string) {
   return {
@@ -48,6 +50,33 @@ const StyledMain = styled("main", {
 });
 
 export default function Home() {
+  // const [isDarkMode] = useIsDarkMode();
+  // console.log("isDarkMode", isDarkMode);
+
+  // useEffect(() => {
+  //   if (isDarkMode) {
+  //     import("../styles/dark.css");
+  //   } else {
+  //     import("../styles/light.css");
+  //   }
+  // }, [isDarkMode]);
+
+  // useEffect(() => {
+  //   const previousPrismCss = document.querySelector("link[href*='prism.css']");
+  //   if (previousPrismCss) {
+  //     previousPrismCss.remove();
+  //   }
+
+  //   const prismCss = document.createElement("link");
+  //   if (isDarkMode) {
+  //     prismCss.href = "dark.css";
+  //   } else {
+  //     prismCss.href = "light.css";
+  //   }
+  //   prismCss.rel = "stylesheet";
+  //   document.head.appendChild(prismCss);
+  // }, [isDarkMode]);
+
   const endOfPageRef = useRef<HTMLDivElement>(null);
 
   const [showHistory, setShowHistory] = useState(false);

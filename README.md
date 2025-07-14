@@ -37,12 +37,13 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 ## Using production bundle locally
 
-1. Create a certificate for `localhost` using `mkcert`
+1. Run `mkcert localhost`, move certificates into `./certificates`.
 1. (If using via LAN: Put/uncomment the `AUTH_URL` in your `.env.local`. You will get a certificate warning in the browser, since localhost and IP don't match. I don't see a way of avoiding that. Running `next start` with IP instead of localhost results in `Request failed to proxy: ECONNREFUSED`.)
 1. Create another OAuth app for localhost, put its ID and SECRET into your `.env.local`
 1. `pnpm build`
 1. `pnpm start:local` (Will probably ask you about installing `local-ssl-proxy` the first time)
 1. Wait for `Started proxy: https://localhost:3000 → http://localhost:3001`
+1. For some reason, after login, you'll be redirected to port 3001 and obviously get an error. You'll have to manually switch back to port 3000. (I don't know why that happens because it does even when setting `redirectTo` to an absolute path with port 3000.)
 
 (Thanks to [Miguel Oller for this](https://www.makeswift.com/blog/accessing-your-local-nextjs-dev-server-using-https)!)
 

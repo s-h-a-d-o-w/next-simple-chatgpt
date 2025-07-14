@@ -1,3 +1,5 @@
+refractorLanguages.ts
+
 .env
 **/*.css.d.ts
 /playwright-report
