@@ -79,10 +79,10 @@ export function Code(
     return <code className={className}>{text}</code>;
   }
 
-  return highlightedCode ? (
+  return (
     <StyledPre>
-      <code>{highlightedCode}</code>
+      <code>{highlightedCode || text}</code>
       <StyledCopyButton>{text}</StyledCopyButton>
     </StyledPre>
-  ) : null;
+  );
 }

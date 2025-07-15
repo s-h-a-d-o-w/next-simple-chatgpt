@@ -1,4 +1,4 @@
-import { readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 function getAvailableLanguages(): string[] {
@@ -37,7 +37,12 @@ export function isSupportedLanguage(language: string): language is SupportedLang
 
 function main() {
   try {
-    console.log("🔍 Scanning for available languages...");
+    if (existsSync("src/app/components/Message/Code/refractorLanguages.ts")) {
+      console.log("🔍 Syntax highlighting languages already generated");
+      return;
+    }
+
+    console.log("🔍 Scanning for available syntax highlighting languages...");
     const languages = getAvailableLanguages();
     console.log(`📝 Found ${languages.length} languages`);
 
@@ -49,7 +54,7 @@ function main() {
 
     console.log(`📊 Total languages supported: ${languages.length}`);
   } catch (error) {
-    console.error("❌ Error generating refractor languages:", error);
+    console.error("❌ Error generating syntax highlighting languages:", error);
     process.exit(1);
   }
 }
