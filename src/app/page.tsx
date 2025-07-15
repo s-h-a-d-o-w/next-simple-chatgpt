@@ -4,7 +4,7 @@ import "../styles/prism-theme.css";
 
 import { useHistory } from "@/hooks/useHistory";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
-import { type ModelKey } from "@/utils/consts";
+import { config, type ModelKey } from "@/config";
 import { useChat, type Message as MessageType } from "@ai-sdk/react";
 import { cloneDeep, debounce } from "lodash";
 import {
@@ -50,33 +50,6 @@ const StyledMain = styled("main", {
 });
 
 export default function Home() {
-  // const [isDarkMode] = useIsDarkMode();
-  // console.log("isDarkMode", isDarkMode);
-
-  // useEffect(() => {
-  //   if (isDarkMode) {
-  //     import("../styles/dark.css");
-  //   } else {
-  //     import("../styles/light.css");
-  //   }
-  // }, [isDarkMode]);
-
-  // useEffect(() => {
-  //   const previousPrismCss = document.querySelector("link[href*='prism.css']");
-  //   if (previousPrismCss) {
-  //     previousPrismCss.remove();
-  //   }
-
-  //   const prismCss = document.createElement("link");
-  //   if (isDarkMode) {
-  //     prismCss.href = "dark.css";
-  //   } else {
-  //     prismCss.href = "light.css";
-  //   }
-  //   prismCss.rel = "stylesheet";
-  //   document.head.appendChild(prismCss);
-  // }, [isDarkMode]);
-
   const endOfPageRef = useRef<HTMLDivElement>(null);
 
   const [showHistory, setShowHistory] = useState(false);
@@ -86,7 +59,7 @@ export default function Home() {
     NonNullable<MessageType["experimental_attachments"]>
   >([]);
   const [model, setModel] = useLocalStorageState<ModelKey>("model", {
-    defaultValue: "gpt-4-turbo",
+    defaultValue: config.models.default,
   });
   const [systemValue, setSystemValue] = useLocalStorageState<string>(
     "system-message",

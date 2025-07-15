@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { models } from "@/utils/consts";
+import { models } from "@/config";
 
 for (const modelId of Object.keys(models)) {
   test(`Model ${modelId} generates a valid response`, async ({ page }) => {

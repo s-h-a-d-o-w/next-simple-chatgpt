@@ -1,4 +1,4 @@
-import { models, type ModelKey } from "@/utils/consts";
+import { models, type ModelKey } from "@/config";
 import { MdImage } from "react-icons/md";
 import { styled } from "../../../styled-system/jsx";
 

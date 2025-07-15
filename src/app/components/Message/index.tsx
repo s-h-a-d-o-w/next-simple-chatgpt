@@ -10,8 +10,7 @@ import { Code } from "./Code";
 import { CopyButton } from "./CopyButton";
 import { padNewlines } from "./padNewlines";
 import { Cell, HeaderCell, Row } from "./TableElements";
-
-const MESSAGE_STREAM_THROTTLE_DURATION = 500;
+import { config } from "@/config";
 
 type Props = MessageType & {
   className?: string;
@@ -81,7 +80,7 @@ function MessageWithThrottling({ content, ...props }: Props) {
   // Throttle to be economical (mobile device batteries)
   const throttledContent = useThrottledValue(
     content,
-    MESSAGE_STREAM_THROTTLE_DURATION,
+    config.ui.messageStreamThrottle,
   );
   // Defer in case a low power device is unable to fully render within that window.
   // Otherwise, e.g. aborting while streaming wouldn't be possible.

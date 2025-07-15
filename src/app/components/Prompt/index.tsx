@@ -3,7 +3,7 @@ import { FormEvent, useCallback, useRef } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { Textarea } from "@/components/Textarea";
-import { models, type ModelKey } from "@/utils/consts";
+import { models, type ModelKey } from "@/config";
 import { AttachmentPreviews } from "./AttachmentPreviews";
 import { filesToAttachments } from "./filesToAttachments";
 import type { Attachment } from "ai";

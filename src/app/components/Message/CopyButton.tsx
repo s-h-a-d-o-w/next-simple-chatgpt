@@ -1,4 +1,5 @@
 import { IconButton } from "@/components/IconButton";
+import { config } from "@/config";
 import { useMemo, useState } from "react";
 
 type Props = {
@@ -6,8 +7,6 @@ type Props = {
 
   className?: string;
 };
-
-const COPY_STATUS_TIMEOUT = 1000;
 
 export function CopyButton({ className, children }: Props) {
   const [hasCopied, setHasCopied] = useState(false);
@@ -36,7 +35,7 @@ export function CopyButton({ className, children }: Props) {
         setHasCopied(true);
         setTimeout(() => {
           setHasCopied(false);
-        }, COPY_STATUS_TIMEOUT);
+        }, config.ui.copyStatusTimeout);
       }}
     />
   );
