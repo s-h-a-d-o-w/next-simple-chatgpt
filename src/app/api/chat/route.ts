@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { config } from "@/config";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText, type Message } from "ai";
 
@@ -8,7 +7,7 @@ export type ChatRequest = {
   messages: Message[];
 };
 
-export const maxDuration = config.api.maxDuration;
+export const maxDuration = 60;
 
 const whitelist = process.env["WHITELIST"]?.split(",");
 const isTest = Boolean(process.env["CI"]);

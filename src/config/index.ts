@@ -27,9 +27,6 @@ export const models = {
 export type ModelKey = keyof typeof models;
 
 export const config = {
-  api: {
-    maxDuration: 60,
-  },
   ui: {
     messageStreamThrottle: 500,
     copyStatusTimeout: 1000,
