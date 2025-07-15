@@ -11,7 +11,11 @@ import { styled } from "../../../../../styled-system/jsx";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import { Fragment, jsxs, jsx } from "react/jsx-runtime";
 import { refractor } from "refractor/core";
-import { isSupportedLanguage, languageLoaders } from "./refractorLanguages";
+import {
+  isSupportedLanguage,
+  languageLoaders,
+  type SupportedLanguage,
+} from "./refractorLanguages";
 
 const StyledCopyButton = styled(CopyButton, {
   base: {
@@ -35,23 +39,14 @@ const StyledPre = styled("pre", {
   },
 });
 
-const alreadyLoaded = new Set<string>();
+const alreadyLoaded = new Set<SupportedLanguage>();
+async function loadLanguage(language: SupportedLanguage) {
+  // Race condition (multiple calls before the language is loaded once) is negligible because refractor only registers once, so all that will happen is that we possibly import the same language multiple times. Which is the only thing that we generally avoid by using the alreadyLoaded Set.
+  refractor.register((await languageLoaders[language]()).default);
+  alreadyLoaded.add(language);
+}
 
-async function renderCode(
-  isInline: boolean,
-  text: string,
-  language: string | undefined,
-) {
-  if (isInline || !language || !isSupportedLanguage(language)) {
-    return text;
-  }
-
-  if (!alreadyLoaded.has(language)) {
-    // Race condition (multiple calls before the language is loaded once) is negligible because refractor only registers once, so all that will happen is that we possibly import the same language multiple times. Which is the only thing that we generally avoid with this check here.
-    refractor.register((await languageLoaders[language]()).default);
-    alreadyLoaded.add(language);
-  }
-
+function renderCode(text: string, language: SupportedLanguage) {
   const tree = refractor.highlight(text, language);
   return toJsxRuntime(tree, { Fragment, jsxs, jsx });
 }
@@ -65,14 +60,21 @@ export function Code(
   const text = children ? String(children) : "";
   const language = /language-(\w+)/.exec(className || "")?.[1] || "";
   const isInline = !text.includes("\n");
+  const isLanguageLoaded = alreadyLoaded.has(language as SupportedLanguage);
 
-  const [highlightedCode, setHighlightedCode] = useState<ReactNode>();
+  const [highlightedCode, setHighlightedCode] = useState<ReactNode>(
+    isLanguageLoaded && isSupportedLanguage(language)
+      ? renderCode(text, language)
+      : "",
+  );
 
   useEffect(() => {
-    renderCode(isInline, text, language).then((code) => {
-      setHighlightedCode(code);
-    });
-  }, [isInline, text, language, className]);
+    if (!isInline && !isLanguageLoaded && isSupportedLanguage(language)) {
+      loadLanguage(language).then(() => {
+        setHighlightedCode(renderCode(text, language));
+      });
+    }
+  }, [isInline, text, language, isLanguageLoaded]);
 
   // Inline code
   if (isInline) {
