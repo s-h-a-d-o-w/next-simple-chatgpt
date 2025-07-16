@@ -1,4 +1,5 @@
 import {
+  useDeferredValue,
   useEffect,
   useState,
   type ClassAttributes,
@@ -67,6 +68,7 @@ export function Code(
       ? renderCode(text, language)
       : "",
   );
+  const deferredHighlightedCode = useDeferredValue(highlightedCode);
 
   useEffect(() => {
     if (!isInline && !isLanguageLoaded && isSupportedLanguage(language)) {
@@ -83,7 +85,7 @@ export function Code(
 
   return (
     <StyledPre>
-      <code>{highlightedCode || text}</code>
+      <code>{deferredHighlightedCode || text}</code>
       <StyledCopyButton>{text}</StyledCopyButton>
     </StyledPre>
   );
