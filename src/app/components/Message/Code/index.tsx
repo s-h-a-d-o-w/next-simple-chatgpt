@@ -39,7 +39,7 @@ const StyledPre = styled("pre", {
   },
 });
 
-const alreadyLoaded = new Set<SupportedLanguage>();
+const alreadyLoaded = new Set<string>();
 async function loadLanguage(language: SupportedLanguage) {
   // Race condition (multiple calls before the language is loaded once) is negligible because refractor only registers once, so all that will happen is that we possibly import the same language multiple times. Which is the only thing that we generally avoid by using the alreadyLoaded Set.
   refractor.register((await languageLoaders[language]()).default);
@@ -60,7 +60,7 @@ export function Code(
   const text = children ? String(children) : "";
   const language = /language-(\w+)/.exec(className || "")?.[1] || "";
   const isInline = !text.includes("\n");
-  const isLanguageLoaded = alreadyLoaded.has(language as SupportedLanguage);
+  const isLanguageLoaded = alreadyLoaded.has(language);
 
   const [highlightedCode, setHighlightedCode] = useState<ReactNode>(
     isLanguageLoaded && isSupportedLanguage(language)
