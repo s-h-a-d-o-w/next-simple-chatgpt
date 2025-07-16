@@ -187,19 +187,23 @@ export default function Home() {
     );
   }, [conversationHistory]);
 
+  const handleReset = useCallback(() => {
+    setMessages([createSystemMessage(systemValue)]);
+    setAttachments([]);
+  }, [setMessages, systemValue]);
+
+  const handleShowHistory = useCallback(() => {
+    setShowHistory(true);
+  }, []);
+
   return (
     <>
       <Actions
         disabledHistoryActions={Object.keys(conversationHistory).length === 0}
         model={model}
         onModelChange={setModel}
-        onShowHistory={() => {
-          setShowHistory(true);
-        }}
-        onReset={() => {
-          setAttachments([]);
-          setMessages([createSystemMessage(systemValue)]);
-        }}
+        onReset={handleReset}
+        onShowHistory={handleShowHistory}
         showAttachmentModelsOnly={
           attachments.length > 0 ||
           messages.some(

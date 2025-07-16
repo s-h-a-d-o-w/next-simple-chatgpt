@@ -7,6 +7,7 @@ import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClien
 import HmrTimestamp from "./HmrTimestamp";
 import { ModelSelector } from "./ModelSelector";
 import { ThemeToggle } from "./ThemeToggle";
+import { memo } from "react";
 
 type Props = {
   disabledHistoryActions: boolean;
@@ -38,7 +39,7 @@ const StyledButtonGroup = styled("div", {
   },
 });
 
-export function Actions({
+export const Actions = memo(function Actions({
   disabledHistoryActions,
   model,
   onModelChange,
@@ -83,4 +84,4 @@ export function Actions({
       </StyledButtonGroup>
     </StyledActions>
   );
-}
+});
