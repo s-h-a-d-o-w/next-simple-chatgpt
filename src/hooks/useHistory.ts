@@ -20,10 +20,14 @@ function stripAttachmentsFromMessages(messages: MessageType[]): MessageType[] {
   );
 }
 
-export function useHistory(isLoading: boolean, messages: MessageType[]) {
+export function useHistory(
+  isLoading: boolean,
+  messages: MessageType[],
+  namespace?: string,
+) {
   const [conversationHistory, setConversationHistory] = useLocalStorageState<
     Array<MessageType[]>
-  >("history", {
+  >(`history${namespace ? `-${namespace}` : ""}`, {
     defaultValue: [],
     serializer: superjson,
   });
