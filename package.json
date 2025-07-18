@@ -27,6 +27,7 @@
     "playground": "ts ./playground.ts"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.2.12",
     "@ai-sdk/openai": "^1.3.22",
     "@ai-sdk/react": "^1.2.12",
     "ai": "^4.3.16",

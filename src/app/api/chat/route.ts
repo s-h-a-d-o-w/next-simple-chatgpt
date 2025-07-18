@@ -1,9 +1,11 @@
 import { auth } from "@/auth";
+import { models, type ModelKey } from "@/config";
+import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText, type Message } from "ai";
 
 export type ChatRequest = {
-  model: string;
+  model: ModelKey;
   messages: Message[];
 };
 
@@ -19,8 +21,9 @@ export const POST = auth(async (req) => {
   }
 
   const { model, messages } = (await req.json()) as ChatRequest;
+  const modelConfig = models[model];
   const result = streamText({
-    model: openai(model),
+    model: modelConfig.provider === "openai" ? openai(model) : anthropic(model),
     messages: convertToCoreMessages(messages),
     providerOptions: ["o3-mini", "o4-mini"].includes(model)
       ? {
