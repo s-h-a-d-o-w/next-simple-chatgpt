@@ -29,9 +29,10 @@ const StyledCopyButton = styled(CopyButton, {
 const StyledPre = styled("pre", {
   base: {
     position: "relative",
-    whiteSpace: "pre-wrap",
     padding: "16rem 12rem",
     margin: "8rem 0",
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-all",
 
     backgroundColor: "white",
     _dark: {
