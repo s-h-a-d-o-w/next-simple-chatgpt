@@ -14,7 +14,6 @@ import { config } from "@/config";
 
 type Props = MessageType & {
   className?: string;
-  fullHeight?: boolean;
   isLoading?: boolean;
   onClick?: () => void;
   onDelete?: (id: string) => void;
@@ -56,11 +55,6 @@ export const StyledMessage = styled("div", {
         },
       },
     },
-    fullHeight: {
-      true: {
-        minHeight: "fit-content",
-      },
-    },
     shortened: {
       true: {
         cursor: "pointer",
@@ -93,7 +87,6 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
   role,
   id,
   isLoading = false,
-  fullHeight = true,
   shortened = false,
   showCopyAll = false,
   content,
@@ -110,7 +103,6 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
       key={id}
       className={className}
       onClick={onClick}
-      fullHeight={fullHeight}
       shortened={shortened}
     >
       {experimental_attachments && experimental_attachments.length > 0 && (
