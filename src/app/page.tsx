@@ -69,6 +69,7 @@ export default function Home() {
     },
   );
 
+  const [chatId, setChatId] = useState(0);
   const {
     messages,
     setMessages,
@@ -80,7 +81,7 @@ export default function Home() {
     error,
     reload,
   } = useChat({
-    keepLastMessageOnError: true,
+    id: chatId.toString(),
     initialMessages: [createSystemMessage(systemValue)],
     body: {
       model,
@@ -188,9 +189,9 @@ export default function Home() {
   }, [conversationHistory]);
 
   const handleReset = useCallback(() => {
-    setMessages([createSystemMessage(systemValue)]);
+    setChatId((currentChatId) => currentChatId + 1);
     setAttachments([]);
-  }, [setMessages, systemValue]);
+  }, []);
 
   const handleShowHistory = useCallback(() => {
     setShowHistory(true);
