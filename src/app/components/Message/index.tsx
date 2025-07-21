@@ -1,19 +1,17 @@
 import { IconButton } from "@/components/IconButton";
+import Spinner from "@/components/Spinner";
+import { config } from "@/config";
 import { useThrottledValue } from "@/hooks/useThrottledValue";
 import { type Message as MessageType } from "ai/react";
 import { memo, useDeferredValue } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { styled } from "../../../../styled-system/jsx";
 import { AttachmentPreviews } from "./AttachmentPreviews";
-import { Code } from "./Code";
 import { CopyButton } from "./CopyButton";
-import { padNewlines } from "./padNewlines";
-import { Cell, HeaderCell, Row } from "./TableElements";
-import { config } from "@/config";
+import { Part } from "./Part";
 
 type Props = MessageType & {
   className?: string;
+  isExpandable?: boolean;
   isLoading?: boolean;
   onClick?: () => void;
   onDelete?: (id: string) => void;
@@ -24,6 +22,7 @@ type Props = MessageType & {
 export const StyledMessage = styled("div", {
   base: {
     display: "flex",
+    position: "relative",
     flexDirection: "column",
     gap: "8rem",
     padding: "12rem",
@@ -34,16 +33,6 @@ export const StyledMessage = styled("div", {
 
   variants: {
     variant: {
-      user: {
-        backgroundColor: "amber.100",
-        borderLeftWidth: "4rem",
-
-        borderColor: "amber.800",
-        _dark: {
-          backgroundColor: "gray.700",
-          borderColor: "brand.500",
-        },
-      },
       default: {
         backgroundColor: "stone.100",
         borderRightWidth: "4rem",
@@ -52,6 +41,16 @@ export const StyledMessage = styled("div", {
         _dark: {
           backgroundColor: "gray.700",
           borderColor: "gray.100",
+        },
+      },
+      user: {
+        backgroundColor: "amber.100",
+        borderLeftWidth: "4rem",
+
+        borderColor: "amber.800",
+        _dark: {
+          backgroundColor: "gray.700",
+          borderColor: "brand.500",
         },
       },
     },
@@ -64,11 +63,6 @@ export const StyledMessage = styled("div", {
     },
   },
 });
-
-const MemoizedReactMarkdown = memo(
-  ReactMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
-);
 
 function MessageWithThrottling({ content, ...props }: Props) {
   // Throttle to be economical (mobile device batteries)
@@ -94,6 +88,7 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
   onDelete,
   onClick,
   experimental_attachments,
+  parts,
 }: Props) {
   const isUser = role === "user";
 
@@ -109,22 +104,9 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
         <AttachmentPreviews attachments={experimental_attachments} />
       )}
 
+      {/* When there's only narrow code, the container wouldn't expand by itself. */}
       <div style={{ width: "100%" }}>
-        <MemoizedReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            code: Code,
-            pre: ({ children }) => children,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            th: HeaderCell,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            td: Cell,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            tr: Row,
-          }}
-        >
-          {padNewlines(content)}
-        </MemoizedReactMarkdown>
+        {parts?.map((part, index) => <Part key={index} part={part} />)}
       </div>
 
       {(isLoading || onDelete || showCopyAll) && (
@@ -135,6 +117,7 @@ const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
             gap: "12rem",
           }}
         >
+          {isLoading && content === "" && <Spinner />}
           {!isLoading && onDelete && (
             <IconButton
               name="delete"

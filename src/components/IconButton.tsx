@@ -2,7 +2,6 @@ import {
   MdCheck,
   MdContentCopy,
   MdArrowUpward,
-  MdOutlineDelete,
   MdReplay,
   MdStop,
   MdFileDownload,
@@ -11,6 +10,9 @@ import {
   MdHistory,
   MdCached,
   MdImage,
+  MdOutlineDelete,
+  MdExpandMore,
+  MdExpandLess,
 } from "react-icons/md";
 import { FaGithub } from "react-icons/fa6";
 import { Button } from "./Button";
@@ -25,8 +27,10 @@ type Props = ComponentProps<typeof Button> & {
 
 const iconMap = {
   check: MdCheck,
+  collapse: MdExpandLess,
   copy: MdContentCopy,
   delete: MdOutlineDelete,
+  expand: MdExpandMore,
   history: MdHistory,
   image: MdImage,
   load: MdFileUpload,
