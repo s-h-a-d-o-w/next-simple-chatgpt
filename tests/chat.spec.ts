@@ -10,6 +10,12 @@ test(`Copying code and message works`, async ({ page, context }) => {
     "Write a one-line JavaScript function named add that returns the sum of two numbers.",
   );
   await promptInput.press("Control+Enter");
+  await page
+    .getByRole("button", { name: "stop" })
+    .waitFor({ state: "visible" });
+  await page
+    .getByRole("button", { name: "replay" })
+    .waitFor({ state: "visible" });
 
   const assistantMessage = page.locator('[data-testid$="-assistant"]');
   const copyButtons = assistantMessage.locator('button[aria-label="copy"]');
