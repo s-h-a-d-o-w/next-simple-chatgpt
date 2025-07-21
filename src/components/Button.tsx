@@ -43,11 +43,13 @@ export const Button = styled("button", {
   },
 
   variants: {
-    ghost: {
-      true: {
-        opacity: "0.5",
-        _hover: {
-          opacity: "1",
+    variant: {
+      ghost: {
+        true: {
+          opacity: "0.5",
+          _hover: {
+            opacity: "1",
+          },
         },
       },
     },

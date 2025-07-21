@@ -31,6 +31,7 @@ const iconMap = {
   copy: MdContentCopy,
   delete: MdOutlineDelete,
   expand: MdExpandMore,
+  github: FaGithub,
   history: MdHistory,
   image: MdImage,
   load: MdFileUpload,
@@ -40,7 +41,6 @@ const iconMap = {
   save: MdFileDownload,
   stop: MdStop,
   up: MdArrowUpward,
-  github: FaGithub,
 } as const;
 
 const StyledButton = styled(Button, {

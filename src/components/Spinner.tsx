@@ -8,6 +8,7 @@ const SpinnerContainer = styled("div", {
     alignItems: "center",
     width: "24rem",
     height: "24rem",
+    flexShrink: 0,
   },
 });
 

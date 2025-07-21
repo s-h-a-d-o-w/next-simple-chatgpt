@@ -43,7 +43,7 @@ export function ShortenedEntry({
           name="delete"
           type="button"
           iconSize="md"
-          ghost
+          variant="ghost"
           onClick={onDeleteHistoryEntry}
         />
       </div>
