@@ -27,6 +27,7 @@ import { History } from "./components/History";
 import { Messages } from "./components/Messages";
 import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
+import { withProfiler } from "@/components/withProfiler";
 
 function createSystemMessage(content: string) {
   return {
@@ -49,7 +50,7 @@ const StyledMain = styled("main", {
   },
 });
 
-export default function Home() {
+function Home() {
   const endOfPageRef = useRef<HTMLDivElement>(null);
 
   const [showHistory, setShowHistory] = useState(false);
@@ -82,6 +83,7 @@ export default function Home() {
     reload,
   } = useChat({
     id: chatId.toString(),
+    experimental_throttle: 500,
     initialMessages: [createSystemMessage(systemValue)],
     body: {
       model,
@@ -136,6 +138,8 @@ export default function Home() {
     debouncedSyncSystemMessage(event.target.value);
   };
 
+  // HISTORY HANDLERS
+  // =================
   const handleCloseHistory = useCallback(() => {
     setShowHistory(false);
     setActiveHistoryEntry(undefined);
@@ -187,7 +191,10 @@ export default function Home() {
       `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
     );
   }, [conversationHistory]);
+  // =================
 
+  // ACTION HANDLERS
+  // =================
   const handleReset = useCallback(() => {
     setChatId((currentChatId) => currentChatId + 1);
     setAttachments([]);
@@ -196,6 +203,7 @@ export default function Home() {
   const handleShowHistory = useCallback(() => {
     setShowHistory(true);
   }, []);
+  // =================
 
   return (
     <>
@@ -290,3 +298,5 @@ export default function Home() {
     </>
   );
 }
+
+export default withProfiler(Home);

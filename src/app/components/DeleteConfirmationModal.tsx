@@ -1,6 +1,7 @@
 import { Dialog } from "@/components/Dialog";
 import { Button } from "@/components/Button";
 import { styled } from "../../../styled-system/jsx";
+import { memo } from "react";
 
 const StyledButtonContainer = styled("div", {
   base: {
@@ -28,32 +29,37 @@ const StyledDeleteConfirmationModal = styled("div", {
   },
 });
 
-export function DeleteConfirmationModal({
-  isOpen,
-  onConfirm,
-  onClose,
-}: {
-  isOpen: boolean;
-  onConfirm: () => void;
-  onClose: () => void;
-}) {
-  return (
-    <Dialog isOpen={isOpen} onClose={onClose}>
-      <StyledDeleteConfirmationModal>
-        Do you really want to delete your history?
-        <StyledButtonContainer>
-          <Button onClick={onConfirm}>Yes</Button>
-          <Button
-            ref={(element) => {
-              // Override browser defaulting to first focusable element
-              setTimeout(() => element?.focus(), 0);
-            }}
-            onClick={onClose}
-          >
-            No
-          </Button>
-        </StyledButtonContainer>
-      </StyledDeleteConfirmationModal>
-    </Dialog>
-  );
-}
+export const DeleteConfirmationModal = memo(
+  function DeleteConfirmationModal({
+    isOpen,
+    onConfirm,
+    onClose,
+  }: {
+    isOpen: boolean;
+    onConfirm: () => void;
+    onClose: () => void;
+  }) {
+    return (
+      <Dialog isOpen={isOpen} onClose={onClose}>
+        <StyledDeleteConfirmationModal>
+          Do you really want to delete your history?
+          <StyledButtonContainer>
+            <Button onClick={onConfirm}>Yes</Button>
+            <Button
+              ref={(element) => {
+                // Override browser defaulting to first focusable element
+                setTimeout(() => element?.focus(), 0);
+              }}
+              onClick={onClose}
+            >
+              No
+            </Button>
+          </StyledButtonContainer>
+        </StyledDeleteConfirmationModal>
+      </Dialog>
+    );
+  },
+  (prev, next) => {
+    return prev.isOpen === next.isOpen;
+  },
+);

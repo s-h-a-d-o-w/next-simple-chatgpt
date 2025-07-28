@@ -2,6 +2,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  devIndicators: false,
 };
 
 export default process.env.ANALYZE === "true"

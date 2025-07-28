@@ -1,9 +1,8 @@
 import { IconButton } from "@/components/IconButton";
 import Spinner from "@/components/Spinner";
-import { config } from "@/config";
-import { useThrottledValue } from "@/hooks/useThrottledValue";
+import { withProfiler } from "@/components/withProfiler";
 import { type Message as MessageType } from "ai/react";
-import { memo, useDeferredValue } from "react";
+import { memo } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { AttachmentPreviews } from "./AttachmentPreviews";
 import { CopyButton } from "./CopyButton";
@@ -64,78 +63,63 @@ export const StyledMessage = styled("div", {
   },
 });
 
-function MessageWithThrottling({ content, ...props }: Props) {
-  // Throttle to be economical (mobile device batteries)
-  const throttledContent = useThrottledValue(
+export const Message = memo(
+  withProfiler(function Message({
+    role,
+    id,
+    isLoading = false,
+    shortened = false,
+    showCopyAll = false,
     content,
-    config.ui.messageStreamThrottle,
-  );
-  // Defer in case a low power device is unable to fully render within that window.
-  // Otherwise, e.g. aborting while streaming wouldn't be possible.
-  const displayText = useDeferredValue(throttledContent);
+    className,
+    onDelete,
+    onClick,
+    experimental_attachments,
+    parts,
+  }: Props) {
+    const isUser = role === "user";
 
-  return <MessageWithoutThrottling content={displayText} {...props} />;
-}
+    return role === "system" ? null : (
+      <StyledMessage
+        variant={isUser ? "user" : "default"}
+        key={id}
+        className={className}
+        onClick={onClick}
+        shortened={shortened}
+      >
+        {experimental_attachments && experimental_attachments.length > 0 && (
+          <AttachmentPreviews attachments={experimental_attachments} />
+        )}
 
-const MessageWithoutThrottling = memo(function MessageWithoutThrottling({
-  role,
-  id,
-  isLoading = false,
-  shortened = false,
-  showCopyAll = false,
-  content,
-  className,
-  onDelete,
-  onClick,
-  experimental_attachments,
-  parts,
-}: Props) {
-  const isUser = role === "user";
-
-  return role === "system" ? null : (
-    <StyledMessage
-      variant={isUser ? "user" : "default"}
-      key={id}
-      className={className}
-      onClick={onClick}
-      shortened={shortened}
-    >
-      {experimental_attachments && experimental_attachments.length > 0 && (
-        <AttachmentPreviews attachments={experimental_attachments} />
-      )}
-
-      {/* When there's only narrow code, the container wouldn't expand by itself. */}
-      <div style={{ width: "100%" }}>
-        {parts?.map((part, index) => <Part key={index} part={part} />)}
-      </div>
-
-      {(isLoading || onDelete || showCopyAll) && (
-        <div
-          style={{
-            alignSelf: isUser ? undefined : "flex-end",
-            display: "flex",
-            gap: "12rem",
-          }}
-        >
-          {isLoading && content === "" && <Spinner />}
-          {!isLoading && onDelete && (
-            <IconButton
-              name="delete"
-              iconSize="md"
-              onClick={() => onDelete(id)}
-            />
-          )}
-          {!isLoading && showCopyAll && <CopyButton>{content}</CopyButton>}
+        {/* When there's only narrow code, the container wouldn't expand by itself. */}
+        <div style={{ width: "100%" }}>
+          {parts?.map((part, index) => <Part key={index} part={part} />)}
         </div>
-      )}
-    </StyledMessage>
-  );
-});
 
-export function Message({ isLoading = false, ...props }: Props) {
-  return isLoading ? (
-    <MessageWithThrottling isLoading={isLoading} {...props} />
-  ) : (
-    <MessageWithoutThrottling isLoading={isLoading} {...props} />
-  );
-}
+        {(isLoading || onDelete || showCopyAll) && (
+          <div
+            style={{
+              alignSelf: isUser ? undefined : "flex-end",
+              display: "flex",
+              gap: "12rem",
+            }}
+          >
+            {content === "" && <Spinner />}
+            {!isLoading && onDelete && (
+              <IconButton
+                name="delete"
+                iconSize="md"
+                onClick={() => onDelete(id)}
+              />
+            )}
+            {!isLoading && showCopyAll && <CopyButton>{content}</CopyButton>}
+          </div>
+        )}
+      </StyledMessage>
+    );
+  }),
+  (prev, next) => {
+    // might have to use stringify(parts) if this doesn't work with all message types
+    return prev.content === next.content;
+  },
+);

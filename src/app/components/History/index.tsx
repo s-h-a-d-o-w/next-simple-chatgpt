@@ -94,105 +94,115 @@ const StyledSearchInput = styled("input", {
   },
 });
 
-export const History = memo(function History({
-  activeHistoryEntry,
-  conversationHistory,
-  isOpen,
-  onClose,
-  onDeleteHistoryEntry,
-  onRestoreHistoryEntry,
-  onSetActiveHistoryEntry,
-  onDeleteHistory,
-  onLoad,
-  onSave,
-}: Props) {
-  const [searchTerms, setSearchTerms] = useState<string[]>();
-  const searchInputRef = useRef<HTMLInputElement>(null);
+export const History = memo(
+  function History({
+    activeHistoryEntry,
+    conversationHistory,
+    isOpen,
+    onClose,
+    onDeleteHistoryEntry,
+    onRestoreHistoryEntry,
+    onSetActiveHistoryEntry,
+    onDeleteHistory,
+    onLoad,
+    onSave,
+  }: Props) {
+    const [searchTerms, setSearchTerms] = useState<string[]>();
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (
-      isOpen &&
-      searchInputRef.current &&
-      !/Mobi|Android/i.test(navigator.userAgent)
-    ) {
-      searchInputRef.current.focus();
-    }
-  }, [isOpen]);
+    useEffect(() => {
+      if (
+        isOpen &&
+        searchInputRef.current &&
+        !/Mobi|Android/i.test(navigator.userAgent)
+      ) {
+        searchInputRef.current.focus();
+      }
+    }, [isOpen]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setSearchTerms(value === "" ? undefined : value.toLowerCase().split(" "));
-    }, 200),
-    [],
-  );
-
-  const filteredHistory = !searchTerms
-    ? conversationHistory
-    : conversationHistory.filter((messages) => {
-        return searchTerms.every((term) =>
-          messages
-            .map(({ content }) => content.toLowerCase())
-            .join(" ")
-            .includes(term),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedSearch = useCallback(
+      debounce((value: string) => {
+        setSearchTerms(
+          value === "" ? undefined : value.toLowerCase().split(" "),
         );
-      });
+      }, 200),
+      [],
+    );
 
-  return (
-    <Dialog
-      suppressNativeFocus
-      isModal={false}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <StyledHistory type="overview">
-        <HistoryHeader
-          conversationHistory={conversationHistory}
-          onDeleteHistory={onDeleteHistory}
-          onLoad={onLoad}
-          onSave={onSave}
-        />
+    const filteredHistory = !searchTerms
+      ? conversationHistory
+      : conversationHistory.filter((messages) => {
+          return searchTerms.every((term) =>
+            messages
+              .map(({ content }) => content.toLowerCase())
+              .join(" ")
+              .includes(term),
+          );
+        });
 
-        <StyledSearchInput
-          ref={searchInputRef}
-          type="text"
-          placeholder="Search..."
-          onChange={(e) => debouncedSearch(e.target.value)}
-        />
+    return (
+      <Dialog
+        suppressNativeFocus
+        isModal={false}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <StyledHistory type="overview">
+          <HistoryHeader
+            conversationHistory={conversationHistory}
+            onDeleteHistory={onDeleteHistory}
+            onLoad={onLoad}
+            onSave={onSave}
+          />
 
-        {filteredHistory
-          .slice(0)
-          .reverse()
-          .map((messages, index) =>
-            !messages[1] ? null : (
-              <ShortenedEntry
-                key={index}
-                message={messages[1]}
-                onDeleteHistoryEntry={() => {
-                  const index = conversationHistory.findIndex(
-                    (_messages) => _messages === messages,
-                  );
-                  onDeleteHistoryEntry(index);
-                }}
-                onSetActiveHistoryEntry={() => {
-                  onSetActiveHistoryEntry(messages);
-                }}
-              />
-            ),
-          )}
-      </StyledHistory>
+          <StyledSearchInput
+            ref={searchInputRef}
+            type="text"
+            placeholder="Search..."
+            onChange={(e) => debouncedSearch(e.target.value)}
+          />
 
-      {activeHistoryEntry && (
-        <StyledHistory type="entry">
-          <Button
-            onClick={onRestoreHistoryEntry}
-            style={{ alignSelf: "flex-end" }}
-          >
-            Restore
-          </Button>
-          <Messages messages={activeHistoryEntry} />
+          {filteredHistory
+            .slice(0)
+            .reverse()
+            .map((messages, index) =>
+              !messages[1] ? null : (
+                <ShortenedEntry
+                  key={index}
+                  message={messages[1]}
+                  onDeleteHistoryEntry={() => {
+                    const index = conversationHistory.findIndex(
+                      (_messages) => _messages === messages,
+                    );
+                    onDeleteHistoryEntry(index);
+                  }}
+                  onSetActiveHistoryEntry={() => {
+                    onSetActiveHistoryEntry(messages);
+                  }}
+                />
+              ),
+            )}
         </StyledHistory>
-      )}
-    </Dialog>
-  );
-});
+
+        {activeHistoryEntry && (
+          <StyledHistory type="entry">
+            <Button
+              onClick={onRestoreHistoryEntry}
+              style={{ alignSelf: "flex-end" }}
+            >
+              Restore
+            </Button>
+            <Messages messages={activeHistoryEntry} />
+          </StyledHistory>
+        )}
+      </Dialog>
+    );
+  },
+  (prev, next) => {
+    return (
+      prev.isOpen === next.isOpen &&
+      prev.activeHistoryEntry === next.activeHistoryEntry
+    );
+  },
+);
