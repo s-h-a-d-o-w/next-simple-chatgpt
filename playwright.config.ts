@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 import { getLocalIp } from "./scripts/getLocalIp";
 
-const isAuthoring = process.env["E2E_AUTHORING"] === "true";
-const baseURL = isAuthoring
+const isDev = process.env["NODE_ENV"] !== "production";
+const baseURL = isDev
   ? `https://${getLocalIp()}:3000`
   : "http://localhost:3000";
 
@@ -12,10 +12,11 @@ const baseURL = isAuthoring
 export default defineConfig({
   testDir: "./tests",
   globalSetup: "./playwright.setup.ts",
+  timeout: isDev ? 3000 : 10000,
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env["CI"],
-  retries: 1,
+  retries: isDev ? 0 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -26,6 +27,15 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+
+    ...(isDev && {
+      launchOptions: {
+        args: [
+          "--auto-open-devtools-for-tabs",
+          // "--devtools-flags=dock-to-bottom,console-drawer",
+        ],
+      },
+    }),
   },
 
   /* Configure projects for major browsers */
@@ -36,11 +46,10 @@ export default defineConfig({
     },
   ],
 
-  // We can't re-use the dev server because authentication would be a problem.
-  // Mocking authentication requires running the server in "CI mode".
   webServer: {
+    reuseExistingServer: isDev,
     ignoreHTTPSErrors: true,
-    command: isAuthoring ? "pnpm dev" : "pnpm start",
+    command: isDev ? "pnpm dev" : "pnpm start",
     url: baseURL,
     stdout: "pipe",
     stderr: "pipe",

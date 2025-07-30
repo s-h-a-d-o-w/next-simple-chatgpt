@@ -48,11 +48,7 @@ export const Messages = memo(function Messages({
           (message) => message.role !== "system" && message.content !== "",
         )
         .map((message, idx) => (
-          <MessageContainer
-            data-testid={`message-${idx}-${message.role}`}
-            key={message.id}
-            isUser={message.role === "user"}
-          >
+          <MessageContainer key={message.id} isUser={message.role === "user"}>
             <Message
               isLoading={
                 isLoading &&

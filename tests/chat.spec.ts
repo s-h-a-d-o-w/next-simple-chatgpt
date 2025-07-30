@@ -1,21 +1,24 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
+
+async function submitPrompt(page: Page, promptInput: Locator, prompt: string) {
+  await promptInput.fill(prompt);
+  await promptInput.press("Control+Enter");
+  await page
+    .getByRole("button", { name: "replay" })
+    .waitFor({ state: "visible" });
+}
 
 test(`Copying code and message works`, async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
   await page.goto("/");
-
   const promptInput = page.getByPlaceholder("Enter your prompt here.");
-  await promptInput.fill(
+
+  await submitPrompt(
+    page,
+    promptInput,
     "Write a one-line JavaScript function named add that returns the sum of two numbers.",
   );
-  await promptInput.press("Control+Enter");
-  await page
-    .getByRole("button", { name: "stop" })
-    .waitFor({ state: "visible" });
-  await page
-    .getByRole("button", { name: "replay" })
-    .waitFor({ state: "visible" });
 
   const assistantMessage = page.locator('[data-testid$="-assistant"]');
   const copyButtons = assistantMessage.locator('button[aria-label="copy"]');
@@ -37,4 +40,34 @@ test(`Copying code and message works`, async ({ page, context }) => {
     navigator.clipboard.readText(),
   );
   expect(clipboardFull).toContain(renderedCode);
+});
+
+test(`Deleting history entries works correctly`, async ({ page }) => {
+  await page.goto("/");
+  const promptInput = page.getByPlaceholder("Enter your prompt here.");
+
+  await page.evaluate(() => {
+    window.localStorage.clear();
+  });
+
+  await submitPrompt(page, promptInput, "What is 2 + 2?");
+  await page.getByRole("button", { name: "Reset" }).click();
+
+  await submitPrompt(page, promptInput, "What is the capital of France?");
+  await page.getByRole("button", { name: "Reset" }).click();
+
+  await page.getByRole("button", { name: "History" }).click();
+
+  const historyEntries = page.getByTestId("message-user");
+  const deleteButtons = page.locator('button[aria-label="delete"]');
+  await expect(historyEntries).toHaveCount(2);
+
+  await historyEntries.nth(1).click({ position: { x: 10, y: 10 } });
+  await expect(page.locator('button:has-text("Restore")')).toBeVisible();
+  await deleteButtons.nth(1).click();
+  await expect(page.locator('button:has-text("Restore")')).not.toBeVisible();
+  await expect(historyEntries).toHaveCount(1);
+
+  await deleteButtons.nth(0).click();
+  await expect(historyEntries).toHaveCount(0);
 });

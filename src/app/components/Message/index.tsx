@@ -83,6 +83,7 @@ export const Message = memo(
       <StyledMessage
         variant={isUser ? "user" : "default"}
         key={id}
+        data-testid={`message-${role}`}
         className={className}
         onClick={onClick}
         shortened={shortened}

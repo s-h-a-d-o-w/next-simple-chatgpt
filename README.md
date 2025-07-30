@@ -55,3 +55,7 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility. 
 - Why HTTPS? Because of `ClipboardItem`. Browsers make an exception for `localhost` but not other devices on the LAN. (To spare others the pain: `nginx` and `http-proxy` don't work. Only the experimental Next.js method. At least with things like server actions and redirects.)
+
+### E2E tests
+
+Use `pnpm dev:e2e` before using playwright in any situation other than testing the production bundle (which is done by running `build` and `e2e`).
