@@ -2,10 +2,11 @@
 
 import "../styles/prism-theme.css";
 
-import { useHistory } from "@/hooks/useHistory";
+import { HistoryEntry, useHistory } from "@/hooks/useHistory";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
-import { config, type ModelKey } from "@/config";
-import { useChat, type Message as MessageType } from "@ai-sdk/react";
+import { type ModelKey } from "@/config";
+import { useChat } from "@ai-sdk/react";
+import { FileUIPart, UIMessage } from "ai";
 import { cloneDeep, debounce } from "lodash";
 import {
   ChangeEventHandler,
@@ -28,13 +29,14 @@ import { Messages } from "./components/Messages";
 import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
 import { withProfiler } from "@/components/withProfiler";
+import { config } from "@/config";
 
 function createSystemMessage(content: string) {
   return {
-    content,
+    parts: [{ type: "text", text: content }],
     role: "system",
     id: "system",
-  } as const;
+  } satisfies UIMessage;
 }
 
 const StyledMain = styled("main", {
@@ -55,13 +57,13 @@ function Home() {
 
   const [showHistory, setShowHistory] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [activeHistoryEntry, setActiveHistoryEntry] = useState<MessageType[]>();
-  const [attachments, setAttachments] = useState<
-    NonNullable<MessageType["experimental_attachments"]>
-  >([]);
+  const [activeHistoryEntry, setActiveHistoryEntry] = useState<HistoryEntry>();
+  const [files, setFiles] = useState<FileUIPart[]>([]);
   const [model, setModel] = useLocalStorageState<ModelKey>("model", {
     defaultValue: config.models.default,
   });
+  const [input, setInput] = useState("");
+  const [startTime, setStartTime] = useState<number>();
   const [systemValue, setSystemValue] = useLocalStorageState<string>(
     "system-message",
     {
@@ -74,20 +76,15 @@ function Home() {
   const {
     messages,
     setMessages,
-    input,
-    handleInputChange,
-    handleSubmit,
     status,
     stop,
     error,
-    reload,
-  } = useChat({
+    sendMessage,
+    regenerate,
+  } = useChat<UIMessage>({
     id: chatId.toString(),
     experimental_throttle: 500,
-    initialMessages: [createSystemMessage(systemValue)],
-    body: {
-      model,
-    } satisfies Omit<ChatRequest, "messages">,
+    messages: [createSystemMessage(systemValue)],
   });
   const isLoading = status === "submitted" || status === "streaming";
 
@@ -99,6 +96,7 @@ function Home() {
 
   const [conversationHistory, setConversationHistory] = useHistory(
     isLoading,
+    startTime,
     messages,
   );
 
@@ -114,13 +112,13 @@ function Home() {
           (message) => message.role === "system",
         );
         if (systemIndex >= 0 && nextMessages[systemIndex]) {
-          nextMessages[systemIndex].content = content;
+          nextMessages[systemIndex].parts = [{ type: "text", text: content }];
         } else {
           nextMessages.unshift(createSystemMessage(content));
         }
         return nextMessages;
       });
-    }, 300),
+    }, config.ui.systemMessageDebounce),
     [setMessages],
   );
 
@@ -155,16 +153,18 @@ function Home() {
   );
 
   const handleRestoreHistoryEntry = useCallback(() => {
-    if (activeHistoryEntry?.[0]) {
-      setSystemValue(activeHistoryEntry[0].content);
-      setMessages(activeHistoryEntry);
+    if (activeHistoryEntry) {
+      setMessages(activeHistoryEntry.messages);
       setActiveHistoryEntry(undefined);
       setShowHistory(false);
+      if (activeHistoryEntry.messages[0]?.parts[0]?.type === "text") {
+        setSystemValue(activeHistoryEntry.messages[0].parts[0].text);
+      }
     }
   }, [activeHistoryEntry, setSystemValue, setMessages]);
 
   const handleSetActiveHistoryEntry = useCallback(
-    (nextMessages?: MessageType[]) => {
+    (nextMessages?: HistoryEntry) => {
       setActiveHistoryEntry(nextMessages);
     },
     [],
@@ -176,9 +176,7 @@ function Home() {
 
   const handleLoadHistory = useCallback(async () => {
     try {
-      const history = superjson.parse(await loadJsonFile()) as Array<
-        MessageType[]
-      >;
+      const history = superjson.parse(await loadJsonFile()) as HistoryEntry[];
       setConversationHistory(history);
     } catch {
       // TODO: user cancelled or picked nonsense. should probably show error.
@@ -197,13 +195,30 @@ function Home() {
   // =================
   const handleReset = useCallback(() => {
     setChatId((currentChatId) => currentChatId + 1);
-    setAttachments([]);
+    setFiles([]);
+    setStartTime(undefined);
   }, []);
 
   const handleShowHistory = useCallback(() => {
     setShowHistory(true);
   }, []);
   // =================
+
+  const handleSubmit = useCallback(() => {
+    if (!startTime) {
+      setStartTime(Date.now());
+    }
+    sendMessage(
+      { text: input },
+      {
+        body: {
+          model,
+        } satisfies Omit<ChatRequest, "messages">,
+      },
+    );
+    setInput("");
+    setFiles([]);
+  }, [sendMessage, input, model, startTime]);
 
   return (
     <>
@@ -214,10 +229,9 @@ function Home() {
         onReset={handleReset}
         onShowHistory={handleShowHistory}
         showAttachmentModelsOnly={
-          attachments.length > 0 ||
-          messages.some(
-            ({ experimental_attachments }) =>
-              experimental_attachments && experimental_attachments.length > 0,
+          files.length > 0 ||
+          messages.some(({ parts }) =>
+            parts.some((part) => part.type === "file"),
           )
         }
       />
@@ -229,7 +243,7 @@ function Home() {
           isLoading={isLoading}
           messages={messages}
           onDelete={handleDeleteMessage}
-          onRetry={reload}
+          onRetry={regenerate}
           showCopyAll
         />
         <Prompt
@@ -237,33 +251,33 @@ function Home() {
           input={input}
           isFirstPrompt={messages.length === 1}
           isLoading={isLoading}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           onClickStop={stop}
-          attachments={attachments}
+          files={files}
           currentModel={model}
           onModelChange={setModel}
           onAddAttachments={(newAttachments) => {
-            setAttachments((previousAttachments) => [
+            setFiles((previousAttachments) => [
               ...previousAttachments,
               ...newAttachments,
             ]);
           }}
           onRemoveAttachment={(index) => {
-            setAttachments((previousAttachments) =>
+            setFiles((previousAttachments) =>
               previousAttachments.filter((_, i) => i !== index),
             );
           }}
           onSubmit={(event) => {
             event.preventDefault();
-            if (input === "" && attachments.length === 0) {
-              reload();
+            if (input === "" && files.length === 0) {
+              regenerate({
+                body: {
+                  model,
+                } satisfies Omit<ChatRequest, "messages">,
+              });
               return;
             } else {
-              handleSubmit(event, {
-                experimental_attachments: attachments,
-              });
-
-              setAttachments([]);
+              handleSubmit();
             }
           }}
         />

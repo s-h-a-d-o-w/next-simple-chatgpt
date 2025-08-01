@@ -1,25 +1,25 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
-import { type Message as MessageType } from "ai/react";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { Messages } from "../Messages";
 import { HistoryHeader } from "./HistoryHeader";
 import { ShortenedEntry } from "./ShortenedEntry";
+import { HistoryEntry } from "@/hooks/useHistory";
 
 type Props = {
-  conversationHistory: MessageType[][];
+  conversationHistory: HistoryEntry[];
   isOpen: boolean;
   onClose: () => void;
   onDeleteHistoryEntry: (index: number) => void;
   onRestoreHistoryEntry: () => void;
-  onSetActiveHistoryEntry: (messages?: MessageType[]) => void;
+  onSetActiveHistoryEntry: (messages?: HistoryEntry) => void;
   onDeleteHistory: () => void;
   onLoad: () => void;
   onSave: () => void;
 
-  activeHistoryEntry?: MessageType[];
+  activeHistoryEntry?: HistoryEntry;
 };
 
 const StyledHistory = styled("div", {
@@ -129,12 +129,14 @@ export const History = function History({
 
   const filteredHistory = !searchTerms
     ? conversationHistory
-    : conversationHistory.filter((messages) => {
+    : conversationHistory.filter((entry) => {
         return searchTerms.every((term) =>
-          messages
-            .map(({ content }) => content.toLowerCase())
-            .join(" ")
-            .includes(term),
+          entry.messages.some((message) =>
+            message.parts.some(
+              (part) =>
+                part.type === "text" && part.text.toLowerCase().includes(term),
+            ),
+          ),
         );
       });
 
@@ -163,22 +165,22 @@ export const History = function History({
         {filteredHistory
           .slice(0)
           .reverse()
-          .map((messages, index) =>
-            !messages[1] ? null : (
+          .map((entry, index) =>
+            !entry.messages[1] ? null : (
               <ShortenedEntry
                 key={index}
-                message={messages[1]}
+                entry={entry}
                 onDeleteHistoryEntry={() => {
-                  if (activeHistoryEntry === messages) {
+                  if (activeHistoryEntry === entry) {
                     onSetActiveHistoryEntry(undefined);
                   }
                   const index = conversationHistory.findIndex(
-                    (_messages) => _messages === messages,
+                    (_entry) => _entry === entry,
                   );
                   onDeleteHistoryEntry(index);
                 }}
                 onSetActiveHistoryEntry={() => {
-                  onSetActiveHistoryEntry(messages);
+                  onSetActiveHistoryEntry(entry);
                 }}
               />
             ),
@@ -193,7 +195,7 @@ export const History = function History({
           >
             Restore
           </Button>
-          <Messages messages={activeHistoryEntry} />
+          <Messages messages={activeHistoryEntry.messages} />
         </StyledHistory>
       )}
     </Dialog>

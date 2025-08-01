@@ -1,73 +1,67 @@
 import { cloneDeep } from "lodash";
-import { type Message as MessageType } from "ai/react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import superjson from "superjson";
 import { useStorageUsage } from "./useStorageUsage";
+import type { UIMessage } from "ai";
 
-function stripAttachmentsFromMessages(messages: MessageType[]): MessageType[] {
-  return messages.map(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ({ experimental_attachments, ...messageWithoutAttachments }) => ({
-      ...messageWithoutAttachments,
-      content:
-        experimental_attachments && experimental_attachments.length > 0
-          ? `[Attachments: ${experimental_attachments
-              .map((attachment) => attachment.name)
-              .join(", ")}] ${messageWithoutAttachments.content}`
-          : messageWithoutAttachments.content,
-    }),
-  );
+export type HistoryEntry = {
+  startTime: number;
+  messages: UIMessage[];
+};
+
+function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
+  // Could be optimized by filtering messages that have file parts and only processing those more deeply. But since this is only called on a single history entry, this seems excessive at the moment.
+  return messages.map(({ parts, ...rest }) => ({
+    parts: parts.map((part) =>
+      part.type === "file"
+        ? {
+            type: "text",
+            text: `[File (${part.mediaType}) ${part.filename || "<no name>"}]`,
+          }
+        : part,
+    ),
+    ...rest,
+  }));
 }
 
 export function useHistory(
   isLoading: boolean,
-  messages: MessageType[],
+  startTime: number | undefined,
+  messages: UIMessage[],
   namespace?: string,
 ) {
   const [conversationHistory, setConversationHistory] = useLocalStorageState<
-    Array<MessageType[]>
+    HistoryEntry[]
   >(`history${namespace ? `-${namespace}` : ""}`, {
     defaultValue: [],
     serializer: superjson,
   });
-  const [lastHistoryUpdate, setLastHistoryUpdate] = useState(0);
 
   // Keep history in sync as messages arive
   useEffect(() => {
-    const latestMessageDate =
-      messages[messages.length - 1]?.createdAt?.valueOf();
-    if (
-      !isLoading &&
-      latestMessageDate &&
-      lastHistoryUpdate < latestMessageDate
-    ) {
-      const firstMessageDate = messages
-        .find((message) => message.role === "user")
-        ?.createdAt?.valueOf();
-      if (firstMessageDate) {
-        setConversationHistory((history) => {
-          const nextHistory = cloneDeep(history);
-          const messagesWithoutAttachments =
-            stripAttachmentsFromMessages(messages);
+    if (!isLoading && startTime && messages.length > 1) {
+      setConversationHistory((history) => {
+        const nextHistory = cloneDeep(history);
+        const newEntry = {
+          startTime,
+          messages: stripAttachmentsFromMessages(messages),
+        };
 
-          const index = nextHistory.findIndex(
-            (messages) =>
-              messages[1]?.createdAt?.valueOf() === firstMessageDate,
-          );
-          if (index >= 0) {
-            // Change a history entry that already existed (like the most recent one).
-            nextHistory[index] = messagesWithoutAttachments;
-          } else {
-            nextHistory.push(messagesWithoutAttachments);
-          }
+        const index = nextHistory.findIndex(
+          (messages) => messages.startTime === startTime,
+        );
+        if (index >= 0) {
+          // Change a history entry that already existed (like the most recent one).
+          nextHistory[index] = newEntry;
+        } else {
+          nextHistory.push(newEntry);
+        }
 
-          setLastHistoryUpdate(Date.now());
-          return nextHistory;
-        });
-      }
+        return nextHistory;
+      });
     }
-  }, [isLoading, lastHistoryUpdate, messages, setConversationHistory]);
+  }, [isLoading, startTime, messages, setConversationHistory]);
 
   // Prune history if we're using too much storage.
   const usedStorage = useStorageUsage();

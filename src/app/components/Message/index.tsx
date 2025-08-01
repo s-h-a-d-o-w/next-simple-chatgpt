@@ -1,14 +1,14 @@
 import { IconButton } from "@/components/IconButton";
 import Spinner from "@/components/Spinner";
 import { withProfiler } from "@/components/withProfiler";
-import { type Message as MessageType } from "ai/react";
+import { type UIMessage } from "ai";
 import { memo } from "react";
 import { styled } from "../../../../styled-system/jsx";
-import { AttachmentPreviews } from "./AttachmentPreviews";
+import { FilesPreview } from "./FilesPreview";
 import { CopyButton } from "./CopyButton";
 import { Part } from "./Part";
 
-type Props = MessageType & {
+type Props = UIMessage & {
   className?: string;
   isExpandable?: boolean;
   isLoading?: boolean;
@@ -70,14 +70,18 @@ export const Message = memo(
     isLoading = false,
     shortened = false,
     showCopyAll = false,
-    content,
     className,
     onDelete,
     onClick,
-    experimental_attachments,
     parts,
   }: Props) {
     const isUser = role === "user";
+    const content = parts
+      ?.filter((part) => part.type === "text")
+      .map((part) => part.text)
+      .join("\n");
+
+    const files = parts.filter((part) => part.type === "file");
 
     return role === "system" ? null : (
       <StyledMessage
@@ -88,13 +92,15 @@ export const Message = memo(
         onClick={onClick}
         shortened={shortened}
       >
-        {experimental_attachments && experimental_attachments.length > 0 && (
-          <AttachmentPreviews attachments={experimental_attachments} />
-        )}
+        {files.length > 0 && <FilesPreview files={files} />}
 
         {/* When there's only narrow code, the container wouldn't expand by itself. */}
         <div style={{ width: "100%" }}>
-          {parts?.map((part, index) => <Part key={index} part={part} />)}
+          {parts
+            .filter((part) => part.type !== "file")
+            .map((part, index) => (
+              <Part key={index} part={part} />
+            ))}
         </div>
 
         {(isLoading || onDelete || showCopyAll) && (
@@ -121,6 +127,6 @@ export const Message = memo(
   }),
   (prev, next) => {
     // might have to use stringify(parts) if this doesn't work with all message types
-    return prev.content === next.content;
+    return prev.parts === next.parts && prev.isLoading === next.isLoading;
   },
 );

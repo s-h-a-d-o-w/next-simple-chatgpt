@@ -1,27 +1,26 @@
-import type { useChat } from "@ai-sdk/react";
 import { FormEvent, useCallback, useRef } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { Textarea } from "@/components/Textarea";
 import { models, type ModelKey } from "@/config";
-import { AttachmentPreviews } from "./AttachmentPreviews";
+import { FilesPreview } from "./FilesPreview";
 import { filesToAttachments } from "./filesToAttachments";
-import type { Attachment } from "ai";
+import type { FileUIPart } from "ai";
 
 type Props = {
-  attachments: Attachment[];
+  files: FileUIPart[];
   currentModel: ModelKey;
   disabledReplay: boolean;
   input: string;
   isFirstPrompt: boolean;
   isLoading: boolean;
-  onChange: ReturnType<typeof useChat>["handleInputChange"];
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onClickStop: () => void;
   onModelChange: (model: ModelKey) => void;
   onRemoveAttachment: (index: number) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 
-  onAddAttachments?: (files: Attachment[]) => void;
+  onAddAttachments?: (files: FileUIPart[]) => void;
 };
 
 const StyledPrompt = styled("div", {
@@ -61,7 +60,7 @@ export function Prompt({
   onChange,
   onClickStop,
   onSubmit,
-  attachments,
+  files,
   onAddAttachments,
   onModelChange,
   onRemoveAttachment,
@@ -94,11 +93,8 @@ export function Prompt({
   return (
     <StyledPrompt>
       <StyledForm onSubmit={onSubmit}>
-        {attachments.length > 0 && (
-          <AttachmentPreviews
-            attachments={attachments}
-            onRemoveAttachment={onRemoveAttachment}
-          />
+        {files.length > 0 && (
+          <FilesPreview files={files} onRemoveAttachment={onRemoveAttachment} />
         )}
 
         <StyledInputContainer>
@@ -146,7 +142,7 @@ export function Prompt({
                 onClickStop();
               }}
             />
-          ) : input || attachments.length > 0 ? (
+          ) : input || files.length > 0 ? (
             <IconButton name="up" type="submit" />
           ) : (
             <IconButton name="replay" type="submit" disabled={disabledReplay} />

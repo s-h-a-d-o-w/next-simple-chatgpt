@@ -2,11 +2,11 @@ import { auth } from "@/auth";
 import { models, type ModelKey } from "@/config";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
-import { convertToCoreMessages, streamText, type Message } from "ai";
+import { convertToModelMessages, streamText, type UIMessage } from "ai";
 
 export type ChatRequest = {
   model: ModelKey;
-  messages: Message[];
+  messages: UIMessage[];
 };
 
 export const maxDuration = 60;
@@ -14,8 +14,8 @@ export const maxDuration = 60;
 const whitelist = process.env["WHITELIST"]?.split(",");
 const isTest = Boolean(process.env["CI"]);
 
-function convertMessagesAnthropic(messages: Message[]) {
-  const coreMessages = convertToCoreMessages(messages);
+function convertMessagesAnthropic(messages: UIMessage[]) {
+  const coreMessages = convertToModelMessages(messages);
 
   const relevantIndices = coreMessages
     .map((msg, index) =>
@@ -60,7 +60,7 @@ export const POST = auth(async (req) => {
     model: modelConfig.provider === "openai" ? openai(model) : anthropic(model),
     messages:
       modelConfig.provider === "openai"
-        ? convertToCoreMessages(messages)
+        ? convertToModelMessages(messages)
         : convertMessagesAnthropic(messages),
     providerOptions: ["o3-mini", "o4-mini"].includes(model)
       ? {
@@ -71,13 +71,14 @@ export const POST = auth(async (req) => {
       : undefined,
   });
 
-  return result.toDataStreamResponse({
-    getErrorMessage(error) {
+  return result.toUIMessageStreamResponse({
+    onError(error) {
       // Would add error reporting service integration in commercial product here.
       console.log(error);
       return "An error occurred.";
     },
     headers: {
+      // Required for nginx to work with streaming responses.
       "X-Accel-Buffering": "no",
     },
   });

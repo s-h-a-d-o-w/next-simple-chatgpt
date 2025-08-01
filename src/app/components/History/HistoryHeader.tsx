@@ -1,11 +1,11 @@
-import type { Message } from "@ai-sdk/react";
 import { styled } from "../../../../styled-system/jsx";
 import { isDev, isClientDebug } from "@/utils/consts";
 import { StorageUsageWheel } from "./StorageUsageWheel";
 import { IconButton } from "@/components/IconButton";
+import { HistoryEntry } from "@/hooks/useHistory";
 
 type Props = {
-  conversationHistory: Message[][];
+  conversationHistory: HistoryEntry[];
   onDeleteHistory: () => void;
   onLoad: () => void;
   onSave: () => void;

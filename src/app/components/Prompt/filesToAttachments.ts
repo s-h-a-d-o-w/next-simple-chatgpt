@@ -1,4 +1,5 @@
 import { getPdfjsLib } from "@/utils/getPdfjsLib";
+import { FileUIPart } from "ai";
 
 function convertFileToDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -37,18 +38,22 @@ async function convertPdfToImage(file: File): Promise<string[]> {
   );
 }
 
-export async function filesToAttachments(files: File[]) {
+export async function filesToAttachments(files: File[]): Promise<FileUIPart[]> {
   return (
     (
       await Promise.all(
         files.map(async (file) => {
           if (file.type === "application/pdf") {
             try {
-              return (await convertPdfToImage(file)).map((dataURL, index) => ({
-                name: `${file.name} - Page ${index + 1}`,
-                contentType: "image/png",
-                url: dataURL,
-              }));
+              return (await convertPdfToImage(file)).map(
+                (dataURL, index) =>
+                  ({
+                    type: "file",
+                    mediaType: "image/png",
+                    filename: `page-${index + 1}-${file.name}`,
+                    url: dataURL,
+                  }) satisfies FileUIPart,
+              );
             } catch (error) {
               // TODO: render error in ui
               console.error("Error converting PDF to image:", error);
@@ -59,11 +64,12 @@ export async function filesToAttachments(files: File[]) {
             try {
               return [
                 {
-                  name: file.name,
-                  contentType: file.type,
+                  type: "file",
+                  mediaType: file.type,
+                  filename: file.name,
                   url: await convertFileToDataURL(file),
                 },
-              ];
+              ] satisfies FileUIPart[];
             } catch (error) {
               // TODO: render error in ui
               console.error("Error converting file to data URL:", error);

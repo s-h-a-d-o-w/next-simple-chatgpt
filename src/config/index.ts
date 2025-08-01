@@ -51,6 +51,7 @@ export const config = {
     copyStatusTimeout: 1000,
     systemMessage:
       "You are a concise assistant. Use markdown for your responses.",
+    systemMessageDebounce: 300,
   },
   storage: {
     // Actual maximum, as imposed by browsers, is around 5 MB.

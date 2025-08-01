@@ -1,10 +1,10 @@
 import { IconButton } from "@/components/IconButton";
-import type { Attachment } from "ai";
+import type { FileUIPart } from "ai";
 import Image from "next/image";
 import { styled } from "../../../../styled-system/jsx";
 
 type Props = {
-  attachments: Attachment[];
+  files: FileUIPart[];
   onRemoveAttachment: (index: number) => void;
 };
 
@@ -37,14 +37,14 @@ const StyledRemoveIcon = styled(IconButton, {
   },
 });
 
-export function AttachmentPreviews({ attachments, onRemoveAttachment }: Props) {
+export function FilesPreview({ files, onRemoveAttachment }: Props) {
   return (
     <StyledAttachmentsContainer>
-      {attachments.map((file, index) => (
+      {files.map((file, index) => (
         <StyledImageContainer key={index}>
           <Image
             src={file.url}
-            alt={file.name ?? `Image ${index + 1}`}
+            alt={file.filename ?? `Image ${index + 1}`}
             fill
             style={{
               objectFit: "contain",

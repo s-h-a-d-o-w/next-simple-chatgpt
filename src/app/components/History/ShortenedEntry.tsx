@@ -1,12 +1,12 @@
 import { formatDistance } from "date-fns/formatDistance";
 import { css } from "../../../../styled-system/css";
 import { IconButton } from "@/components/IconButton";
-import type { Message as MessageType } from "@ai-sdk/react";
 import { Message } from "../Message";
 import { styled } from "../../../../styled-system/jsx";
+import { HistoryEntry } from "@/hooks/useHistory";
 
 type Props = {
-  message: MessageType;
+  entry: HistoryEntry;
   onDeleteHistoryEntry: () => void;
   onSetActiveHistoryEntry: () => void;
 };
@@ -20,25 +20,31 @@ const StyledDeleteButton = styled(IconButton, {
 });
 
 export function ShortenedEntry({
-  message,
+  entry,
   onDeleteHistoryEntry,
   onSetActiveHistoryEntry,
 }: Props) {
-  return (
+  const firstUserMessage = entry.messages[1];
+
+  return !firstUserMessage ? null : (
     <div>
       <div
         className={css({
           fontSize: "sm",
         })}
       >
-        {message.createdAt
-          ? formatDistance(message.createdAt, new Date(), {
+        {entry.startTime
+          ? formatDistance(entry.startTime, new Date(), {
               addSuffix: true,
             })
           : ""}
       </div>
       <div style={{ position: "relative" }}>
-        <Message {...message} shortened onClick={onSetActiveHistoryEntry} />
+        <Message
+          {...firstUserMessage}
+          shortened
+          onClick={onSetActiveHistoryEntry}
+        />
         <StyledDeleteButton
           name="delete"
           type="button"

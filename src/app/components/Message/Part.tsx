@@ -4,12 +4,11 @@ import { Code } from "./Code";
 import { padNewlines } from "./padNewlines";
 import { HeaderCell, Cell, Row } from "./TableElements";
 import ReactMarkdown from "react-markdown";
-import { Message as MessageType } from "ai/react";
-import type { ToolInvocation as ToolInvocationType } from "@ai-sdk/ui-utils";
 import { styled } from "../../../../styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { CopyButton } from "./CopyButton";
 import Spinner from "@/components/Spinner";
+import { UIMessage, ToolUIPart, DynamicToolUIPart } from "ai";
 
 // TODO: Should probably extract this and also use it for system messages at some point
 export const Expandable = styled("div", {
@@ -48,19 +47,30 @@ const MemoizedReactMarkdown = memo(
 export function ToolInvocation({
   toolInvocation,
 }: {
-  toolInvocation: ToolInvocationType;
+  toolInvocation: ToolUIPart | DynamicToolUIPart;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  return (
+  const toolName =
+    toolInvocation.type === "dynamic-tool"
+      ? toolInvocation.toolName
+      : toolInvocation.type.split("-")[1];
+  const output =
+    toolInvocation.state === "output-available"
+      ? toolInvocation.output
+      : toolInvocation.state === "output-error"
+        ? toolInvocation.errorText
+        : undefined;
+
+  return toolInvocation.state === "input-streaming" ? null : (
     <Expandable isExpanded={isExpanded}>
-      {toolInvocation.toolName} (
-      {Object.entries(toolInvocation.args)
+      {toolName} (
+      {Object.entries(toolInvocation.input as Record<string, unknown>)
         .map(([key, value]) => `${key}: ${value}`)
         .join(", ")}
       ):{" "}
-      {toolInvocation.state === "result" ? (
+      {output ? (
         isExpanded ? (
-          JSON.stringify(toolInvocation.result)
+          JSON.stringify(output)
         ) : (
           "..."
         )
@@ -69,7 +79,7 @@ export function ToolInvocation({
           style={{ display: "inline-block", width: "16rem", height: "16rem" }}
         />
       )}
-      {toolInvocation.state === "result" && (
+      {Boolean(output) && (
         <div
           style={{
             position: "absolute",
@@ -79,7 +89,7 @@ export function ToolInvocation({
             gap: "6rem",
           }}
         >
-          {<CopyButton>{JSON.stringify(toolInvocation.result)}</CopyButton>}
+          {<CopyButton>{JSON.stringify(output)}</CopyButton>}
           <IconButton
             name={isExpanded ? "collapse" : "expand"}
             iconSize="sm"
@@ -94,7 +104,7 @@ export function ToolInvocation({
 export function Part({
   part,
 }: {
-  part: NonNullable<MessageType["parts"]>[number];
+  part: NonNullable<UIMessage["parts"]>[number];
 }) {
   return part.type === "text" ? (
     <MemoizedReactMarkdown
@@ -112,17 +122,15 @@ export function Part({
     >
       {padNewlines(part.text)}
     </MemoizedReactMarkdown>
-  ) : part.type === "tool-invocation" ? (
-    <ToolInvocation toolInvocation={part.toolInvocation} />
+  ) : part.type === "dynamic-tool" ? (
+    <ToolInvocation toolInvocation={part} />
+  ) : part.type.startsWith("tool-") ? (
+    <ToolInvocation toolInvocation={part as ToolUIPart} />
   ) : part.type === "reasoning" ? (
-    <p>Reasoning: {part.reasoning}</p>
-  ) : part.type === "source" ? (
-    <p>
-      Source ({part.source.title}): {part.source.url}
-    </p>
+    <p>Reasoning: {part.text}</p>
   ) : part.type === "file" ? (
     <p>
-      File ({part.mimeType}): {part.data}
+      File ({part.mediaType}): {part.url}
     </p>
   ) : null;
 }

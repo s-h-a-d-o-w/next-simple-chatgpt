@@ -1,11 +1,11 @@
 import { Message } from "@/app/components/Message";
 import { Button } from "@/components/Button";
-import { Message as MessageType } from "ai";
+import { UIMessage } from "ai";
 import { styled } from "../../../styled-system/jsx";
 import { memo } from "react";
 
 type Props = {
-  messages: MessageType[];
+  messages: UIMessage[];
 
   hasError?: boolean;
   isLoading?: boolean;
@@ -44,9 +44,7 @@ export const Messages = memo(function Messages({
   return (
     <>
       {messages
-        .filter(
-          (message) => message.role !== "system" && message.content !== "",
-        )
+        .filter((message) => message.role !== "system")
         .map((message, idx) => (
           <MessageContainer key={message.id} isUser={message.role === "user"}>
             <Message
