@@ -124,7 +124,7 @@ export const Message = memo(
         )}
       </StyledMessage>
     );
-  }),
+  }, true),
   (prev, next) => {
     // might have to use stringify(parts) if this doesn't work with all message types
     return prev.parts === next.parts && prev.isLoading === next.isLoading;

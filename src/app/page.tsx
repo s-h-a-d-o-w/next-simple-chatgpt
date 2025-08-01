@@ -12,6 +12,7 @@ import {
   ChangeEventHandler,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -87,6 +88,12 @@ function Home() {
     messages: [createSystemMessage(systemValue)],
   });
   const isLoading = status === "submitted" || status === "streaming";
+
+  const body = useMemo(() => {
+    return {
+      model,
+    } satisfies Omit<ChatRequest, "messages">;
+  }, [model]);
 
   useEffect(() => {
     if (error) {
@@ -204,21 +211,44 @@ function Home() {
   }, []);
   // =================
 
-  const handleSubmit = useCallback(() => {
-    if (!startTime) {
-      setStartTime(Date.now());
-    }
-    sendMessage(
-      { text: input },
-      {
-        body: {
-          model,
-        } satisfies Omit<ChatRequest, "messages">,
-      },
-    );
-    setInput("");
-    setFiles([]);
-  }, [sendMessage, input, model, startTime]);
+  const handleSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      if (input === "" && files.length === 0) {
+        regenerate({
+          body,
+        });
+        return;
+      }
+
+      sendMessage(
+        {
+          parts: [
+            { type: "text", text: input },
+            ...(files.length > 0
+              ? files.map(({ filename, mediaType, url }) => {
+                  return {
+                    type: "file",
+                    filename,
+                    mediaType,
+                    url,
+                  } satisfies FileUIPart;
+                })
+              : []),
+          ],
+        },
+        { body },
+      );
+      setInput("");
+      setFiles([]);
+      // We only need to set start time at the start of the conversation.
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
+    },
+    [input, files, sendMessage, body, startTime, regenerate],
+  );
 
   return (
     <>
@@ -243,7 +273,9 @@ function Home() {
           isLoading={isLoading}
           messages={messages}
           onDelete={handleDeleteMessage}
-          onRetry={regenerate}
+          onRetry={() => {
+            regenerate({ body });
+          }}
           showCopyAll
         />
         <Prompt
@@ -267,19 +299,7 @@ function Home() {
               previousAttachments.filter((_, i) => i !== index),
             );
           }}
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (input === "" && files.length === 0) {
-              regenerate({
-                body: {
-                  model,
-                } satisfies Omit<ChatRequest, "messages">,
-              });
-              return;
-            } else {
-              handleSubmit();
-            }
-          }}
+          onSubmit={handleSubmit}
         />
         <div ref={endOfPageRef} />
       </StyledMain>
@@ -313,4 +333,4 @@ function Home() {
   );
 }
 
-export default withProfiler(Home);
+export default withProfiler(Home, true);
