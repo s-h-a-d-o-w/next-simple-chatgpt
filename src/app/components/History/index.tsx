@@ -7,9 +7,11 @@ import { Messages } from "../Messages";
 import { HistoryHeader } from "./HistoryHeader";
 import { ShortenedEntry } from "./ShortenedEntry";
 import { HistoryEntry } from "@/hooks/useHistory";
+import { memo } from "react";
+import useLocalStorageState from "use-local-storage-state";
+import superjson from "superjson";
 
 type Props = {
-  conversationHistory: HistoryEntry[];
   isOpen: boolean;
   onClose: () => void;
   onDeleteHistoryEntry: (index: number) => void;
@@ -20,6 +22,7 @@ type Props = {
   onSave: () => void;
 
   activeHistoryEntry?: HistoryEntry;
+  namespace?: string;
 };
 
 const StyledHistory = styled("div", {
@@ -94,9 +97,8 @@ const StyledSearchInput = styled("input", {
   },
 });
 
-export const History = function History({
+export const History = memo(function History({
   activeHistoryEntry,
-  conversationHistory,
   isOpen,
   onClose,
   onDeleteHistoryEntry,
@@ -105,7 +107,16 @@ export const History = function History({
   onDeleteHistory,
   onLoad,
   onSave,
+  namespace,
 }: Props) {
+  const [conversationHistory] = useLocalStorageState<HistoryEntry[]>(
+    `history${namespace ? `-${namespace}` : ""}`,
+    {
+      defaultValue: [],
+      serializer: superjson,
+    },
+  );
+
   const [searchTerms, setSearchTerms] = useState<string[]>();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -200,4 +211,4 @@ export const History = function History({
       )}
     </Dialog>
   );
-};
+});

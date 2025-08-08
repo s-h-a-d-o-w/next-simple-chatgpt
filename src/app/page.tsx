@@ -168,6 +168,7 @@ function Home() {
 
   const handleRestoreHistoryEntry = useCallback(() => {
     if (activeHistoryEntry) {
+      // We consciously don't restore the start time so that a new history entry is created after submitting a prompt.
       setMessages(activeHistoryEntry.messages);
       setActiveHistoryEntry(undefined);
       setShowHistory(false);
@@ -315,7 +316,6 @@ function Home() {
       {/* ================ */}
       <History
         activeHistoryEntry={activeHistoryEntry}
-        conversationHistory={conversationHistory}
         isOpen={showHistory}
         onClose={handleCloseHistory}
         onDeleteHistoryEntry={handleDeleteHistoryEntry}
