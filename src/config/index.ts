@@ -1,16 +1,16 @@
 // Input/output costs are per million tokens
 export const models = {
+  "gpt-5": {
+    name: "GPT-5",
+    input: 1.25,
+    output: 10,
+    supportsAttachments: true,
+    provider: "openai",
+  },
   "gpt-4.1": {
     name: "GPT-4.1",
     input: 2,
     output: 8,
-    supportsAttachments: true,
-    provider: "openai",
-  },
-  "gpt-4-turbo": {
-    name: "GPT-4 Turbo",
-    input: 10,
-    output: 30,
     supportsAttachments: true,
     provider: "openai",
   },
@@ -19,13 +19,6 @@ export const models = {
     input: 1.1,
     output: 4.4,
     supportsAttachments: true,
-    provider: "openai",
-  },
-  "o3-mini": {
-    name: "o3 mini",
-    input: 1.1,
-    output: 4.4,
-    supportsAttachments: false,
     provider: "openai",
   },
   "claude-opus-4-0": {
@@ -58,6 +51,6 @@ export const config = {
     localStorageQuota: 2.5 * 1024 * 1024,
   },
   models: {
-    default: "gpt-4.1",
+    default: "gpt-5",
   },
 } as const;

@@ -126,7 +126,7 @@ export function Part({
     <ToolInvocation toolInvocation={part} />
   ) : part.type.startsWith("tool-") ? (
     <ToolInvocation toolInvocation={part as ToolUIPart} />
-  ) : part.type === "reasoning" ? (
+  ) : part.type === "reasoning" && part.text !== "" ? (
     <p>Reasoning: {part.text}</p>
   ) : part.type === "file" ? (
     <p>

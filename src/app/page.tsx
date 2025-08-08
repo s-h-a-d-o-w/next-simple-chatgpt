@@ -6,7 +6,7 @@ import { HistoryEntry, useHistory } from "@/hooks/useHistory";
 import { useScrollToTarget } from "@/hooks/useScrollToTarget";
 import { type ModelKey } from "@/config";
 import { useChat } from "@ai-sdk/react";
-import { FileUIPart, UIMessage } from "ai";
+import { type FileUIPart, type UIMessage } from "ai";
 import { cloneDeep, debounce } from "lodash";
 import {
   ChangeEventHandler,
@@ -80,8 +80,8 @@ function Home() {
     status,
     stop,
     error,
-    sendMessage,
     regenerate,
+    sendMessage,
   } = useChat<UIMessage>({
     id: chatId.toString(),
     experimental_throttle: 500,
@@ -108,6 +108,13 @@ function Home() {
   );
 
   useScrollToTarget(isLoading, endOfPageRef);
+
+  // If the persisted model is not in the config, set it to the default.
+  useEffect(() => {
+    if (!Object.keys(config.models).includes(model)) {
+      setModel(config.models.default);
+    }
+  }, [model, setModel]);
 
   // Syncs the system prompt into the array of messages when it changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
