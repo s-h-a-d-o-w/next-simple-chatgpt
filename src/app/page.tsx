@@ -30,7 +30,7 @@ import { Messages } from "./components/Messages";
 import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
 import { withProfiler } from "@/components/withProfiler";
-import { config } from "@/config";
+import { config, models } from "@/config";
 
 function createSystemMessage(content: string) {
   return {
@@ -111,7 +111,7 @@ function Home() {
 
   // If the persisted model is not in the config, set it to the default.
   useEffect(() => {
-    if (!Object.keys(config.models).includes(model)) {
+    if (!Object.keys(models).includes(model)) {
       setModel(config.models.default);
     }
   }, [model, setModel]);
