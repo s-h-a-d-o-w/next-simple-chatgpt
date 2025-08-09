@@ -95,13 +95,15 @@ export const Message = memo(
         {files.length > 0 && <FilesPreview files={files} />}
 
         {/* When there's only narrow code, the container wouldn't expand by itself. */}
-        <div style={{ width: "100%" }}>
-          {parts
-            .filter((part) => part.type !== "file")
-            .map((part, index) => (
-              <Part key={index} part={part} />
-            ))}
-        </div>
+        {content && (
+          <div style={{ width: "100%" }}>
+            {parts
+              .filter((part) => part.type !== "file")
+              .map((part, index) => (
+                <Part key={index} part={part} />
+              ))}
+          </div>
+        )}
 
         {(isLoading || onDelete || showCopyAll) && (
           <div
@@ -109,9 +111,10 @@ export const Message = memo(
               alignSelf: isUser ? undefined : "flex-end",
               display: "flex",
               gap: "12rem",
+              alignItems: "center",
             }}
           >
-            {content === "" && <Spinner />}
+            {isLoading && content === "" && <Spinner />}
             {!isLoading && onDelete && (
               <IconButton
                 name="delete"

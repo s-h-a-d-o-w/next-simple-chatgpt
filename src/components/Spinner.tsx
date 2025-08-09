@@ -9,6 +9,9 @@ const SpinnerContainer = styled("div", {
     width: "24rem",
     height: "24rem",
     flexShrink: 0,
+
+    opacity: 0,
+    animation: "fadeIn 400ms ease-in-out 400ms forwards",
   },
 });
 

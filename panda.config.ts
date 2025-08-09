@@ -59,6 +59,16 @@ export default defineConfig({
       breakpoints: {
         xs: "380px",
       },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        fadeOut: {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+      },
       tokens: {
         fontSizes: {
           "2xs": { value: "8rem" },
