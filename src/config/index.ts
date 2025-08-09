@@ -51,6 +51,6 @@ export const config = {
     localStorageQuota: 2.5 * 1024 * 1024,
   },
   models: {
-    default: "gpt-5",
+    default: "gpt-4.1",
   },
 } as const;
