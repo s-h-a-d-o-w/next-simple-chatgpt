@@ -3,7 +3,7 @@
 import "../styles/prism-theme.css";
 
 import { HistoryEntry, useHistory } from "@/hooks/useHistory";
-import { useScrollToTarget } from "@/hooks/useScrollToTarget";
+import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 import { type ModelKey } from "@/config";
 import { useChat } from "@ai-sdk/react";
 import { type FileUIPart, type UIMessage } from "ai";
@@ -107,7 +107,7 @@ function Home() {
     messages,
   );
 
-  useScrollToTarget(isLoading, endOfPageRef);
+  useScrollToBottom(isLoading, messages);
 
   // If the persisted model is not in the config, set it to the default.
   useEffect(() => {
