@@ -2,7 +2,13 @@
 
 import "../styles/prism-theme.css";
 
-import { HistoryEntry, useHistory } from "@/hooks/useHistory";
+import {
+  HistoryEntryV1,
+  CURRENT_HISTORY_VERSION,
+  historySerializer,
+  useHistory,
+  useSyncHistory,
+} from "@/hooks/useHistory";
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 import { type ModelKey } from "@/config";
 import { useChat } from "@ai-sdk/react";
@@ -16,7 +22,6 @@ import {
   useRef,
   useState,
 } from "react";
-import superjson from "superjson";
 import useLocalStorageState from "use-local-storage-state";
 import { styled } from "../../styled-system/jsx";
 import { loadJsonFile } from "../utils/loadJsonFile";
@@ -58,7 +63,8 @@ function Home() {
 
   const [showHistory, setShowHistory] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [activeHistoryEntry, setActiveHistoryEntry] = useState<HistoryEntry>();
+  const [activeHistoryEntry, setActiveHistoryEntry] =
+    useState<HistoryEntryV1>();
   const [files, setFiles] = useState<FileUIPart[]>([]);
   const [model, setModel] = useLocalStorageState<ModelKey>("model", {
     defaultValue: config.models.default,
@@ -101,11 +107,8 @@ function Home() {
     }
   }, [error]);
 
-  const [conversationHistory, setConversationHistory] = useHistory(
-    isLoading,
-    startTime,
-    messages,
-  );
+  const [conversationHistory, setConversationHistory] = useHistory();
+  useSyncHistory(isLoading, startTime, messages);
 
   useScrollToBottom(isLoading, messages);
 
@@ -179,7 +182,7 @@ function Home() {
   }, [activeHistoryEntry, setSystemValue, setMessages]);
 
   const handleSetActiveHistoryEntry = useCallback(
-    (nextMessages?: HistoryEntry) => {
+    (nextMessages?: HistoryEntryV1) => {
       setActiveHistoryEntry(nextMessages);
     },
     [],
@@ -191,8 +194,7 @@ function Home() {
 
   const handleLoadHistory = useCallback(async () => {
     try {
-      const history = superjson.parse(await loadJsonFile()) as HistoryEntry[];
-      setConversationHistory(history);
+      setConversationHistory(historySerializer.parse(await loadJsonFile()));
     } catch {
       // TODO: user cancelled or picked nonsense. should probably show error.
     }
@@ -200,7 +202,10 @@ function Home() {
 
   const handleSaveHistory = useCallback(() => {
     saveJsonFile(
-      conversationHistory,
+      {
+        version: CURRENT_HISTORY_VERSION,
+        history: conversationHistory,
+      },
       `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
     );
   }, [conversationHistory]);

@@ -2,10 +2,10 @@ import { styled } from "../../../../styled-system/jsx";
 import { isDev, isClientDebug } from "@/utils/consts";
 import { StorageUsageWheel } from "./StorageUsageWheel";
 import { IconButton } from "@/components/IconButton";
-import { HistoryEntry } from "@/hooks/useHistory";
+import { HistoryEntryV1 } from "@/hooks/useHistory";
 
 type Props = {
-  conversationHistory: HistoryEntry[];
+  conversationHistory: HistoryEntryV1[];
   onDeleteHistory: () => void;
   onLoad: () => void;
   onSave: () => void;

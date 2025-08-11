@@ -1,27 +1,24 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
+import { HistoryEntryV1, useHistory } from "@/hooks/useHistory";
 import { debounce } from "lodash";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { Messages } from "../Messages";
 import { HistoryHeader } from "./HistoryHeader";
 import { ShortenedEntry } from "./ShortenedEntry";
-import { HistoryEntry } from "@/hooks/useHistory";
-import { memo } from "react";
-import useLocalStorageState from "use-local-storage-state";
-import superjson from "superjson";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onDeleteHistoryEntry: (index: number) => void;
   onRestoreHistoryEntry: () => void;
-  onSetActiveHistoryEntry: (messages?: HistoryEntry) => void;
+  onSetActiveHistoryEntry: (messages?: HistoryEntryV1) => void;
   onDeleteHistory: () => void;
   onLoad: () => void;
   onSave: () => void;
 
-  activeHistoryEntry?: HistoryEntry;
+  activeHistoryEntry?: HistoryEntryV1;
   namespace?: string;
 };
 
@@ -109,13 +106,7 @@ export const History = memo(function History({
   onSave,
   namespace,
 }: Props) {
-  const [conversationHistory] = useLocalStorageState<HistoryEntry[]>(
-    `history${namespace ? `-${namespace}` : ""}`,
-    {
-      defaultValue: [],
-      serializer: superjson,
-    },
-  );
+  const [conversationHistory] = useHistory(namespace);
 
   const [searchTerms, setSearchTerms] = useState<string[]>();
   const searchInputRef = useRef<HTMLInputElement>(null);

@@ -3,10 +3,10 @@ import { css } from "../../../../styled-system/css";
 import { IconButton } from "@/components/IconButton";
 import { Message } from "../Message";
 import { styled } from "../../../../styled-system/jsx";
-import { HistoryEntry } from "@/hooks/useHistory";
+import { HistoryEntryV1 } from "@/hooks/useHistory";
 
 type Props = {
-  entry: HistoryEntry;
+  entry: HistoryEntryV1;
   onDeleteHistoryEntry: () => void;
   onSetActiveHistoryEntry: () => void;
 };

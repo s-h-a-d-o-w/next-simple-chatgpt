@@ -1,6 +1,6 @@
 import * as superjson from "superjson";
 
-export function saveJsonFile(data: object, filename: string): void {
+export function saveJsonFile(data: unknown, filename: string): void {
   // Create a blob with the JSON content
   const blob = new Blob([superjson.stringify(data)], {
     type: "application/json",
