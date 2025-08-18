@@ -1,3 +1,5 @@
+import { isTest } from "@/utils/consts";
+
 // Input/output costs are per million tokens
 export const models = {
   "gpt-5": {
@@ -21,8 +23,9 @@ export const models = {
     supportsAttachments: true,
     provider: "openai",
   },
-  "claude-opus-4-0": {
-    name: "Claude Opus 4.0",
+  // See https://docs.anthropic.com/en/docs/about-claude/models/overview
+  "claude-opus-4-1": {
+    name: "Claude Opus 4.1",
     input: 15,
     output: 75,
     supportsAttachments: true,
@@ -32,6 +35,13 @@ export const models = {
     name: "Claude Sonnet 4.0",
     input: 3,
     output: 15,
+    supportsAttachments: true,
+    provider: "anthropic",
+  },
+  "claude-3-5-haiku-latest": {
+    name: "Claude 3.5 Haiku",
+    input: 0.8,
+    output: 4,
     supportsAttachments: true,
     provider: "anthropic",
   },
@@ -51,6 +61,6 @@ export const config = {
     localStorageQuota: 2.5 * 1024 * 1024,
   },
   models: {
-    default: "gpt-4.1",
+    default: isTest ? "claude-3-5-haiku-latest" : "gpt-4.1",
   },
 } as const;
