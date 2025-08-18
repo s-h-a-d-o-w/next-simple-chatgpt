@@ -66,9 +66,17 @@ function Home() {
   const [activeHistoryEntry, setActiveHistoryEntry] =
     useState<HistoryEntryV1>();
   const [files, setFiles] = useState<FileUIPart[]>([]);
-  const [model, setModel] = useLocalStorageState<ModelKey>("model", {
-    defaultValue: config.models.default,
-  });
+  const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>("model");
+  const model = useMemo<ModelKey>(() => {
+    if (!Object.keys(models).includes(storedModel)) {
+      // Has to happen after rendering, otherwise React will freak out.
+      setTimeout(() => {
+        setStoredModel(config.models.default);
+      });
+      return config.models.default;
+    }
+    return storedModel;
+  }, [storedModel, setStoredModel]);
   const [input, setInput] = useState("");
   const [startTime, setStartTime] = useState<number>();
   const [systemValue, setSystemValue] = useLocalStorageState<string>(
@@ -112,13 +120,6 @@ function Home() {
 
   useScrollToBottom(isLoading, messages);
 
-  // If the persisted model is not in the config, set it to the default.
-  useEffect(() => {
-    if (!Object.keys(models).includes(model)) {
-      setModel(config.models.default);
-    }
-  }, [model, setModel]);
-
   // Syncs the system prompt into the array of messages when it changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSyncSystemMessage = useCallback(
@@ -141,9 +142,11 @@ function Home() {
 
   const handleDeleteMessage = useCallback(
     (id: string) => {
-      setMessages(messages.filter((message) => message.id !== id));
+      setMessages((previousMessages) =>
+        previousMessages.filter((message) => message.id !== id),
+      );
     },
-    [messages, setMessages],
+    [setMessages],
   );
 
   const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = (
@@ -268,7 +271,7 @@ function Home() {
       <Actions
         disabledHistoryActions={Object.keys(conversationHistory).length === 0}
         model={model}
-        onModelChange={setModel}
+        onModelChange={setStoredModel}
         onReset={handleReset}
         onShowHistory={handleShowHistory}
         showAttachmentModelsOnly={
@@ -300,7 +303,7 @@ function Home() {
           onClickStop={stop}
           files={files}
           currentModel={model}
-          onModelChange={setModel}
+          onModelChange={setStoredModel}
           onAddAttachments={(newAttachments) => {
             setFiles((previousAttachments) => [
               ...previousAttachments,
