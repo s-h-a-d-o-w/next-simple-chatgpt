@@ -3,6 +3,7 @@ import { models, type ModelKey } from "@/config";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { isTest } from "@/utils/consts";
 
 export type ChatRequest = {
   model: ModelKey;
@@ -12,7 +13,6 @@ export type ChatRequest = {
 export const maxDuration = 60;
 
 const whitelist = process.env["WHITELIST"]?.split(",");
-const isTest = Boolean(process.env["CI"]);
 
 function convertMessagesAnthropic(messages: UIMessage[]) {
   const coreMessages = convertToModelMessages(messages);

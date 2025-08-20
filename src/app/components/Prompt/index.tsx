@@ -100,7 +100,7 @@ export function Prompt({
         <StyledInputContainer>
           <Textarea
             autoFocus
-            name="prompt"
+            aria-label="chat prompt"
             placeholder={
               isFirstPrompt
                 ? "Enter your prompt here."

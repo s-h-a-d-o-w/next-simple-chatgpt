@@ -68,7 +68,7 @@ function Home() {
   const [files, setFiles] = useState<FileUIPart[]>([]);
   const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>("model");
   const model = useMemo<ModelKey>(() => {
-    if (!Object.keys(models).includes(storedModel)) {
+    if (!storedModel || !Object.keys(models).includes(storedModel)) {
       // Has to happen after rendering, otherwise React will freak out.
       setTimeout(() => {
         setStoredModel(config.models.default);

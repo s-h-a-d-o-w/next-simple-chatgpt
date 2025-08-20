@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
+import { isTest } from "@/utils/consts";
 
 const whitelist = process.env["WHITELIST"]?.split(",");
 
-export const isTest = Boolean(process.env["CI"]);
 const trustHost = isTest ? { trustHost: true } : {};
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

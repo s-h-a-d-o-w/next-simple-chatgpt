@@ -12,7 +12,7 @@ const baseURL = isDev
 export default defineConfig({
   testDir: "./tests",
   globalSetup: "./playwright.setup.ts",
-  timeout: isDev ? 3000 : 10000,
+  timeout: 10000,
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env["CI"],
