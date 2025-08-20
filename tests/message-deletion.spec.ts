@@ -3,9 +3,6 @@ import { submitPrompt } from "./utilities";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
-  await page.evaluate(() => {
-    window.localStorage.clear();
-  });
 });
 
 test("should delete individual messages correctly", async ({ page }) => {
