@@ -1,19 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-
-async function submitPrompt(page: Page, prompt: string) {
-  const promptInput = page.getByRole("textbox", { name: "chat prompt" });
-  await promptInput.waitFor({ state: "visible" });
-  await expect(promptInput).toBeEnabled();
-  await promptInput.fill(prompt);
-
-  await promptInput.press("Control+Enter");
-  await page
-    .getByRole("button", { name: "replay" })
-    .waitFor({ state: "visible" });
-
-  await expect(promptInput).toBeEnabled();
-  await promptInput.waitFor({ state: "visible" });
-}
+import { test, expect } from "@playwright/test";
+import { submitPrompt } from "./utilities";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -45,8 +31,8 @@ test("should delete individual messages correctly", async ({ page }) => {
 
   // Verify remaining messages are correct
   await expect(secondUserMessage).not.toBeVisible();
-  await expect(main.getByText("First message")).toBeVisible();
-  await expect(main.getByText("Third message")).toBeVisible();
+  await expect(userMessages.getByText("First message")).toBeVisible();
+  await expect(userMessages.getByText("Third message")).toBeVisible();
   await expect(assistantMessages).toHaveCount(3);
 });
 

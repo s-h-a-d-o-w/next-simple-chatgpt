@@ -1,22 +1,18 @@
-import { test, expect, type Locator, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+import { submitPrompt } from "./utilities";
 
-async function submitPrompt(page: Page, promptInput: Locator, prompt: string) {
-  await promptInput.fill(prompt);
-  await promptInput.press("Control+Enter");
-  await page
-    .getByRole("button", { name: "replay" })
-    .waitFor({ state: "visible" });
-}
+test.beforeEach(async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    window.localStorage.clear();
+  });
+});
 
 test(`Copying code and message works`, async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
-  await page.goto("/");
-  const promptInput = page.getByPlaceholder("Enter your prompt here.");
-
   await submitPrompt(
     page,
-    promptInput,
     "Write a one-line JavaScript function named add that returns the sum of two numbers.",
   );
 
@@ -43,17 +39,10 @@ test(`Copying code and message works`, async ({ page, context }) => {
 });
 
 test(`Deleting history entries works correctly`, async ({ page }) => {
-  await page.goto("/");
-  const promptInput = page.getByPlaceholder("Enter your prompt here.");
-
-  await page.evaluate(() => {
-    window.localStorage.clear();
-  });
-
-  await submitPrompt(page, promptInput, "What is 2 + 2?");
+  await submitPrompt(page, "What is 2 + 2?");
   await page.getByRole("button", { name: "Reset" }).click();
 
-  await submitPrompt(page, promptInput, "What is the capital of France?");
+  await submitPrompt(page, "What is the capital of France?");
   await page.getByRole("button", { name: "Reset" }).click();
 
   await page.getByRole("button", { name: "History" }).click();
