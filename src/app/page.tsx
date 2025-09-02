@@ -2,15 +2,17 @@
 
 import "../styles/prism-theme.css";
 
+import { withProfiler } from "@/components/withProfiler";
+import { config } from "@/config";
 import {
-  HistoryEntryV1,
   CURRENT_HISTORY_VERSION,
+  HistoryEntryV1,
   historySerializer,
   useHistory,
   useSyncHistory,
 } from "@/hooks/useHistory";
+import { useModelSelection } from "@/hooks/useModelSelection";
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
-import { type ModelKey } from "@/config";
 import { useChat } from "@ai-sdk/react";
 import { type FileUIPart, type UIMessage } from "ai";
 import { cloneDeep, debounce } from "lodash";
@@ -34,8 +36,6 @@ import { History } from "./components/History";
 import { Messages } from "./components/Messages";
 import { Prompt } from "./components/Prompt";
 import { SystemPrompt } from "./components/SystemPrompt";
-import { withProfiler } from "@/components/withProfiler";
-import { config, models } from "@/config";
 
 function createSystemMessage(content: string) {
   return {
@@ -66,23 +66,7 @@ function Home() {
   const [activeHistoryEntry, setActiveHistoryEntry] =
     useState<HistoryEntryV1>();
   const [files, setFiles] = useState<FileUIPart[]>([]);
-
-  const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>(
-    "model",
-    {
-      defaultValue: config.models.default,
-    },
-  );
-  const model = useMemo<ModelKey>(() => {
-    return !(storedModel in models) ? config.models.default : storedModel;
-  }, [storedModel]);
-
-  // Sync possibly invalid model back to localStorage
-  useEffect(() => {
-    if (storedModel && !(storedModel in models)) {
-      setStoredModel(config.models.default);
-    }
-  }, [storedModel, setStoredModel]);
+  const [model, setModel] = useModelSelection();
 
   const [input, setInput] = useState("");
   const [startTime, setStartTime] = useState<number>();
@@ -278,7 +262,7 @@ function Home() {
       <Actions
         disabledHistoryActions={Object.keys(conversationHistory).length === 0}
         model={model}
-        onModelChange={setStoredModel}
+        onModelChange={setModel}
         onReset={handleReset}
         onShowHistory={handleShowHistory}
         showAttachmentModelsOnly={
@@ -310,7 +294,7 @@ function Home() {
           onClickStop={stop}
           files={files}
           currentModel={model}
-          onModelChange={setStoredModel}
+          onModelChange={setModel}
           onAddAttachments={(newAttachments) => {
             setFiles((previousAttachments) => [
               ...previousAttachments,
