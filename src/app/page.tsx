@@ -66,17 +66,24 @@ function Home() {
   const [activeHistoryEntry, setActiveHistoryEntry] =
     useState<HistoryEntryV1>();
   const [files, setFiles] = useState<FileUIPart[]>([]);
-  const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>("model");
+
+  const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>(
+    "model",
+    {
+      defaultValue: config.models.default,
+    },
+  );
   const model = useMemo<ModelKey>(() => {
-    if (!storedModel || !Object.keys(models).includes(storedModel)) {
-      // Has to happen after rendering, otherwise React will freak out.
-      setTimeout(() => {
-        setStoredModel(config.models.default);
-      });
-      return config.models.default;
+    return !(storedModel in models) ? config.models.default : storedModel;
+  }, [storedModel]);
+
+  // Sync possibly invalid model back to localStorage
+  useEffect(() => {
+    if (storedModel && !(storedModel in models)) {
+      setStoredModel(config.models.default);
     }
-    return storedModel;
   }, [storedModel, setStoredModel]);
+
   const [input, setInput] = useState("");
   const [startTime, setStartTime] = useState<number>();
   const [systemValue, setSystemValue] = useLocalStorageState<string>(

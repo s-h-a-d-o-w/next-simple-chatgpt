@@ -46,16 +46,26 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    reuseExistingServer: isDev,
-    ignoreHTTPSErrors: true,
-    command: isDev ? "pnpm dev" : "pnpm start",
-    url: baseURL,
-    stdout: "pipe",
-    stderr: "pipe",
-    env: {
-      ...process.env,
-      CI: "true",
-    },
-  },
+  webServer: isDev
+    ? {
+        // We can't use `env` in dev because we run a script => env would be overwritten
+        reuseExistingServer: true,
+        ignoreHTTPSErrors: true,
+        command: "pnpm dev:e2e",
+        url: baseURL,
+        stdout: "pipe",
+        stderr: "pipe",
+      }
+    : {
+        reuseExistingServer: false,
+        ignoreHTTPSErrors: true,
+        command: "pnpm start",
+        url: baseURL,
+        stdout: "pipe",
+        stderr: "pipe",
+        env: {
+          ...process.env,
+          CI: "true",
+        },
+      },
 });
