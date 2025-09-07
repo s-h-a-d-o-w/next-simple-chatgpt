@@ -9,7 +9,6 @@ import {
   HistoryEntryV1,
   historySerializer,
   useHistory,
-  useSyncHistory,
 } from "@/hooks/useHistory";
 import { useModelSelection } from "@/hooks/useModelSelection";
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
@@ -106,8 +105,11 @@ function Home() {
     }
   }, [error]);
 
-  const [conversationHistory, setConversationHistory] = useHistory();
-  useSyncHistory(isLoading, startTime, messages);
+  const [conversationHistory, setConversationHistory] = useHistory(
+    isLoading,
+    startTime,
+    messages,
+  );
 
   useScrollToBottom(isLoading, messages);
 

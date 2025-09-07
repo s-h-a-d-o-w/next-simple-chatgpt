@@ -52,7 +52,12 @@ function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
   }));
 }
 
-export function useHistory(namespace?: string) {
+export function useHistory(
+  isLoading: boolean,
+  startTime: number | undefined,
+  messages: UIMessage[],
+  namespace?: string,
+) {
   const [conversationHistory, setConversationHistory] = useLocalStorageState<
     HistoryEntryV1[]
   >(`history${namespace ? `-${namespace}` : ""}`, {
@@ -60,24 +65,7 @@ export function useHistory(namespace?: string) {
     serializer: historySerializer,
   });
 
-  return [conversationHistory, setConversationHistory] as const;
-}
-
-// Keep history in sync as messages arive
-export function useSyncHistory(
-  isLoading: boolean,
-  startTime: number | undefined,
-  messages: UIMessage[],
-  namespace?: string,
-) {
-  const [_, setConversationHistory] = useLocalStorageState<HistoryEntryV1[]>(
-    `history${namespace ? `-${namespace}` : ""}`,
-    {
-      defaultValue: [],
-      serializer: historySerializer,
-    },
-  );
-
+  // Keep history in sync as messages arive
   useEffect(() => {
     if (!isLoading && startTime && messages.length > 1) {
       setConversationHistory((history) => {
@@ -113,4 +101,6 @@ export function useSyncHistory(
       });
     }
   }, [usedStorage, setConversationHistory]);
+
+  return [conversationHistory, setConversationHistory] as const;
 }

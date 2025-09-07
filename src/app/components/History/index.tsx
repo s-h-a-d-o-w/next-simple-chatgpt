@@ -1,12 +1,13 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
-import { HistoryEntryV1, useHistory } from "@/hooks/useHistory";
+import { HistoryEntryV1 } from "@/hooks/useHistory";
 import { debounce } from "lodash";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { Messages } from "../Messages";
 import { HistoryHeader } from "./HistoryHeader";
 import { ShortenedEntry } from "./ShortenedEntry";
+import useLocalStorageState from "use-local-storage-state";
 
 type Props = {
   isOpen: boolean;
@@ -106,7 +107,12 @@ export const History = memo(function History({
   onSave,
   namespace,
 }: Props) {
-  const [conversationHistory] = useHistory(namespace);
+  const [conversationHistory] = useLocalStorageState<HistoryEntryV1[]>(
+    `history${namespace ? `-${namespace}` : ""}`,
+    {
+      defaultValue: [],
+    },
+  );
 
   const [searchTerms, setSearchTerms] = useState<string[]>();
   const searchInputRef = useRef<HTMLInputElement>(null);
