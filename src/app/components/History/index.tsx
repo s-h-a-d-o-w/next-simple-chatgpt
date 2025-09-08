@@ -1,6 +1,6 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
-import { HistoryEntryV1 } from "@/hooks/useHistory";
+import { HistoryEntryV1, historySerializer } from "@/hooks/useHistory";
 import { debounce } from "lodash";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "../../../../styled-system/jsx";
@@ -111,6 +111,7 @@ export const History = memo(function History({
     `history${namespace ? `-${namespace}` : ""}`,
     {
       defaultValue: [],
+      serializer: historySerializer,
     },
   );
 
