@@ -112,11 +112,8 @@ export function Part({
       components={{
         code: Code,
         pre: ({ children }) => children,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         th: HeaderCell,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         td: Cell,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         tr: Row,
       }}
     >

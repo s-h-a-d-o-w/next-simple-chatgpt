@@ -4,10 +4,10 @@ import { type ModelKey } from "@/config";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
-import HmrTimestamp from "./HmrTimestamp";
 import { ModelSelector } from "./ModelSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { memo } from "react";
+import { HmrTimestamp } from "./HmrTimestamp";
 
 type Props = {
   disabledHistoryActions: boolean;
