@@ -2,12 +2,22 @@ import { isTest } from "@/utils/consts";
 
 // Input/output costs are per million tokens
 export const models = {
+  "gpt-oss-120b": {
+    name: "GPT-OSS 120B",
+    input: 1.25,
+    output: 10,
+    supportsAttachments: true,
+    provider: "openai",
+    reasoningEffort: "high",
+  },
   "gpt-5": {
     name: "GPT-5",
     input: 1.25,
     output: 10,
     supportsAttachments: true,
     provider: "openai",
+    // Bizarrely, the latency seems to go down as the reasoning effort goes up. 🤷
+    reasoningEffort: "high",
   },
   "gpt-4.1": {
     name: "GPT-4.1",

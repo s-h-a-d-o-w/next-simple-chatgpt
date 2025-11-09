@@ -62,13 +62,14 @@ export const POST = auth(async (req) => {
       modelConfig.provider === "openai"
         ? convertToModelMessages(messages)
         : convertMessagesAnthropic(messages),
-    providerOptions: ["o3-mini", "o4-mini"].includes(model)
-      ? {
-          openai: {
-            reasoningEffort: "low",
-          },
-        }
-      : undefined,
+    providerOptions:
+      modelConfig.provider === "openai" && "reasoningEffort" in modelConfig
+        ? {
+            openai: {
+              reasoningEffort: modelConfig.reasoningEffort,
+            },
+          }
+        : undefined,
   });
 
   return result.toUIMessageStreamResponse({
