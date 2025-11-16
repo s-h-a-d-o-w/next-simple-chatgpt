@@ -6,7 +6,7 @@ export const models = {
     name: "Kimi K2 Thinking (OR)",
     input: 0.6,
     output: 2.5,
-    supportsAttachments: true,
+    supportsAttachments: false,
     provider: "openrouter",
     extraBody: {
       reasoning: {

@@ -117,21 +117,25 @@ export function Prompt({
             style={{ flexGrow: 1 }}
           />
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*,application/pdf"
-            multiple
-            onChange={handleFileSelect}
-            style={{ display: "none" }}
-          />
-          <IconButton
-            name="image"
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
-            aria-label="Add image"
-          />
+          {models[currentModel].supportsAttachments && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,application/pdf"
+                multiple
+                onChange={handleFileSelect}
+                style={{ display: "none" }}
+              />
+              <IconButton
+                name="image"
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+                aria-label="Add image"
+              />
+            </>
+          )}
 
           {isLoading ? (
             <IconButton
