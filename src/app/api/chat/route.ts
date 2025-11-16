@@ -1,9 +1,10 @@
 import { auth } from "@/auth";
 import { models, type ModelKey } from "@/config";
+import { isTest } from "@/utils/consts";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { isTest } from "@/utils/consts";
 
 export type ChatRequest = {
   model: ModelKey;
@@ -11,8 +12,12 @@ export type ChatRequest = {
 };
 
 export const maxDuration = 60;
-
 const whitelist = process.env["WHITELIST"]?.split(",");
+const loggedErrors = new Set<string>();
+
+const openrouter = createOpenRouter({
+  apiKey: process.env["OPENROUTER_API_KEY"],
+});
 
 function convertMessagesAnthropic(messages: UIMessage[]) {
   const coreMessages = convertToModelMessages(messages);
@@ -56,16 +61,25 @@ export const POST = auth(async (req) => {
 
   const { model, messages } = (await req.json()) as ChatRequest;
   const modelConfig = models[model];
+  // console.log("modelConfig", openai(model));
   const result = streamText({
-    model: modelConfig.provider === "openai" ? openai(model) : anthropic(model),
-    messages:
+    model:
       modelConfig.provider === "openai"
+        ? openai(model)
+        : modelConfig.provider === "anthropic"
+          ? anthropic(model)
+          : openrouter(model, {
+              extraBody: modelConfig.extraBody,
+            }),
+    messages:
+      modelConfig.provider === "openai" || modelConfig.provider === "openrouter"
         ? convertToModelMessages(messages)
         : convertMessagesAnthropic(messages),
     providerOptions:
-      modelConfig.provider === "openai" && "reasoningEffort" in modelConfig
+      "reasoningEffort" in modelConfig
         ? {
-            openai: {
+            // does this work with open router?
+            [modelConfig.provider]: {
               reasoningEffort: modelConfig.reasoningEffort,
             },
           }
@@ -75,7 +89,15 @@ export const POST = auth(async (req) => {
   return result.toUIMessageStreamResponse({
     onError(error) {
       // Would add error reporting service integration in commercial product here.
-      console.log(error);
+      if (!loggedErrors.has((error as Error).message)) {
+        if (loggedErrors.size > 100) {
+          loggedErrors.clear();
+        }
+
+        loggedErrors.add((error as Error).message);
+        console.log("onError:", (error as Error).message);
+      }
+
       return "An error occurred.";
     },
     headers: {
