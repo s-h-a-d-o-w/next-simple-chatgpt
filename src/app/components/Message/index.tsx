@@ -94,11 +94,10 @@ export const Message = memo(
       >
         {files.length > 0 && <FilesPreview files={files} />}
 
-        {/* When there's only narrow code, the container wouldn't expand by itself. */}
         {content && (
           <div style={{ width: "100%" }}>
             {parts
-              .filter((part) => part.type !== "file")
+              .filter((part) => part.type === "text")
               .map((part, index) => (
                 <Part key={index} part={part} />
               ))}
