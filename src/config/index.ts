@@ -12,6 +12,9 @@ export const models = {
       reasoning: {
         enabled: true,
       },
+      provider: {
+        only: ["fireworks"],
+      },
     },
   },
   "gpt-4.1": {
