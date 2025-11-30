@@ -20,7 +20,11 @@ const args = [
 ];
 
 const child = spawn("pnpm", args as string[], {
-  env: { ...process.env, CI: isE2E ? "true" : "false", FORCE_COLOR: "1" },
+  env: {
+    ...process.env,
+    NEXT_PUBLIC_E2E: isE2E ? "true" : undefined,
+    FORCE_COLOR: "1",
+  },
   stdio: ["ignore", "pipe", "pipe"],
   shell: true,
 });

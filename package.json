@@ -10,6 +10,7 @@
     "analyze": "cross-env ANALYZE=true next build",
     "prebuild": "pnpm generate:refractor-languages",
     "build": "tsx ./scripts/generateBuildTimestamp && next build",
+    "build:e2e": "tsx ./scripts/generateBuildTimestamp && cross-env NEXT_PUBLIC_E2E=true next build",
     "create-certificate": "pnpm tsx ./scripts/createCertificate",
     "predev": "pnpm generate:refractor-languages",
     "dev": "tsx ./scripts/checkWsl && del-cli .next && concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",

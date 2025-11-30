@@ -6,6 +6,17 @@ const baseURL = isDev
   ? `https://${getLocalIp()}:3000`
   : "http://localhost:3000";
 
+const sharedWebServerOptions = {
+  url: baseURL,
+  ignoreHTTPSErrors: true,
+  stdout: "pipe",
+  stderr: "pipe",
+  env: {
+    ...process.env,
+    NEXT_PUBLIC_E2E: "true",
+  },
+} as const;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -52,22 +63,12 @@ export default defineConfig({
     ? {
         // We can't use `env` in dev because we run a script => env would be overwritten
         reuseExistingServer: true,
-        ignoreHTTPSErrors: true,
         command: "pnpm dev:e2e",
-        url: baseURL,
-        stdout: "pipe",
-        stderr: "pipe",
+        ...sharedWebServerOptions,
       }
     : {
         reuseExistingServer: false,
-        ignoreHTTPSErrors: true,
         command: "pnpm start",
-        url: baseURL,
-        stdout: "pipe",
-        stderr: "pipe",
-        env: {
-          ...process.env,
-          CI: "true",
-        },
+        ...sharedWebServerOptions,
       },
 });
