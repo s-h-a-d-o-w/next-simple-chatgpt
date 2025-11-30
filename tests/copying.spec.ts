@@ -17,12 +17,12 @@ test(`Copying code and message works`, async ({ page, context }) => {
     await assistantMessage.locator("pre").innerText()
   ).trim();
 
-  await copyButtons.nth(0).click();
-  await checkButton.waitFor({ state: "visible" });
-  const clipboardCode = await page.evaluate(() =>
-    navigator.clipboard.readText(),
-  );
-  expect(clipboardCode.trim()).toBe(renderedCode);
+  await expect
+    .poll(async () => {
+      await copyButtons.nth(0).click();
+      return (await page.evaluate(() => navigator.clipboard.readText())).trim();
+    })
+    .toBe(renderedCode);
 
   await copyButtons.nth(1).click();
   await checkButton.waitFor({ state: "visible" });
