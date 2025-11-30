@@ -15,7 +15,7 @@
     "dev": "tsx ./scripts/checkWsl && del-cli .next && concurrently \"tsx ./scripts/runNext\" \"pnpm panda:watch\"",
     "dev:e2e": "tsx ./scripts/checkWsl && del-cli .next && concurrently \"tsx ./scripts/runNext --e2e\" \"pnpm panda:watch\"",
     "generate:refractor-languages": "tsx ./scripts/generateRefractorLanguageImports.ts",
-    "lint": "eslint",
+    "lint": "eslint --cache --cache-strategy content",
     "panda:watch": "panda --watch",
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
     "prepare": "concurrently \"husky\" \"panda codegen\"",
