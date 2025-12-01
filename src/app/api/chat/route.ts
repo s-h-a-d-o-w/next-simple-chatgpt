@@ -12,6 +12,7 @@ export type ChatRequest = {
 };
 
 export const maxDuration = 60;
+const DEV_TIMEOUT = maxDuration * 1000 + 1000; // 1 second more to use environment timeout behavior in production
 const whitelist = process.env["WHITELIST"]?.split(",");
 const loggedErrors = new Set<string>();
 
@@ -61,7 +62,12 @@ export const POST = auth(async (req) => {
 
   const { model, messages } = (await req.json()) as ChatRequest;
   const modelConfig = models[model];
-  // console.log("modelConfig", openai(model));
+
+  const abortController = new AbortController();
+  const timeoutId = setTimeout(() => {
+    abortController.abort();
+  }, DEV_TIMEOUT);
+
   const result = streamText({
     model:
       modelConfig.provider === "openai"
@@ -78,12 +84,18 @@ export const POST = auth(async (req) => {
     providerOptions:
       "reasoningEffort" in modelConfig
         ? {
-            // does this work with open router?
             [modelConfig.provider]: {
               reasoningEffort: modelConfig.reasoningEffort,
             },
           }
         : undefined,
+    abortSignal: abortController.signal,
+    onFinish() {
+      clearTimeout(timeoutId);
+    },
+    onError() {
+      clearTimeout(timeoutId);
+    },
   });
 
   return result.toUIMessageStreamResponse({
