@@ -80,6 +80,7 @@ export const Message = memo(
       ?.filter((part) => part.type === "text")
       .map((part) => part.text)
       .join("\n");
+    const lastPart = parts.at(-1);
 
     const files = parts.filter((part) => part.type === "file");
 
@@ -103,6 +104,12 @@ export const Message = memo(
               ))}
           </div>
         )}
+
+        {!isLoading &&
+          lastPart?.type === "reasoning" &&
+          lastPart?.state === "streaming" && (
+            <div>Request timed out during model reasoning</div>
+          )}
 
         {(isLoading || onDelete || showCopyAll) && (
           <div
