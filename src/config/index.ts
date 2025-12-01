@@ -45,7 +45,7 @@ export const models = {
     supportsAttachments: true,
     provider: "openai",
     // Bizarrely, the latency seems to go down as the reasoning effort goes up. 🤷
-    reasoningEffort: "high",
+    reasoningEffort: "low",
   },
 } as const;
 export type ModelKey = keyof typeof models;
