@@ -4,7 +4,7 @@ import { getLocalIp } from "./scripts/getLocalIp";
 const isDev = process.env["NODE_ENV"] !== "production";
 const baseURL = isDev
   ? `https://${getLocalIp()}:3030`
-  : "http://localhost:3030";
+  : "http://localhost:3000";
 
 const sharedWebServerOptions = {
   url: baseURL,
