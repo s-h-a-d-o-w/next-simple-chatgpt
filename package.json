@@ -21,7 +21,7 @@
     "precommit": "concurrently \"pnpm lint\" \"pnpm typecheck\"",
     "prepare": "concurrently \"husky\" \"panda codegen\"",
     "start": "next start",
-    "start:local": "concurrently \"next start -p 3001\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3000 --target 3001\"",
+    "start:local": "concurrently \"next start -p 3031\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3030 --target 3031\"",
     "test": "vitest",
     "e2e": "cross-env NODE_ENV=production playwright test",
     "e2e:debug": "playwright test --debug",
