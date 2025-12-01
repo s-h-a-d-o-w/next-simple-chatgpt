@@ -167,15 +167,20 @@ function Home() {
 
   const handleRestoreHistoryEntry = useCallback(() => {
     if (activeHistoryEntry) {
-      // We consciously don't restore the start time so that a new history entry is created after submitting a prompt.
+      setConversationHistory((history) =>
+        history.filter(
+          (entry) => entry.startTime !== activeHistoryEntry.startTime,
+        ),
+      );
       setMessages(activeHistoryEntry.messages);
+      setStartTime(Date.now());
       setActiveHistoryEntry(undefined);
       setShowHistory(false);
       if (activeHistoryEntry.messages[0]?.parts[0]?.type === "text") {
         setSystemValue(activeHistoryEntry.messages[0].parts[0].text);
       }
     }
-  }, [activeHistoryEntry, setSystemValue, setMessages]);
+  }, [activeHistoryEntry, setSystemValue, setMessages, setConversationHistory]);
 
   const handleSetActiveHistoryEntry = useCallback(
     (nextMessages?: HistoryEntryV1) => {
