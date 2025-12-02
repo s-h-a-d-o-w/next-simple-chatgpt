@@ -44,7 +44,6 @@ export const models = {
     output: 10,
     supportsAttachments: true,
     provider: "openai",
-    // Bizarrely, the latency seems to go down as the reasoning effort goes up. 🤷
     reasoningEffort: "low",
   },
 } as const;
