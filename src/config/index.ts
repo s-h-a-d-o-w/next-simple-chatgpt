@@ -19,29 +19,45 @@ export const models = {
   },
   "gpt-4.1": {
     name: "GPT-4.1",
-    input: 2,
-    output: 8,
+    input: 3,
+    output: 12,
+    cacheRead: 0.75,
     supportsAttachments: true,
     provider: "openai",
   },
+  "claude-opus-4-5": {
+    name: "Claude Opus 4.5",
+    input: 5,
+    output: 25,
+    cacheRead: 0.5,
+    cacheWrite: 6.25,
+    supportsAttachments: true,
+    provider: "anthropic",
+  },
   "claude-sonnet-4-5": {
     name: "Claude Sonnet 4.5",
+    // Higher pricing >200K tokens but... not doing that for now.
     input: 3,
     output: 15,
+    cacheRead: 0.3,
+    cacheWrite: 3.75,
     supportsAttachments: true,
     provider: "anthropic",
   },
-  "claude-3-5-haiku-latest": {
-    name: "Claude 3.5 Haiku",
-    input: 0.8,
-    output: 4,
+  "claude-haiku-4-5": {
+    name: "Claude Haiku 4.5",
+    input: 1,
+    output: 5,
+    cacheRead: 0.1,
+    cacheWrite: 1.25,
     supportsAttachments: true,
     provider: "anthropic",
   },
-  "gpt-5": {
-    name: "GPT-5",
+  "gpt-5.1": {
+    name: "GPT-5.1",
     input: 1.25,
     output: 10,
+    cacheRead: 0.125,
     supportsAttachments: true,
     provider: "openai",
     reasoningEffort: "low",
@@ -62,6 +78,6 @@ export const config = {
     localStorageQuota: 2.5 * 1024 * 1024,
   },
   models: {
-    default: isTest ? "claude-3-5-haiku-latest" : "gpt-4.1",
+    default: isTest ? "claude-haiku-4-5" : "gpt-4.1",
   },
 } as const;
