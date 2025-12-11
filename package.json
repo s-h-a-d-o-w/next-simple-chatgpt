@@ -23,7 +23,7 @@
     "start": "next start",
     "start:local": "concurrently \"next start -p 3031\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3030 --target 3031\"",
     "test": "vitest",
-    "e2e": "cross-env NODE_ENV=production playwright test",
+    "e2e": "cross-env NODE_ENV=production NEXT_PUBLIC_E2E=true  playwright test",
     "e2e:debug": "playwright test --debug",
     "e2e:ui": "playwright test --ui",
     "typecheck": "tsgo",
