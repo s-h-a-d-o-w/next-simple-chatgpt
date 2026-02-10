@@ -1,5 +1,6 @@
 const nextConfig = {
   devIndicators: false,
+  output: "standalone",
 };
 
 export default process.env.ANALYZE === "true"

@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Tests
 on:
   push:
     branches: [ main, master ]
@@ -21,6 +21,8 @@ jobs:
       uses: pnpm/action-setup@v4
     - name: Install dependencies
       run: pnpm install
+    - name: Run Tests
+      run: pnpm test
     - name: Build
       run: pnpm build:e2e
     - name: Install Playwright Browsers
