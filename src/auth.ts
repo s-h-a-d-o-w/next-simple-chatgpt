@@ -28,7 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       ],
   callbacks: {
     signIn({ user }) {
-      return isTest || Boolean(user?.email && whitelist?.includes(user.email));
+      return isTest || Boolean(user.email && whitelist?.includes(user.email));
     },
   },
   pages: {

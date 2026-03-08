@@ -2,7 +2,7 @@ import type { ClassAttributes, HTMLAttributes } from "react";
 import type { ExtraProps } from "react-markdown";
 import { css } from "../../../../styled-system/css";
 
-export const cellStyle = css({
+const cellStyle = css({
   padding: "6rem 12rem",
   border: "1px solid token(colors.stone.400)",
   _dark: {
@@ -11,7 +11,6 @@ export const cellStyle = css({
 });
 
 export const HeaderCell = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   node,
   children,
   ...props
@@ -24,7 +23,6 @@ export const HeaderCell = ({
 );
 
 export const Cell = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   node,
   children,
   ...props
@@ -36,7 +34,7 @@ export const Cell = ({
   </td>
 );
 
-export const rowStyle = css({
+const rowStyle = css({
   _even: {
     backgroundColor: "stone.200",
     _dark: {
@@ -46,7 +44,6 @@ export const rowStyle = css({
 });
 
 export const Row = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   node,
   children,
   ...props

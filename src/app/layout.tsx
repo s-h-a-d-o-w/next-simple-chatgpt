@@ -4,6 +4,7 @@ import { styled } from "../../styled-system/jsx";
 import { fonts } from "@/utils/fonts";
 import type { ReactNode } from "react";
 
+// oxlint-disable-next-line react/only-export-components
 export const metadata: Metadata = {
   title: "Simple ChatGPT UI",
   description: "Barebones UI for using ChatGPT.",

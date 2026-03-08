@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/IconButton";
 import { isDev } from "@/utils/consts";
-import { type ModelKey } from "@/config";
+import type { ModelKey } from "@/config";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";

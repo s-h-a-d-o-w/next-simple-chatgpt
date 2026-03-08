@@ -1,10 +1,7 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowImportingTsExtensions": true,
     "allowJs": false,
     "skipLibCheck": true,
     "noEmit": true,
@@ -17,18 +14,18 @@
     "jsx": "react-jsx",
     "incremental": true,
     "strict": true,
-    "noImplicitAny": true, /* Enable error reporting for expressions and declarations with an implied 'any' type. */
-    "strictNullChecks": true, /* When type checking, take into account 'null' and 'undefined'. */
-    "strictFunctionTypes": true, /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
-    "strictBindCallApply": true, /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
-    "strictPropertyInitialization": true, /* Check for class properties that are declared but not set in the constructor. */
-    "noImplicitThis": true, /* Enable error reporting when 'this' is given the type 'any'. */ // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
-    "alwaysStrict": true, /* Ensure 'use strict' is always emitted. */
-    "noUnusedLocals": true, /* Enable error reporting when local variables aren't read. */
-    "noUnusedParameters": true, /* Raise an error when a function parameter isn't read. */
-    "noFallthroughCasesInSwitch": true, /* Enable error reporting for fallthrough cases in switch statements. */
-    "noUncheckedIndexedAccess": true, /* Add 'undefined' to a type when accessed using an index. */
-    "noImplicitOverride": true, /* Ensure overriding members in derived classes are marked with an override modifier. */
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
+    "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined'. */,
+    "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
+    "strictBindCallApply": true /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */,
+    "strictPropertyInitialization": true /* Check for class properties that are declared but not set in the constructor. */,
+    "noImplicitThis": true /* Enable error reporting when 'this' is given the type 'any'. */, // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
+    "alwaysStrict": true /* Ensure 'use strict' is always emitted. */,
+    "noUnusedLocals": true /* Enable error reporting when local variables aren't read. */,
+    "noUnusedParameters": true /* Raise an error when a function parameter isn't read. */,
+    "noFallthroughCasesInSwitch": true /* Enable error reporting for fallthrough cases in switch statements. */,
+    "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index. */,
+    "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier. */,
     "noPropertyAccessFromIndexSignature": true,
     "plugins": [
       {
@@ -36,13 +33,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals"]
   },
   "include": [
     "next-env.d.ts",
@@ -51,7 +44,5 @@
     "**/*.tsx",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

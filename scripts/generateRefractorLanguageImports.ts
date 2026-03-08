@@ -14,11 +14,11 @@ function getAvailableLanguages() {
     const aliases: LanguageAlias[] = modules
       .map((file) => {
         const content = readFileSync(join(langDir, file), "utf-8");
-        const match = content.match(/\.aliases\s*=\s*(\[(?:'|").+?(?:'|")\])/s);
-        return match && match[1]
+        const match = /\.aliases\s*=\s*(\[(?:'|").+?(?:'|")\])/s.exec(content);
+        return match?.[1]
           ? {
               file: file.replace(".js", ""),
-              aliases: JSON.parse(match[1].replaceAll("'", '"')),
+              aliases: JSON.parse(match[1].replaceAll("'", '"')) as string[],
             }
           : undefined;
       })

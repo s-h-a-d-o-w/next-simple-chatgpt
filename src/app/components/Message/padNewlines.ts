@@ -8,7 +8,7 @@ export function padNewlines(input: string): string {
     const char = input[i];
 
     // In triple backtick?
-    if (input.substring(i, i + 3) === "```") {
+    if (input.slice(i, i + 3) === "```") {
       inTripleBacktick = !inTripleBacktick;
       result += "```";
       i += 2;

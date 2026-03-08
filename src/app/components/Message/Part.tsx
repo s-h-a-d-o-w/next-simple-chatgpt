@@ -10,6 +10,8 @@ import { CopyButton } from "./CopyButton";
 import Spinner from "@/components/Spinner";
 import { UIMessage, ToolUIPart, DynamicToolUIPart } from "ai";
 
+const remarkPlugins = [remarkGfm];
+
 // TODO: Should probably extract this and also use it for system messages at some point
 export const Expandable = styled("div", {
   base: {
@@ -65,7 +67,7 @@ export function ToolInvocation({
     <Expandable isExpanded={isExpanded}>
       {toolName} (
       {Object.entries(toolInvocation.input as Record<string, unknown>)
-        .map(([key, value]) => `${key}: ${value}`)
+        .map(([key, value]) => `${key}: ${value as string}`)
         .join(", ")}
       ):{" "}
       {output ? (
@@ -108,7 +110,7 @@ export function Part({
 }) {
   return part.type === "text" ? (
     <MemoizedReactMarkdown
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={remarkPlugins}
       components={{
         code: Code,
         pre: ({ children }) => children,

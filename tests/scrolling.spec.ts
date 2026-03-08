@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import { submitPrompt } from "./utilities";
 
-async function bottomDistance(page: Page) {
-  return await page.evaluate(() => {
+function bottomDistance(page: Page) {
+  return page.evaluate(() => {
     const bottom =
       document.body.scrollHeight - (window.scrollY + window.innerHeight);
     return Math.max(0, Math.round(bottom));

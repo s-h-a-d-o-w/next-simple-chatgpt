@@ -43,13 +43,9 @@ const StyledPercentage = styled("div", {
 });
 
 function getColor(usage: number) {
-  if (usage < 0.5) {
-    const red = Math.round(240 * usage * 2);
-    return `rgb(${red}, 240, 0)`;
-  } else {
-    const green = Math.round(240 * (1 - usage) * 2);
-    return `rgb(240, ${green}, 0)`;
-  }
+  return usage < 0.5
+    ? `rgb(${Math.round(240 * usage * 2)}, 240, 0)`
+    : `rgb(240, ${Math.round(240 * (1 - usage) * 2)}, 0)`;
 }
 
 export function StorageUsageWheel() {

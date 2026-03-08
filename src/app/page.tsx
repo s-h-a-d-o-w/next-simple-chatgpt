@@ -13,16 +13,10 @@ import {
 import { useModelSelection } from "@/hooks/useModelSelection";
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
-import { type FileUIPart, type UIMessage } from "ai";
+import type { FileUIPart, UIMessage } from "ai";
 import { cloneDeep, debounce } from "lodash";
-import {
-  ChangeEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ChangeEventHandler, KeyboardEvent, SubmitEvent } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import { styled } from "../../styled-system/jsx";
 import { loadJsonFile } from "../utils/loadJsonFile";
@@ -207,7 +201,7 @@ function Home() {
         version: CURRENT_HISTORY_VERSION,
         history: conversationHistory,
       },
-      `history-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+      `history-${new Date().toISOString().replaceAll(/[:.]/g, "-")}`,
     );
   }, [conversationHistory]);
   // =================
@@ -226,17 +220,19 @@ function Home() {
   // =================
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    (
+      event: KeyboardEvent<HTMLTextAreaElement> | SubmitEvent<HTMLFormElement>,
+    ) => {
       event.preventDefault();
 
       if (input === "" && files.length === 0) {
-        regenerate({
+        void regenerate({
           body,
         });
         return;
       }
 
-      sendMessage(
+      void sendMessage(
         {
           parts: [
             { type: "text", text: input },
@@ -288,7 +284,7 @@ function Home() {
           messages={messages}
           onDelete={handleDeleteMessage}
           onRetry={() => {
-            regenerate({ body });
+            void regenerate({ body });
           }}
           showCopyAll
         />
@@ -346,4 +342,5 @@ function Home() {
   );
 }
 
-export default withProfiler(Home, true);
+const ProfiledHome = withProfiler(Home, true);
+export default ProfiledHome;

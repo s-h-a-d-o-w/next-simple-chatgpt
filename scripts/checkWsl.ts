@@ -1,4 +1,4 @@
-import os from "os";
+import os from "node:os";
 
 if (
   Boolean(process.env["WSL_DISTRO_NAME"]) ||

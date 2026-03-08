@@ -30,12 +30,17 @@ export function CopyButton({ className, children }: Props) {
       iconSize="md"
       className={className}
       disabled={hasCopied}
-      onClick={() => {
-        navigator.clipboard.write(clipboardItem);
-        setHasCopied(true);
-        setTimeout(() => {
-          setHasCopied(false);
-        }, config.ui.copyStatusTimeout);
+      onClick={async () => {
+        try {
+          await navigator.clipboard.write(clipboardItem);
+          setHasCopied(true);
+          setTimeout(() => {
+            setHasCopied(false);
+          }, config.ui.copyStatusTimeout);
+        } catch (error) {
+          // TODO Handle error gracefully.
+          console.error("Error copying to clipboard", error);
+        }
       }}
     />
   );

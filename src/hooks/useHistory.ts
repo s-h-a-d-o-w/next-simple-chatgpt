@@ -44,7 +44,7 @@ function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
       part.type === "file"
         ? {
             type: "text",
-            text: `[File (${part.mediaType}) ${part.filename || "<no name>"}]`,
+            text: `[File (${part.mediaType}) ${part.filename ?? "<no name>"}]`,
           }
         : part,
     ),

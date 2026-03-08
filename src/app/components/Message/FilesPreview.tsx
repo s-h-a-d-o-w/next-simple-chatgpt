@@ -23,7 +23,7 @@ export function FilesPreview({ files }: { files: FileUIPart[] }) {
   return (
     <StyledAttachmentsContainer>
       {files.map(({ mediaType, url, filename }, index) => (
-        <StyledImagePreview key={index}>
+        <StyledImagePreview key={filename ?? url}>
           {mediaType.startsWith("image/") ? (
             <Image
               src={url}

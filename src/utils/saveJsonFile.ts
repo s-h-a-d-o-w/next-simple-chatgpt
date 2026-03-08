@@ -1,4 +1,4 @@
-import * as superjson from "superjson";
+import superjson from "superjson";
 
 export function saveJsonFile(data: unknown, filename: string): void {
   // Create a blob with the JSON content
@@ -12,7 +12,7 @@ export function saveJsonFile(data: unknown, filename: string): void {
   link.download = filename;
 
   // Append the link to the body, click it, and then remove it
-  document.body.appendChild(link);
+  document.body.append(link);
   link.click();
-  document.body.removeChild(link);
+  link.remove();
 }

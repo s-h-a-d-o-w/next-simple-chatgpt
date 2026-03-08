@@ -40,11 +40,11 @@ const StyledRemoveIcon = styled(IconButton, {
 export function FilesPreview({ files, onRemoveAttachment }: Props) {
   return (
     <StyledAttachmentsContainer>
-      {files.map((file, index) => (
-        <StyledImageContainer key={index}>
+      {files.map(({ url, filename }, index) => (
+        <StyledImageContainer key={filename ?? url}>
           <Image
-            src={file.url}
-            alt={file.filename ?? `Image ${index + 1}`}
+            src={url}
+            alt={filename ?? `Image ${index + 1}`}
             fill
             style={{
               objectFit: "contain",

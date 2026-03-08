@@ -1,4 +1,4 @@
-import { getLocalIp } from "./getLocalIp.js";
+import { getLocalIp } from "./getLocalIp.ts";
 import { spawn } from "node:child_process";
 
 const localIp = getLocalIp();
@@ -13,10 +13,6 @@ const args = [
   "-H",
   localIp,
   "--experimental-https",
-  "--experimental-https-key",
-  `certificates/${localIp}-key.pem`,
-  "--experimental-https-cert",
-  `certificates/${localIp}.pem`,
 ];
 
 const child = spawn("pnpm", args as string[], {
@@ -29,8 +25,8 @@ const child = spawn("pnpm", args as string[], {
   shell: true,
 });
 
-child.stdout?.pipe(process.stdout);
-child.stderr?.pipe(process.stderr);
+child.stdout.pipe(process.stdout);
+child.stderr.pipe(process.stderr);
 
 child.on("error", (error) => {
   console.error("Failed to start server:", error);

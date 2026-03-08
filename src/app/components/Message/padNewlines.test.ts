@@ -1,4 +1,5 @@
 import { padNewlines } from "./padNewlines";
+import { test, expect } from "vitest";
 
 test(padNewlines.name, () => {
   expect(

@@ -174,10 +174,10 @@ export const History = memo(function History({
         {filteredHistory
           .slice(0)
           .reverse()
-          .map((entry, index) =>
+          .map((entry) =>
             !entry.messages[1] ? null : (
               <ShortenedEntry
-                key={index}
+                key={entry.startTime}
                 entry={entry}
                 onDeleteHistoryEntry={() => {
                   if (activeHistoryEntry === entry) {

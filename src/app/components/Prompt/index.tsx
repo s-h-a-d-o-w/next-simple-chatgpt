@@ -1,4 +1,5 @@
-import { FormEvent, useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
+import type { KeyboardEvent, SubmitEvent } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { Textarea } from "@/components/Textarea";
@@ -18,7 +19,9 @@ type Props = {
   onClickStop: () => void;
   onModelChange: (model: ModelKey) => void;
   onRemoveAttachment: (index: number) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (
+    event: KeyboardEvent<HTMLTextAreaElement> | SubmitEvent<HTMLFormElement>,
+  ) => void;
 
   onAddAttachments?: (files: FileUIPart[]) => void;
 };
@@ -71,7 +74,7 @@ export function Prompt({
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       // TODO: If processing takes longer than ~500ms, render a spinner.
       onAddAttachments?.(
-        await filesToAttachments(Array.from(event.target.files || [])),
+        await filesToAttachments(Array.from(event.target.files ?? [])),
       );
 
       if (!models[currentModel].supportsAttachments) {
@@ -110,7 +113,7 @@ export function Prompt({
             onChange={onChange}
             onKeyDown={(event) => {
               if (event.ctrlKey && event.key === "Enter") {
-                onSubmit(event as unknown as FormEvent<HTMLFormElement>);
+                onSubmit(event);
               }
             }}
             disabled={isLoading}

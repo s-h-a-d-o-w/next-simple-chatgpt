@@ -1,5 +1,5 @@
 import { config, models } from "@/config";
-import { type ModelKey } from "@/config";
+import type { ModelKey } from "@/config";
 import useLocalStorageState from "use-local-storage-state";
 import { useMemo, useEffect } from "react";
 
@@ -16,7 +16,7 @@ export function useModelSelection() {
 
   // Sync possibly invalid model back to localStorage
   useEffect(() => {
-    if (storedModel && !(storedModel in models)) {
+    if (!(storedModel in models)) {
       setStoredModel(config.models.default);
     }
   }, [storedModel, setStoredModel]);

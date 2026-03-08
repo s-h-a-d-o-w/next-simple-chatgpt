@@ -1,8 +1,8 @@
 import { IconButton } from "@/components/IconButton";
 import Spinner from "@/components/Spinner";
 import { withProfiler } from "@/components/withProfiler";
-import { type UIMessage } from "ai";
-import { memo } from "react";
+import type { UIMessage } from "ai";
+import { memo, useMemo } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { FilesPreview } from "./FilesPreview";
 import { CopyButton } from "./CopyButton";
@@ -77,12 +77,15 @@ export const Message = memo(
   }: Props) {
     const isUser = role === "user";
     const content = parts
-      ?.filter((part) => part.type === "text")
+      .filter((part) => part.type === "text")
       .map((part) => part.text)
       .join("\n");
     const lastPart = parts.at(-1);
 
-    const files = parts.filter((part) => part.type === "file");
+    const files = useMemo(
+      () => parts.filter((part) => part.type === "file"),
+      [parts],
+    );
 
     return role === "system" ? null : (
       <StyledMessage
@@ -99,19 +102,19 @@ export const Message = memo(
           <div style={{ width: "100%" }}>
             {parts
               .filter((part) => part.type === "text")
-              .map((part, index) => (
-                <Part key={index} part={part} />
+              .map((part) => (
+                <Part key={`${id}-${part.text}`} part={part} />
               ))}
           </div>
         )}
 
         {!isLoading &&
           lastPart?.type === "reasoning" &&
-          lastPart?.state === "streaming" && (
+          lastPart.state === "streaming" && (
             <div>Request timed out during model reasoning</div>
           )}
 
-        {(isLoading || onDelete || showCopyAll) && (
+        {(isLoading || showCopyAll || onDelete) && (
           <div
             style={{
               alignSelf: isUser ? undefined : "flex-end",
@@ -139,3 +142,4 @@ export const Message = memo(
     return prev.parts === next.parts && prev.isLoading === next.isLoading;
   },
 );
+Message.displayName = "Message";

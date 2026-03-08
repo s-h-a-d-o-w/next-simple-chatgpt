@@ -4,6 +4,7 @@ import {
   useState,
   type ClassAttributes,
   type HTMLAttributes,
+  type JSX,
   type ReactNode,
 } from "react";
 import type { ExtraProps } from "react-markdown";
@@ -49,8 +50,12 @@ async function loadLanguage(language: SupportedLanguage) {
 }
 
 function renderCode(text: string, language: SupportedLanguage) {
-  const tree = refractor.highlight(text, language);
-  return toJsxRuntime(tree, { Fragment, jsxs, jsx });
+  try {
+    const tree = refractor.highlight(text, language);
+    return toJsxRuntime(tree, { Fragment, jsxs, jsx }) as JSX.Element;
+  } catch (error) {
+    return text;
+  }
 }
 
 export function Code(
@@ -59,8 +64,9 @@ export function Code(
     ExtraProps,
 ) {
   const { children, className } = props;
+  // oxlint-disable-next-line typescript/no-base-to-string
   const text = children ? String(children) : "";
-  const language = /language-(\w+)/.exec(className || "")?.[1] || "";
+  const language = /language-(\w+)/.exec(className ?? "")?.[1] ?? "";
   const isInline = !text.includes("\n");
   const isLanguageLoaded = alreadyLoaded.has(language);
 
@@ -73,9 +79,13 @@ export function Code(
 
   useEffect(() => {
     if (!isInline && !isLanguageLoaded && isSupportedLanguage(language)) {
-      loadLanguage(language).then(() => {
-        setHighlightedCode(renderCode(text, language));
-      });
+      loadLanguage(language)
+        .then(() => {
+          setHighlightedCode(renderCode(text, language));
+        })
+        .catch(() => {
+          setHighlightedCode(text);
+        });
     }
   }, [isInline, text, language, isLanguageLoaded]);
 
@@ -86,7 +96,7 @@ export function Code(
 
   return (
     <StyledPre>
-      <code>{deferredHighlightedCode || text}</code>
+      <code>{deferredHighlightedCode ?? text}</code>
       <StyledCopyButton>{text}</StyledCopyButton>
     </StyledPre>
   );
