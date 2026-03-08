@@ -15,7 +15,7 @@
     "generate:refractor-languages": "node ./scripts/generateRefractorLanguageImports.ts",
     "lint": "oxlint --report-unused-disable-directives-severity=error",
     "panda:watch": "panda --watch",
-    "prepare": "concurrently \"husky\" \"panda codegen\"",
+    "prepare": "concurrently \"husky\" \"panda codegen\" \"pnpm generate:refractor-languages\"",
     "start": "next start",
     "start:local": "concurrently \"next start -p 3031\" \"npx local-ssl-proxy --key ./certificates/localhost-key.pem --cert ./certificates/localhost.pem --source 3030 --target 3031\"",
     "test": "vitest",
