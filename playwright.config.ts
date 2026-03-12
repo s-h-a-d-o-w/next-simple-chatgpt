@@ -1,9 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
-import { getLocalIp } from "./scripts/getLocalIp";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local", quiet: true });
+process.env["NEXT_PUBLIC_E2E"] = "true";
 
 const isDev = process.env["NODE_ENV"] !== "production";
 const baseURL = isDev
-  ? `https://${getLocalIp()}:3030`
+  ? new URL(process.env["AUTH_URL"] ?? "").origin
   : "http://localhost:3000";
 
 const sharedWebServerOptions = {
@@ -37,6 +40,10 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
 
+    screenshot: "only-on-failure",
+
+    ignoreHTTPSErrors: true,
+
     ...(isDev && {
       launchOptions: {
         args: [
@@ -61,9 +68,8 @@ export default defineConfig({
 
   webServer: isDev
     ? {
-        // We can't use `env` in dev because we run a script => env would be overwritten
         reuseExistingServer: true,
-        command: "pnpm dev:e2e",
+        command: "pnpm dev",
         ...sharedWebServerOptions,
       }
     : {

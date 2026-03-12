@@ -2,18 +2,6 @@ import { isTest } from "@/utils/consts";
 
 // Input/output costs are per million tokens
 export const models = {
-  "moonshotai/kimi-k2-thinking": {
-    name: "Kimi K2 Thinking (OR)",
-    input: 0.6,
-    output: 2.5,
-    supportsAttachments: false,
-    provider: "openrouter",
-    extraBody: {
-      reasoning: {
-        enabled: true,
-      },
-    },
-  },
   "gpt-4.1": {
     name: "GPT-4.1",
     input: 3,
@@ -58,6 +46,18 @@ export const models = {
     supportsAttachments: true,
     provider: "openai",
     reasoningEffort: "low",
+  },
+  "moonshotai/kimi-k2-thinking": {
+    name: "Kimi K2 Thinking (OR)",
+    input: 0.6,
+    output: 2.5,
+    supportsAttachments: false,
+    provider: "openrouter",
+    extraBody: {
+      reasoning: {
+        enabled: true,
+      },
+    },
   },
 } as const;
 export type ModelKey = keyof typeof models;

@@ -29,7 +29,12 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 1. Clone, install dependencies
 1. Create your `.env.local` based on `.env.schema`
 1. `pnpm dev`
-1. (Optional: If you want to access the UI from mobile devices on your LAN, I recommend using `ngrok` and setting `AUTH_URL`.)
+1. (Optional: I recommend using ngrok and setting `AUTH_URL` for easy compatibility with LAN devices, WSL, etc.)
+
+### E2E tests
+
+Run `pnpm dev:e2e` before using playwright in any situation other than testing the production bundle (which is done by running `build` and `e2e`).
+(We could do some thing with saving cookies, reusing them in playwright and whatnot but that seemed too cumbersome to me compared to temporarily running a different dev server.)
 
 ## TODO
 
@@ -39,7 +44,3 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility.
 - Why HTTPS in dev? Because of `ClipboardItem`. Browsers make an exception for `localhost` but not other devices on the LAN.
-
-### E2E tests
-
-Run `pnpm dev:e2e` before using playwright in any situation other than testing the production bundle (which is done by running `build` and `e2e`).
