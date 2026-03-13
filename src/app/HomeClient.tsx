@@ -1,0 +1,353 @@
+"use client";
+
+import "@/lib/utils/logBuildInfo";
+
+import { withProfiler } from "@/components/withProfiler";
+import { config } from "@/config";
+import type { Models } from "@/lib/server/models";
+import {
+  CURRENT_HISTORY_VERSION,
+  HistoryEntryV1,
+  historySerializer,
+  useHistory,
+} from "@/hooks/useHistory";
+import { useModels } from "@/hooks/useModels";
+import { useModelSelection } from "@/hooks/useModelSelection";
+import { useScrollToBottom } from "@/hooks/useScrollToBottom";
+import { useChat } from "@ai-sdk/react";
+import type { FileUIPart, UIMessage } from "ai";
+import { cloneDeep, debounce } from "lodash";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ChangeEventHandler, KeyboardEvent, SubmitEvent } from "react";
+import useLocalStorageState from "use-local-storage-state";
+import { styled } from "../../styled-system/jsx";
+import { loadJsonFile } from "@/lib/utils/loadJsonFile";
+import { saveJsonFile } from "@/lib/utils/saveJsonFile";
+import type { ChatRequest } from "./api/chat/route";
+import { Actions } from "./components/Actions";
+import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
+import { History } from "./components/History";
+import { Messages } from "./components/Messages";
+import { Prompt } from "./components/Prompt";
+import { SystemPrompt } from "./components/SystemPrompt";
+
+type Props = {
+  initialModels: Models;
+};
+
+function createSystemMessage(content: string) {
+  return {
+    parts: [{ type: "text", text: content }],
+    role: "system",
+    id: "system",
+  } satisfies UIMessage;
+}
+
+const StyledMain = styled("main", {
+  base: {
+    width: "100%",
+    maxWidth: "800px",
+    padding: "10rem",
+    marginInline: "auto",
+
+    display: "flex",
+    flexDirection: "column",
+    gap: "10rem",
+  },
+});
+
+function HomeClient({ initialModels }: Props) {
+  const endOfPageRef = useRef<HTMLDivElement>(null);
+  const models = useModels(initialModels);
+
+  const [showHistory, setShowHistory] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [activeHistoryEntry, setActiveHistoryEntry] =
+    useState<HistoryEntryV1>();
+  const [files, setFiles] = useState<FileUIPart[]>([]);
+  const [model, setModel] = useModelSelection(models);
+
+  const [input, setInput] = useState("");
+  const [startTime, setStartTime] = useState<number>();
+  const [systemValue, setSystemValue] = useLocalStorageState<string>(
+    "system-message",
+    {
+      defaultValue:
+        "You are a concise assistant. Use markdown for your responses.",
+    },
+  );
+
+  const [chatId, setChatId] = useState(0);
+  const {
+    messages,
+    setMessages,
+    status,
+    stop,
+    error,
+    regenerate,
+    sendMessage,
+  } = useChat<UIMessage>({
+    id: chatId.toString(),
+    experimental_throttle: 500,
+    messages: [createSystemMessage(systemValue)],
+  });
+  const isLoading = status === "submitted" || status === "streaming";
+
+  const body = useMemo(() => {
+    return {
+      model,
+    } satisfies Omit<ChatRequest, "messages">;
+  }, [model]);
+
+  useEffect(() => {
+    if (error) {
+      console.log(error);
+    }
+  }, [error]);
+
+  const [conversationHistory, setConversationHistory] = useHistory(
+    isLoading,
+    startTime,
+    messages,
+  );
+
+  useScrollToBottom(isLoading, messages);
+
+  // Syncs the system prompt into the array of messages when it changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSyncSystemMessage = useCallback(
+    debounce((content: string) => {
+      setMessages((innerMessages) => {
+        const nextMessages = cloneDeep(innerMessages);
+        const systemIndex = nextMessages.findIndex(
+          (message) => message.role === "system",
+        );
+        if (systemIndex >= 0 && nextMessages[systemIndex]) {
+          nextMessages[systemIndex].parts = [{ type: "text", text: content }];
+        } else {
+          nextMessages.unshift(createSystemMessage(content));
+        }
+        return nextMessages;
+      });
+    }, config.ui.systemMessageDebounce),
+    [setMessages],
+  );
+
+  const handleDeleteMessage = useCallback(
+    (id: string) => {
+      setMessages((previousMessages) =>
+        previousMessages.filter((message) => message.id !== id),
+      );
+    },
+    [setMessages],
+  );
+
+  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = (
+    event,
+  ) => {
+    setSystemValue(event.target.value);
+    debouncedSyncSystemMessage(event.target.value);
+  };
+
+  // HISTORY HANDLERS
+  // =================
+  const handleCloseHistory = useCallback(() => {
+    setShowHistory(false);
+    setActiveHistoryEntry(undefined);
+  }, []);
+
+  const handleDeleteHistoryEntry = useCallback(
+    (index: number) => {
+      const nextHistory = cloneDeep(conversationHistory);
+      nextHistory.splice(index, 1);
+      setConversationHistory(nextHistory);
+    },
+    [conversationHistory, setConversationHistory],
+  );
+
+  const handleRestoreHistoryEntry = useCallback(() => {
+    if (activeHistoryEntry) {
+      setConversationHistory((history) =>
+        history.filter(
+          (entry) => entry.startTime !== activeHistoryEntry.startTime,
+        ),
+      );
+      setMessages(activeHistoryEntry.messages);
+      setStartTime(Date.now());
+      setActiveHistoryEntry(undefined);
+      setShowHistory(false);
+      if (activeHistoryEntry.messages[0]?.parts[0]?.type === "text") {
+        setSystemValue(activeHistoryEntry.messages[0].parts[0].text);
+      }
+    }
+  }, [activeHistoryEntry, setSystemValue, setMessages, setConversationHistory]);
+
+  const handleSetActiveHistoryEntry = useCallback(
+    (nextMessages?: HistoryEntryV1) => {
+      setActiveHistoryEntry(nextMessages);
+    },
+    [],
+  );
+
+  const handleDeleteHistory = useCallback(() => {
+    setShowDeleteConfirmation(true);
+  }, []);
+
+  const handleLoadHistory = useCallback(async () => {
+    try {
+      setConversationHistory(historySerializer.parse(await loadJsonFile()));
+    } catch {
+      // TODO: user cancelled or picked nonsense. should probably show error.
+    }
+  }, [setConversationHistory]);
+
+  const handleSaveHistory = useCallback(() => {
+    saveJsonFile(
+      {
+        version: CURRENT_HISTORY_VERSION,
+        history: conversationHistory,
+      },
+      `history-${new Date().toISOString().replaceAll(/[:.]/g, "-")}`,
+    );
+  }, [conversationHistory]);
+  // =================
+
+  // ACTION HANDLERS
+  // =================
+  const handleReset = useCallback(() => {
+    setChatId((currentChatId) => currentChatId + 1);
+    setFiles([]);
+    setStartTime(undefined);
+  }, []);
+
+  const handleShowHistory = useCallback(() => {
+    setShowHistory(true);
+  }, []);
+  // =================
+
+  const handleSubmit = useCallback(
+    (
+      event: KeyboardEvent<HTMLTextAreaElement> | SubmitEvent<HTMLFormElement>,
+    ) => {
+      event.preventDefault();
+
+      if (input === "" && files.length === 0) {
+        void regenerate({
+          body,
+        });
+        return;
+      }
+
+      void sendMessage(
+        {
+          parts: [
+            { type: "text", text: input },
+            ...(files.length > 0
+              ? files.map(({ filename, mediaType, url }) => {
+                  return {
+                    type: "file",
+                    filename,
+                    mediaType,
+                    url,
+                  } satisfies FileUIPart;
+                })
+              : []),
+          ],
+        },
+        { body },
+      );
+      setInput("");
+      setFiles([]);
+      // We only need to set start time at the start of the conversation.
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
+    },
+    [input, files, sendMessage, body, startTime, regenerate],
+  );
+
+  return (
+    <>
+      <Actions
+        disabledHistoryActions={Object.keys(conversationHistory).length === 0}
+        model={model}
+        models={models}
+        onModelChange={setModel}
+        onReset={handleReset}
+        onShowHistory={handleShowHistory}
+        showAttachmentModelsOnly={
+          files.length > 0 ||
+          messages.some(({ parts }) =>
+            parts.some((part) => part.type === "file"),
+          )
+        }
+      />
+
+      <StyledMain>
+        <SystemPrompt value={systemValue} onChange={handleChangeSystemInput} />
+        <Messages
+          hasError={Boolean(error)}
+          isLoading={isLoading}
+          messages={messages}
+          onDelete={handleDeleteMessage}
+          onRetry={() => {
+            void regenerate({ body });
+          }}
+          showCopyAll
+        />
+        <Prompt
+          currentModel={model}
+          disabledReplay={messages.length < 2}
+          files={files}
+          input={input}
+          isFirstPrompt={messages.length === 1}
+          isLoading={isLoading}
+          models={models}
+          onAddAttachments={(newAttachments) => {
+            setFiles((previousAttachments) => [
+              ...previousAttachments,
+              ...newAttachments,
+            ]);
+          }}
+          onChange={(e) => setInput(e.target.value)}
+          onClickStop={stop}
+          onModelChange={setModel}
+          onRemoveAttachment={(index) => {
+            setFiles((previousAttachments) =>
+              previousAttachments.filter((_, i) => i !== index),
+            );
+          }}
+          onSubmit={handleSubmit}
+        />
+        <div ref={endOfPageRef} />
+      </StyledMain>
+
+      <History
+        activeHistoryEntry={activeHistoryEntry}
+        isOpen={showHistory}
+        onClose={handleCloseHistory}
+        onDeleteHistoryEntry={handleDeleteHistoryEntry}
+        onDeleteHistory={handleDeleteHistory}
+        onLoad={handleLoadHistory}
+        onRestoreHistoryEntry={handleRestoreHistoryEntry}
+        onSave={handleSaveHistory}
+        onSetActiveHistoryEntry={handleSetActiveHistoryEntry}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => {
+          setShowDeleteConfirmation(false);
+        }}
+        onConfirm={() => {
+          setConversationHistory([]);
+          setShowDeleteConfirmation(false);
+        }}
+      />
+    </>
+  );
+}
+
+const ProfiledHomeClient = withProfiler(HomeClient, true);
+
+export default ProfiledHomeClient;

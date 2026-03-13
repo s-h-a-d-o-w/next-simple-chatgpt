@@ -1,4 +1,4 @@
-import { isDev } from "@/utils/consts";
+import { isDev } from "@/lib/utils/consts";
 import { Profiler } from "react";
 
 export function withProfiler<T>(

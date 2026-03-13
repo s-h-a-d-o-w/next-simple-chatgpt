@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/IconButton";
-import { isDev } from "@/utils/consts";
-import type { ModelKey } from "@/config";
+import { isDev } from "@/lib/utils/consts";
+import type { ModelKey, Models } from "@/lib/server/models";
 import { css } from "../../../styled-system/css";
 import { styled } from "../../../styled-system/jsx";
 import { AuthButtonClient } from "../login/components/AuthButton/AuthButtonClient";
@@ -12,6 +12,7 @@ import { HmrTimestamp } from "./HmrTimestamp";
 type Props = {
   disabledHistoryActions: boolean;
   model: ModelKey;
+  models: Models;
   onModelChange: (model: ModelKey) => void;
   onShowHistory: () => void;
   onReset: () => void;
@@ -42,6 +43,7 @@ const StyledButtonGroup = styled("div", {
 export const Actions = memo(function Actions({
   disabledHistoryActions,
   model,
+  models,
   onModelChange,
   onShowHistory,
   onReset,
@@ -59,10 +61,9 @@ export const Actions = memo(function Actions({
         </div>
       )}
       <ModelSelector
+        models={models}
         value={model}
-        onChange={(value) => {
-          onModelChange(value as ModelKey);
-        }}
+        onChange={onModelChange}
         showAttachmentModelsOnly={showAttachmentModelsOnly}
       />
       <StyledButtonGroup>

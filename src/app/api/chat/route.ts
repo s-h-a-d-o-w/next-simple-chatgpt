@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import { models, type ModelKey } from "@/config";
-import { isTest } from "@/utils/consts";
+import { fetchModels, type ModelKey } from "@/lib/server/models";
+import { isTest } from "@/lib/utils/consts";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
@@ -61,6 +61,7 @@ export const POST = auth(async (req) => {
   }
 
   const { model, messages } = (await req.json()) as ChatRequest;
+  const models = await fetchModels();
   const modelConfig = models[model];
 
   const abortController = new AbortController();
@@ -74,21 +75,20 @@ export const POST = auth(async (req) => {
         ? openai(model)
         : modelConfig.provider === "anthropic"
           ? anthropic(model)
-          : openrouter(model, {
+          : openrouter(model.split("/").slice(1).join("/"), {
               extraBody: modelConfig.extraBody,
             }),
     messages:
       modelConfig.provider === "openai" || modelConfig.provider === "openrouter"
         ? convertToModelMessages(messages)
         : convertMessagesAnthropic(messages),
-    providerOptions:
-      "reasoningEffort" in modelConfig
-        ? {
-            [modelConfig.provider]: {
-              reasoningEffort: modelConfig.reasoningEffort,
-            },
-          }
-        : undefined,
+    providerOptions: modelConfig.reasoningEffort
+      ? {
+          [modelConfig.provider]: {
+            reasoningEffort: modelConfig.reasoningEffort,
+          },
+        }
+      : undefined,
     abortSignal: abortController.signal,
     onFinish() {
       clearTimeout(timeoutId);

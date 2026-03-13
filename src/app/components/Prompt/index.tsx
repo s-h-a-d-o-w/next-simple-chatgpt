@@ -3,14 +3,16 @@ import type { KeyboardEvent, SubmitEvent } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { Textarea } from "@/components/Textarea";
-import { models, type ModelKey } from "@/config";
+import type { ModelKey, Models } from "@/lib/server/models";
 import { FilesPreview } from "./FilesPreview";
 import { filesToAttachments } from "./filesToAttachments";
 import type { FileUIPart } from "ai";
+import { objectEntries } from "@/lib/utils/objectEntries";
 
 type Props = {
   files: FileUIPart[];
   currentModel: ModelKey;
+  models: Models;
   disabledReplay: boolean;
   input: string;
   isFirstPrompt: boolean;
@@ -60,6 +62,7 @@ export function Prompt({
   input,
   isFirstPrompt,
   isLoading,
+  models,
   onChange,
   onClickStop,
   onSubmit,
@@ -78,11 +81,11 @@ export function Prompt({
       );
 
       if (!models[currentModel].supportsAttachments) {
-        // fall back to model that supports attachments
+        // fall back to any model that supports attachments
         onModelChange(
-          Object.entries(models).find(
+          objectEntries(models).find(
             ([_, model]) => model.supportsAttachments,
-          )?.[0] as ModelKey,
+          )![0],
         );
       }
 
@@ -90,7 +93,7 @@ export function Prompt({
         fileInputRef.current.value = "";
       }
     },
-    [currentModel, onAddAttachments, onModelChange],
+    [currentModel, models, onAddAttachments, onModelChange],
   );
 
   return (

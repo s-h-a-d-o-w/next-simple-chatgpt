@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { config, models } from "@/config";
+import { config } from "@/config";
 import { clearLocalStorage } from "./utilities";
+import { fetchModels } from "@/lib/server/models";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -11,7 +12,7 @@ test("should persist selected model across page reloads", async ({ page }) => {
   const modelSelect = page.locator("select");
   expect(await modelSelect.inputValue()).toBe(config.models.default);
 
-  const differentModel = Object.keys(models).find(
+  const differentModel = Object.keys(await fetchModels()).find(
     (m) => m !== config.models.default,
   );
   await modelSelect.selectOption(differentModel!);

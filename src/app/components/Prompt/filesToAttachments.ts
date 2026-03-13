@@ -1,4 +1,4 @@
-import { getPdfjsLib } from "@/utils/getPdfjsLib";
+import { getPdfjsLib } from "@/lib/utils/getPdfjsLib";
 import { FileUIPart } from "ai";
 
 function convertFileToDataURL(file: File): Promise<string> {

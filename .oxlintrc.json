@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["public/**/*"],
+  "ignorePatterns": ["public/**/*", "**/model_prices_and_context_window.json"],
   "env": {
     "node": true,
     "browser": true

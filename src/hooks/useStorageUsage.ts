@@ -1,5 +1,5 @@
 import { config } from "@/config";
-import { isServer } from "@/utils/consts";
+import { isServer } from "@/lib/utils/consts";
 import { useState } from "react";
 
 export function useStorageUsage() {
