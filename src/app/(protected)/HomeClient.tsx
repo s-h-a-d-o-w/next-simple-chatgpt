@@ -1,15 +1,17 @@
 "use client";
 
-import "../styles/prism-theme.css";
+import "@/lib/utils/logBuildInfo";
 
 import { withProfiler } from "@/components/withProfiler";
 import { config } from "@/config";
+import type { Models } from "@/lib/server/models";
 import {
   CURRENT_HISTORY_VERSION,
   HistoryEntryV1,
   historySerializer,
   useHistory,
 } from "@/hooks/useHistory";
+import { useModels } from "@/hooks/useModels";
 import { useModelSelection } from "@/hooks/useModelSelection";
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
@@ -18,17 +20,20 @@ import { cloneDeep, debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEventHandler, KeyboardEvent, SubmitEvent } from "react";
 import useLocalStorageState from "use-local-storage-state";
-import { styled } from "../../styled-system/jsx";
-import { loadJsonFile } from "../utils/loadJsonFile";
-import "../utils/logBuildInfo";
-import { saveJsonFile } from "../utils/saveJsonFile";
-import type { ChatRequest } from "./api/chat/route";
-import { Actions } from "./components/Actions";
-import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
-import { History } from "./components/History";
-import { Messages } from "./components/Messages";
-import { Prompt } from "./components/Prompt";
-import { SystemPrompt } from "./components/SystemPrompt";
+import { styled } from "../../../styled-system/jsx";
+import { loadJsonFile } from "@/lib/utils/loadJsonFile";
+import { saveJsonFile } from "@/lib/utils/saveJsonFile";
+import type { ChatRequest } from "@/app/api/chat/route";
+import { Actions } from "@/app/components/Actions";
+import { DeleteConfirmationModal } from "@/app/components/DeleteConfirmationModal";
+import { History } from "@/app/components/History";
+import { Messages } from "@/app/components/Messages";
+import { Prompt } from "@/app/components/Prompt";
+import { SystemPrompt } from "@/app/components/SystemPrompt";
+
+type Props = {
+  initialModels: Models;
+};
 
 function createSystemMessage(content: string) {
   return {
@@ -51,15 +56,16 @@ const StyledMain = styled("main", {
   },
 });
 
-function Home() {
+function HomeClient({ initialModels }: Props) {
   const endOfPageRef = useRef<HTMLDivElement>(null);
+  const models = useModels(initialModels);
 
   const [showHistory, setShowHistory] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [activeHistoryEntry, setActiveHistoryEntry] =
     useState<HistoryEntryV1>();
   const [files, setFiles] = useState<FileUIPart[]>([]);
-  const [model, setModel] = useModelSelection();
+  const [model, setModel] = useModelSelection(models);
 
   const [input, setInput] = useState("");
   const [startTime, setStartTime] = useState<number>();
@@ -265,6 +271,7 @@ function Home() {
       <Actions
         disabledHistoryActions={Object.keys(conversationHistory).length === 0}
         model={model}
+        models={models}
         onModelChange={setModel}
         onReset={handleReset}
         onShowHistory={handleShowHistory}
@@ -289,21 +296,22 @@ function Home() {
           showCopyAll
         />
         <Prompt
+          currentModel={model}
           disabledReplay={messages.length < 2}
+          files={files}
           input={input}
           isFirstPrompt={messages.length === 1}
           isLoading={isLoading}
-          onChange={(e) => setInput(e.target.value)}
-          onClickStop={stop}
-          files={files}
-          currentModel={model}
-          onModelChange={setModel}
+          models={models}
           onAddAttachments={(newAttachments) => {
             setFiles((previousAttachments) => [
               ...previousAttachments,
               ...newAttachments,
             ]);
           }}
+          onChange={(e) => setInput(e.target.value)}
+          onClickStop={stop}
+          onModelChange={setModel}
           onRemoveAttachment={(index) => {
             setFiles((previousAttachments) =>
               previousAttachments.filter((_, i) => i !== index),
@@ -314,27 +322,25 @@ function Home() {
         <div ref={endOfPageRef} />
       </StyledMain>
 
-      {/* DIALOGS */}
-      {/* ================ */}
       <History
         activeHistoryEntry={activeHistoryEntry}
         isOpen={showHistory}
         onClose={handleCloseHistory}
         onDeleteHistoryEntry={handleDeleteHistoryEntry}
-        onRestoreHistoryEntry={handleRestoreHistoryEntry}
-        onSetActiveHistoryEntry={handleSetActiveHistoryEntry}
         onDeleteHistory={handleDeleteHistory}
         onLoad={handleLoadHistory}
+        onRestoreHistoryEntry={handleRestoreHistoryEntry}
         onSave={handleSaveHistory}
+        onSetActiveHistoryEntry={handleSetActiveHistoryEntry}
       />
 
       <DeleteConfirmationModal
         isOpen={showDeleteConfirmation}
-        onConfirm={() => {
-          setConversationHistory([]);
+        onClose={() => {
           setShowDeleteConfirmation(false);
         }}
-        onClose={() => {
+        onConfirm={() => {
+          setConversationHistory([]);
           setShowDeleteConfirmation(false);
         }}
       />
@@ -342,5 +348,6 @@ function Home() {
   );
 }
 
-const ProfiledHome = withProfiler(Home, true);
-export default ProfiledHome;
+const ProfiledHomeClient = withProfiler(HomeClient, true);
+
+export default ProfiledHomeClient;

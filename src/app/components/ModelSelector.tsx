@@ -1,6 +1,7 @@
-import { models, type ModelKey } from "@/config";
+import type { ModelKey, Models } from "@/lib/server/models";
 import { MdImage } from "react-icons/md";
 import { styled } from "../../../styled-system/jsx";
+import { objectEntries } from "@/lib/utils/objectEntries";
 
 const StyledSelect = styled("select", {
   base: {
@@ -41,12 +42,14 @@ const StyledSelectContainer = styled("div", {
 });
 
 type Props = {
+  models: Models;
   value: ModelKey;
   onChange: (value: ModelKey) => void;
   showAttachmentModelsOnly: boolean;
 };
 
 export function ModelSelector({
+  models,
   value,
   onChange,
   showAttachmentModelsOnly,
@@ -57,8 +60,8 @@ export function ModelSelector({
         value={value}
         onChange={(e) => onChange(e.target.value as ModelKey)}
       >
-        {Object.entries(models)
-          .filter(([_, { supportsAttachments }]) =>
+        {objectEntries(models)
+          .filter(([, { supportsAttachments }]) =>
             showAttachmentModelsOnly ? supportsAttachments : true,
           )
           .map(([id, { name, input, output }]) => (

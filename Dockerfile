@@ -15,9 +15,7 @@ RUN pnpm install
 RUN pnpm build
 
 FROM base AS runner
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=80

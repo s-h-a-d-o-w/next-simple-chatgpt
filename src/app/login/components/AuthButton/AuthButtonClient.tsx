@@ -2,39 +2,60 @@
 // Runs on the client so that we can display a spinner while login/logout is being processed
 
 import { IconButton } from "@/components/IconButton";
-import { useCallback, useRef, useState } from "react";
-import type { SubmitEvent } from "react";
+import { useState } from "react";
 import Spinner from "@/components/Spinner";
-import { signIn, signOut } from "./authActions";
+import { authClient } from "@/lib/utils/authClient";
+import { redirect } from "next/navigation";
+import { flushSync } from "react-dom";
+import { css } from "../../../../../styled-system/css";
 
 export function AuthButtonClient({
   isSignedIn = false,
 }: {
   isSignedIn?: boolean;
 }) {
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-  const hasSubmittedRef = useRef(false);
-  const action = isSignedIn ? signOut : signIn;
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
 
-  const handleSubmit = useCallback((event: SubmitEvent) => {
-    if (hasSubmittedRef.current) {
-      event.preventDefault();
-      return;
+  const handleSignIn = async () => {
+    flushSync(() => {
+      setIsLoading(true);
+    });
+
+    const { error } = await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/",
+    });
+    if (error) {
+      console.error(error);
+      setError("An error occurred while signing in. Please try again later.");
+      setIsLoading(false);
     }
+  };
 
-    hasSubmittedRef.current = true;
-    setHasSubmitted(true);
-  }, []);
+  const handleSignOut = async () => {
+    // Is done locally => instant, no need to set isLoading
+    await authClient.signOut();
+    redirect("/");
+  };
 
-  return (
-    <form action={action} onSubmit={handleSubmit}>
-      {hasSubmitted ? (
-        <Spinner />
-      ) : isSignedIn ? (
-        <IconButton name="logout" iconSize="md" label="Sign out" />
-      ) : (
-        <IconButton name="github" iconSize="md" label="Sign in with GitHub" />
-      )}
-    </form>
+  return isLoading ? (
+    <Spinner />
+  ) : error ? (
+    <div className={css({ color: "red.500" })}>{error}</div>
+  ) : isSignedIn ? (
+    <IconButton
+      name="logout"
+      iconSize="md"
+      label="Sign out"
+      onClick={handleSignOut}
+    />
+  ) : (
+    <IconButton
+      name="github"
+      iconSize="md"
+      label="Sign in with GitHub"
+      onClick={handleSignIn}
+    />
   );
 }

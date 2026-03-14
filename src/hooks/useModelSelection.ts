@@ -1,9 +1,9 @@
-import { config, models } from "@/config";
-import type { ModelKey } from "@/config";
+import { config } from "@/config";
+import type { ModelKey, Models } from "@/lib/server/models";
 import useLocalStorageState from "use-local-storage-state";
 import { useMemo, useEffect } from "react";
 
-export function useModelSelection() {
+export function useModelSelection(models: Models) {
   const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>(
     "model",
     {
@@ -12,14 +12,14 @@ export function useModelSelection() {
   );
   const model = useMemo<ModelKey>(() => {
     return !(storedModel in models) ? config.models.default : storedModel;
-  }, [storedModel]);
+  }, [storedModel, models]);
 
-  // Sync possibly invalid model back to localStorage
+  // Replace possibly invalid model with default.
   useEffect(() => {
     if (!(storedModel in models)) {
       setStoredModel(config.models.default);
     }
-  }, [storedModel, setStoredModel]);
+  }, [storedModel, setStoredModel, models]);
 
   return [model, setStoredModel] as const;
 }

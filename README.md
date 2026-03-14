@@ -29,11 +29,11 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 1. Clone, install dependencies
 1. Create your `.env.local` based on `.env.schema`
 1. `pnpm dev`
-1. (Optional: I recommend using ngrok and setting `AUTH_URL` for easy compatibility with LAN devices, WSL, etc.)
+1. (Optional: Use ngrok and set `AUTH_URL` accordingly to use features that require HTTPS, like copying to the clipboard, and easy compatibility with LAN devices, WSL, etc.)
 
 ### E2E tests
 
-Run `pnpm dev:e2e` before using playwright in any situation other than testing the production bundle (which is done by running `build` and `e2e`).
+Run `pnpm dev:e2e` before using playwright in any situation other than testing the production bundle (which is done by running `build:e2e` and `e2e` - double-check your `AUTH_URL` if you have issues with auth).
 (We could do some thing with saving cookies, reusing them in playwright and whatnot but that seemed too cumbersome to me compared to temporarily running a different dev server.)
 
 ## TODO
@@ -43,4 +43,4 @@ Run `pnpm dev:e2e` before using playwright in any situation other than testing t
 ## Dev notes
 
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility.
-- Why HTTPS in dev? Because of `ClipboardItem`. Browsers make an exception for `localhost` but not other devices on the LAN.
+- Why stick with port 3000? Being able to reuse the same OAuth app for dev.

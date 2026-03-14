@@ -1,5 +1,5 @@
 import { styled } from "../../../../styled-system/jsx";
-import { isDev, isClientDebug } from "@/utils/consts";
+import { isDev, isClientDebug } from "@/lib/utils/consts";
 import { StorageUsageWheel } from "./StorageUsageWheel";
 import { IconButton } from "@/components/IconButton";
 import { HistoryEntryV1 } from "@/hooks/useHistory";

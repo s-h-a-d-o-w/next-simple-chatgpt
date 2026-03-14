@@ -9,6 +9,7 @@ import { IconButton } from "@/components/IconButton";
 import { CopyButton } from "./CopyButton";
 import Spinner from "@/components/Spinner";
 import { UIMessage, ToolUIPart, DynamicToolUIPart } from "ai";
+import { objectEntries } from "@/lib/utils/objectEntries";
 
 const remarkPlugins = [remarkGfm];
 
@@ -66,8 +67,8 @@ export function ToolInvocation({
   return toolInvocation.state === "input-streaming" ? null : (
     <Expandable isExpanded={isExpanded}>
       {toolName} (
-      {Object.entries(toolInvocation.input as Record<string, unknown>)
-        .map(([key, value]) => `${key}: ${value as string}`)
+      {objectEntries(toolInvocation.input as Record<string, string>)
+        .map(([key, value]) => `${key}: ${value}`)
         .join(", ")}
       ):{" "}
       {output ? (

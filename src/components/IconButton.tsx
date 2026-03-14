@@ -46,6 +46,7 @@ const iconMap = {
 const StyledButton = styled(Button, {
   base: {
     display: "flex",
+    width: "fit-content",
     alignItems: "center",
     gap: "6rem",
     whiteSpace: "nowrap",

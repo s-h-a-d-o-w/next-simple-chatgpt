@@ -1,7 +1,8 @@
 import "./global.css";
 import type { Metadata } from "next";
 import { styled } from "../../styled-system/jsx";
-import { fonts } from "@/utils/fonts";
+import { Providers } from "./Providers";
+import { fonts } from "@/lib/utils/fonts";
 import type { ReactNode } from "react";
 
 // oxlint-disable-next-line react/only-export-components
@@ -25,7 +26,9 @@ const Body = styled("body", {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html className={fonts.aleo.className} lang="en">
-      <Body>{children}</Body>
+      <Body>
+        <Providers>{children}</Providers>
+      </Body>
     </html>
   );
 }

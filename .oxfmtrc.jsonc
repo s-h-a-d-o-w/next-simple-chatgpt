@@ -4,6 +4,7 @@
     // Don't fight pnpm
     "pnpm-workspace.yaml",
     "public/**/*",
+    "**/model_prices_and_context_window.json",
   ],
   // Prettier default
   "printWidth": 80,

@@ -1,16 +1,20 @@
-import { defineConfig, devices } from "@playwright/test";
+import {
+  defineConfig,
+  devices,
+  type PlaywrightTestConfig,
+} from "@playwright/test";
 import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local", quiet: true });
 process.env["NEXT_PUBLIC_E2E"] = "true";
 
 const isDev = process.env["NODE_ENV"] !== "production";
-const baseURL = isDev
-  ? new URL(process.env["AUTH_URL"] ?? "").origin
-  : "http://localhost:3000";
+const baseURL = process.env["AUTH_URL"]
+  ? new URL(process.env["AUTH_URL"]).origin
+  : `http://localhost:${process.env["PORT"] ?? 3000}`;
 
-const sharedWebServerOptions = {
-  url: baseURL,
+const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
+  timeout: 5 * 1000,
   ignoreHTTPSErrors: true,
   stdout: "pipe",
   stderr: "pipe",
@@ -26,6 +30,7 @@ const sharedWebServerOptions = {
 export default defineConfig({
   testDir: "./tests",
   timeout: 10000,
+
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env["CI"],

@@ -1,37 +1,14 @@
-import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
-import { isTest } from "@/utils/consts";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 
-const whitelist = process.env["WHITELIST"]?.split(",");
-
-const trustHost = isTest ? { trustHost: true } : {};
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  ...trustHost,
-  secret: process.env["AUTH_SECRET"],
-  providers: !isTest
-    ? [GitHub]
-    : [
-        {
-          id: "test",
-          name: "Test",
-          type: "credentials",
-          credentials: {},
-          authorize() {
-            return {
-              id: "test-user",
-              email: "test@example.com",
-              name: "Test User",
-            };
-          },
-        },
-      ],
-  callbacks: {
-    signIn({ user }) {
-      return isTest || Boolean(user.email && whitelist?.includes(user.email));
+const authConfig: BetterAuthOptions = {
+  baseURL: process.env["AUTH_URL"]!,
+  secret: process.env["AUTH_SECRET"]!,
+  socialProviders: {
+    github: {
+      clientId: process.env["AUTH_GITHUB_ID"]!,
+      clientSecret: process.env["AUTH_GITHUB_SECRET"]!,
     },
   },
-  pages: {
-    error: "/accessDenied",
-  },
-});
+};
+
+export const auth = betterAuth(authConfig);
