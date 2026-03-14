@@ -1,4 +1,4 @@
-import "../styles/prism-theme.css";
+import "@/styles/prism-theme.css";
 import { fetchModels } from "@/lib/server/models";
 import HomeClient from "./HomeClient";
 

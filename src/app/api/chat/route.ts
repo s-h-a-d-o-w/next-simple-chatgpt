@@ -1,10 +1,10 @@
-import { auth } from "@/auth";
+import { authGuard } from "@/lib/server/authGuard";
 import { fetchModels, type ModelKey } from "@/lib/server/models";
-import { isTest } from "@/lib/utils/consts";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { NextRequest } from "next/server";
 
 export type ChatRequest = {
   model: ModelKey;
@@ -13,7 +13,6 @@ export type ChatRequest = {
 
 export const maxDuration = 60;
 const DEV_TIMEOUT = maxDuration * 1000 + 1000; // 1 second more to use environment timeout behavior in production
-const whitelist = process.env["WHITELIST"]?.split(",");
 const loggedErrors = new Set<string>();
 
 const openrouter = createOpenRouter({
@@ -54,11 +53,8 @@ function convertMessagesAnthropic(messages: UIMessage[]) {
   return messagesWithCacheMarkers;
 }
 
-export const POST = auth(async (req) => {
-  const isUserWhitelisted = whitelist?.includes(String(req.auth?.user?.email));
-  if (!isTest && !isUserWhitelisted) {
-    throw new Error("Unauthorized access attempt to /api/chat! ");
-  }
+export const POST = async (req: NextRequest) => {
+  await authGuard();
 
   const { model, messages } = (await req.json()) as ChatRequest;
   const models = await fetchModels();
@@ -117,4 +113,4 @@ export const POST = auth(async (req) => {
       "X-Accel-Buffering": "no",
     },
   });
-});
+};

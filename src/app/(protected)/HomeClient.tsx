@@ -20,16 +20,16 @@ import { cloneDeep, debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ChangeEventHandler, KeyboardEvent, SubmitEvent } from "react";
 import useLocalStorageState from "use-local-storage-state";
-import { styled } from "../../styled-system/jsx";
+import { styled } from "../../../styled-system/jsx";
 import { loadJsonFile } from "@/lib/utils/loadJsonFile";
 import { saveJsonFile } from "@/lib/utils/saveJsonFile";
-import type { ChatRequest } from "./api/chat/route";
-import { Actions } from "./components/Actions";
-import { DeleteConfirmationModal } from "./components/DeleteConfirmationModal";
-import { History } from "./components/History";
-import { Messages } from "./components/Messages";
-import { Prompt } from "./components/Prompt";
-import { SystemPrompt } from "./components/SystemPrompt";
+import type { ChatRequest } from "@/app/api/chat/route";
+import { Actions } from "@/app/components/Actions";
+import { DeleteConfirmationModal } from "@/app/components/DeleteConfirmationModal";
+import { History } from "@/app/components/History";
+import { Messages } from "@/app/components/Messages";
+import { Prompt } from "@/app/components/Prompt";
+import { SystemPrompt } from "@/app/components/SystemPrompt";
 
 type Props = {
   initialModels: Models;

@@ -1,13 +1,9 @@
 import { auth } from "@/auth";
 import { AuthButtonClient } from "./AuthButtonClient";
+import { headers } from "next/headers";
 
 export async function AuthButton() {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
-  // auth return type is wrong, see https://github.com/nextauthjs/next-auth/issues/11934
-  if (session !== null && "message" in session) {
-    throw new Error(session.message as string);
-  }
-
-  return <AuthButtonClient isSignedIn={Boolean(session?.user)} />;
+  return <AuthButtonClient isSignedIn={Boolean(session)} />;
 }
