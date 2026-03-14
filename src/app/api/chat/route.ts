@@ -3,13 +3,17 @@ import { fetchModels, type ModelKey } from "@/lib/server/models";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { type UIMessage, convertToModelMessages, streamText } from "ai";
 import { NextRequest } from "next/server";
+import { createDownload } from "ai";
 
 export type ChatRequest = {
   model: ModelKey;
   messages: UIMessage[];
 };
+
+// Workaround for https://github.com/vercel/ai/issues/13103
+const singleDownload = createDownload();
 
 export const maxDuration = 60;
 const DEV_TIMEOUT = maxDuration * 1000 + 1000; // 1 second more to use environment timeout behavior in production
@@ -19,8 +23,8 @@ const openrouter = createOpenRouter({
   apiKey: process.env["OPENROUTER_API_KEY"],
 });
 
-function convertMessagesAnthropic(messages: UIMessage[]) {
-  const coreMessages = convertToModelMessages(messages);
+async function convertMessagesAnthropic(messages: UIMessage[]) {
+  const coreMessages = await convertToModelMessages(messages);
 
   const relevantIndices = coreMessages
     .map((msg, index) =>
@@ -66,6 +70,16 @@ export const POST = async (req: NextRequest) => {
   }, DEV_TIMEOUT);
 
   const result = streamText({
+    // Workaround for https://github.com/vercel/ai/issues/13103
+    experimental_download: (requestedDownloads) =>
+      Promise.all(
+        requestedDownloads.map((req) => {
+          if (req.isUrlSupportedByModel || req.url.protocol === "data:") {
+            return null;
+          }
+          return singleDownload(req);
+        }),
+      ),
     model:
       modelConfig.provider === "openai"
         ? openai(model)
@@ -76,8 +90,8 @@ export const POST = async (req: NextRequest) => {
             }),
     messages:
       modelConfig.provider === "openai" || modelConfig.provider === "openrouter"
-        ? convertToModelMessages(messages)
-        : convertMessagesAnthropic(messages),
+        ? await convertToModelMessages(messages)
+        : await convertMessagesAnthropic(messages),
     providerOptions: modelConfig.reasoningEffort
       ? {
           [modelConfig.provider]: {

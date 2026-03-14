@@ -55,8 +55,7 @@ function transformLiteLLMModel(name: ModelKey, info: LiteLLMModelInfo) {
     provider: info.litellm_provider,
     input: perTokenToPerMillion(info.input_cost_per_token),
     output: perTokenToPerMillion(info.output_cost_per_token),
-    supportsAttachments:
-      info.supports_vision ?? info.supports_pdf_input ?? false,
+    supportsAttachments: info.supports_vision ?? false,
     cacheRead: info.cache_read_input_token_cost
       ? perTokenToPerMillion(info.cache_read_input_token_cost)
       : undefined,
