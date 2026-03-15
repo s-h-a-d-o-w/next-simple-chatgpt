@@ -17,7 +17,7 @@ import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
 import type { FileUIPart, UIMessage } from "ai";
 import { cloneDeep, debounce } from "lodash";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEventHandler, KeyboardEvent, SubmitEvent } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import { styled } from "../../../styled-system/jsx";
@@ -30,10 +30,6 @@ import { History } from "@/app/components/History";
 import { Messages } from "@/app/components/Messages";
 import { Prompt } from "@/app/components/Prompt";
 import { SystemPrompt } from "@/app/components/SystemPrompt";
-
-type Props = {
-  initialModels: Models;
-};
 
 function createSystemMessage(content: string) {
   return {
@@ -56,8 +52,7 @@ const StyledMain = styled("main", {
   },
 });
 
-function HomeClient({ initialModels }: Props) {
-  const endOfPageRef = useRef<HTMLDivElement>(null);
+function HomeClient({ initialModels }: { initialModels: Models }) {
   const models = useModels(initialModels);
 
   const [showHistory, setShowHistory] = useState(false);
@@ -319,7 +314,6 @@ function HomeClient({ initialModels }: Props) {
           }}
           onSubmit={handleSubmit}
         />
-        <div ref={endOfPageRef} />
       </StyledMain>
 
       <History
