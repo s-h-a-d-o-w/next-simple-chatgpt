@@ -20,6 +20,7 @@
     "test": "vitest",
     "e2e": "cross-env NODE_ENV=production NEXT_PUBLIC_E2E=true  playwright test",
     "e2e:debug": "playwright test --debug",
+    "e2e:dev": "cross-env NEXT_PUBLIC_E2E=true  playwright test",
     "e2e:ui": "playwright test --ui",
     "typecheck": "tsgo",
     "playground": "ts ./playground.ts"

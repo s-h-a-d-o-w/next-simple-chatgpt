@@ -14,6 +14,7 @@ const baseURL = process.env["AUTH_URL"]
   : `http://localhost:${process.env["PORT"] ?? 3000}`;
 
 const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
+  url: baseURL,
   timeout: 5 * 1000,
   ignoreHTTPSErrors: true,
   stdout: "pipe",
@@ -74,7 +75,7 @@ export default defineConfig({
   webServer: isDev
     ? {
         reuseExistingServer: true,
-        command: "pnpm dev",
+        command: "pnpm dev:e2e",
         ...sharedWebServerOptions,
       }
     : {

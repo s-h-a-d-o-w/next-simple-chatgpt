@@ -5,7 +5,6 @@ import {
   type ClassAttributes,
   type HTMLAttributes,
   type JSX,
-  type ReactNode,
 } from "react";
 import type { ExtraProps } from "react-markdown";
 import { CopyButton } from "../CopyButton";
@@ -70,7 +69,7 @@ export function Code(
   const isInline = !text.includes("\n");
   const isLanguageLoaded = alreadyLoaded.has(language);
 
-  const [highlightedCode, setHighlightedCode] = useState<ReactNode>(
+  const [highlightedCode, setHighlightedCode] = useState<string | JSX.Element>(
     isLanguageLoaded && isSupportedLanguage(language)
       ? renderCode(text, language)
       : "",
@@ -96,7 +95,7 @@ export function Code(
 
   return (
     <StyledPre>
-      <code>{deferredHighlightedCode ?? text}</code>
+      <code>{deferredHighlightedCode || text}</code>
       <StyledCopyButton>{text}</StyledCopyButton>
     </StyledPre>
   );
