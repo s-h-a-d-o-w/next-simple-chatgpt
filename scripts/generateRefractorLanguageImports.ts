@@ -6,6 +6,9 @@ type LanguageAlias = {
   aliases: string[];
 };
 
+const refractorLanguagesPath =
+  "src/app/(protected)/components/Message/Code/refractorLanguages.ts";
+
 function getAvailableLanguages() {
   try {
     const langDir = join(resolve("node_modules/refractor"), "lang");
@@ -73,7 +76,7 @@ export function isSupportedLanguage(language: string): language is SupportedLang
 
 function main() {
   try {
-    if (existsSync("src/app/components/Message/Code/refractorLanguages.ts")) {
+    if (existsSync(refractorLanguagesPath)) {
       console.log("🔍 Syntax highlighting languages already generated");
       return;
     }
@@ -86,7 +89,7 @@ function main() {
 
     console.log("🏗️  Generating language loader...");
     writeFileSync(
-      "src/app/components/Message/Code/refractorLanguages.ts",
+      refractorLanguagesPath,
       generateLanguageLoader(languages, aliases),
     );
 

@@ -46,11 +46,11 @@ const globalCss = defineGlobalStyles({
 });
 
 export default defineConfig({
+  outdir: "src/styled-system",
+
   // Whether to use css reset
   preflight: true,
-
   globalCss,
-
   include: ["./src/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}"],
   // exclude: [],
 
@@ -110,9 +110,6 @@ export default defineConfig({
       },
     },
   },
-
-  // The output directory for your css system
-  outdir: "styled-system",
 
   // The JSX framework to use
   jsxFramework: "react",

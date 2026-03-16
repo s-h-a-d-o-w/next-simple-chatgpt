@@ -1,7 +1,14 @@
-import { ReactNode, useEffect, useMemo, useRef } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type ReactEventHandler,
+} from "react";
 import { createPortal } from "react-dom";
-import { styled } from "../../styled-system/jsx";
-import { SystemStyleObject } from "../../styled-system/types";
+import { styled } from "@/styled-system/jsx";
+import { SystemStyleObject } from "@/styled-system/types";
 import { isServer } from "@/lib/utils/consts";
 
 type Props = {
@@ -173,11 +180,19 @@ export default function DialogImplementation({
     }
   }, [isModal, isOpen, suppressNativeFocus]);
 
+  const handleClose: ReactEventHandler<HTMLDialogElement> = useCallback(
+    (event) => {
+      event.stopPropagation();
+      onClose();
+    },
+    [onClose],
+  );
+
   return portalRoot
     ? createPortal(
         <StyledDialog
           ref={dialogRef}
-          onClose={onClose}
+          onClose={handleClose}
           className={className}
           isModal={isModal}
         >
