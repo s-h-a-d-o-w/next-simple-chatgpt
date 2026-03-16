@@ -23,9 +23,34 @@ const Body = styled("body", {
   },
 });
 
+const themeInitializerScript = `
+(() => {
+  const storageKey = "darkMode";
+  let isDarkMode = false;
+
+  try {
+    const storedValue = window.localStorage.getItem(storageKey);
+
+    if (storedValue === null) {
+      isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+      isDarkMode = JSON.parse(storedValue);
+    }
+  } catch {
+    isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  document.documentElement.classList.toggle("dark", isDarkMode);
+})();
+`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html className={fonts.aleo.className} lang="en">
+    <html className={fonts.aleo.className} lang="en" suppressHydrationWarning>
+      <head>
+        {/* oxlint-disable-next-line react/no-danger */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
+      </head>
       <Body>
         <Providers>{children}</Providers>
       </Body>
