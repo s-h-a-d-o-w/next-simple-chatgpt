@@ -26,7 +26,7 @@ const authConfig = (
         session: {
           cookieCache: {
             enabled: true,
-            maxAge: 7 * 24 * 60 * 60, // 1 year
+            maxAge: 365 * 24 * 60 * 60, // 1 year
             strategy: "jwe",
             refreshCache: true, // Enable stateless refresh
           },
