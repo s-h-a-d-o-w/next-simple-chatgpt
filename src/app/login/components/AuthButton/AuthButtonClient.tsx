@@ -5,7 +5,6 @@ import { IconButton } from "@/components/IconButton";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
 import { authClient } from "@/lib/utils/authClient";
-import { redirect } from "next/navigation";
 import { flushSync } from "react-dom";
 import { css } from "../../../../../styled-system/css";
 
@@ -36,7 +35,7 @@ export function AuthButtonClient({
   const handleSignOut = async () => {
     // Is done locally => instant, no need to set isLoading
     await authClient.signOut();
-    redirect("/");
+    window.location.reload();
   };
 
   return isLoading ? (
