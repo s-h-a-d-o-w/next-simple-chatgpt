@@ -3,6 +3,7 @@
 refractorLanguages.ts
 
 .env
+public/pdf.worker.min.mjs
 **/*.css.d.ts
 /playwright-report
 /playwright.state.json
