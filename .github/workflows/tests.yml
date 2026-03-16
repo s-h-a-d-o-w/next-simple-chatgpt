@@ -20,8 +20,8 @@ jobs:
         uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install
-      - name: Run Tests
-        run: pnpm test
+      - name: Run basic tests
+        run: pnpm concurrently "pnpm test" "pnpm lint" "pnpm typecheck"
       - name: Build
         run: pnpm build:e2e
       - name: Install Playwright Browsers
