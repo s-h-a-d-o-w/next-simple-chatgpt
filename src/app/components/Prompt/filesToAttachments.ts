@@ -24,13 +24,12 @@ async function convertPdfToImage(file: File): Promise<string[]> {
       const viewport = page.getViewport({ scale: 2 });
 
       const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
       canvas.height = viewport.height;
       canvas.width = viewport.width;
 
       await page.render({
-        canvasContext: context!,
-        viewport: viewport,
+        canvas,
+        viewport,
       }).promise;
 
       return canvas.toDataURL("image/png");

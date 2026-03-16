@@ -3,9 +3,7 @@ import {
   devices,
   type PlaywrightTestConfig,
 } from "@playwright/test";
-import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.local", quiet: true });
 process.env["NEXT_PUBLIC_E2E"] = "true";
 
 const isDev = process.env["NODE_ENV"] !== "production";
@@ -15,7 +13,7 @@ const baseURL = process.env["AUTH_URL"]
 
 const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
   url: baseURL,
-  timeout: 5 * 1000,
+  timeout: 20 * 1000,
   ignoreHTTPSErrors: true,
   stdout: "pipe",
   stderr: "pipe",
