@@ -59,6 +59,7 @@
     "import/unambiguous": "off",
 
     "jest/no-conditional-in-test": "off",
+    "jest/no-focused-tests": "off",
     "jest/valid-title": "off",
 
     "jsx_a11y/no-autofocus": "off",

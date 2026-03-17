@@ -1,8 +1,24 @@
 import { POST, type ChatRequest } from "./route";
 import { test, expect } from "vitest";
 import { NextRequest } from "next/server";
-import type { ProviderMetadata } from "ai";
 import type { AnthropicMessageMetadata } from "@ai-sdk/anthropic";
+import type { TextStreamPart, ToolSet } from "ai";
+import type { ModelKey } from "@/lib/server/models";
+
+type FinishStepPart = Extract<TextStreamPart<ToolSet>, { type: "finish-step" }>;
+
+type AnthropicUsage = {
+  input_tokens: number;
+  output_tokens: number;
+  cache_read_input_tokens: number;
+  cache_creation_input_tokens: number;
+  service_tier: string;
+  inference_geo: string;
+  cache_creation: {
+    ephemeral_5m_input_tokens: number;
+    ephemeral_1h_input_tokens: number;
+  };
+};
 
 // Haiku 4.5 requires a minimum of 4096 tokens for caching
 const longSystemPrompt = `You are a helpful assistant with extensive knowledge across many domains.
@@ -53,27 +69,33 @@ This system prompt is designed to be sufficiently long to trigger automatic cach
 ## Final Instructions
 Please respond to all user queries following the above guidelines. Remember to be helpful, accurate, and considerate in all interactions.`;
 
-type AnthropicUsage = {
-  input_tokens: number;
-  output_tokens: number;
-  cache_read_input_tokens: number;
-  cache_creation_input_tokens: number;
-  service_tier: string;
-  inference_geo: string;
-  cache_creation: {
-    ephemeral_5m_input_tokens: number;
-    ephemeral_1h_input_tokens: number;
+function extractAnthropicUsage(messageMetadata: FinishStepPart) {
+  const anthropic = messageMetadata.providerMetadata?.["anthropic"] as
+    | AnthropicMessageMetadata
+    | undefined;
+  const usage = anthropic?.usage as AnthropicUsage | undefined;
+  return {
+    cacheCreationInputTokens: usage?.cache_creation_input_tokens ?? 0,
+    cacheReadInputTokens: usage?.cache_read_input_tokens ?? 0,
   };
-};
+}
 
-test("automatic caching works with anthropic provider", async () => {
+function extractOpenAIUsage(messageMetadata: FinishStepPart) {
+  return {
+    inputTokens: messageMetadata.usage.inputTokens ?? 0,
+    cacheReadTokens:
+      messageMetadata.usage.inputTokenDetails.cacheReadTokens ?? 0,
+  };
+}
+
+async function callRouteHandler(model: ModelKey, systemPrompt: string) {
   const body: ChatRequest = {
-    model: "claude-haiku-4-5",
+    model,
     messages: [
       {
         id: "system-1",
         role: "system",
-        parts: [{ type: "text", text: longSystemPrompt }],
+        parts: [{ type: "text", text: systemPrompt }],
       },
       {
         id: "user-1",
@@ -94,24 +116,49 @@ test("automatic caching works with anthropic provider", async () => {
   const text = await response.text();
   const lines = text.split("\n").filter(Boolean);
 
-  let cacheCreationInputTokens = 0;
-  let cacheReadInputTokens = 0;
   for (const line of lines) {
     if (line.startsWith("data: ") && !line.includes("[DONE]")) {
       const data = JSON.parse(line.slice(6)) as {
         type: string;
-        messageMetadata: ProviderMetadata;
+        messageMetadata: FinishStepPart;
       };
       if (data.type === "message-metadata") {
-        const anthropic = data.messageMetadata["anthropic"] as
-          | AnthropicMessageMetadata
-          | undefined;
-        const usage = anthropic?.usage as AnthropicUsage | undefined;
-        cacheCreationInputTokens = usage?.cache_creation_input_tokens ?? 0;
-        cacheReadInputTokens = usage?.cache_read_input_tokens ?? 0;
+        return data.messageMetadata;
       }
     }
   }
 
-  expect(cacheCreationInputTokens + cacheReadInputTokens).toBeGreaterThan(4000);
+  throw new Error("No message metadata found");
+}
+
+test("automatic caching works with anthropic provider", async () => {
+  const timestamp = Date.now().toString();
+
+  const { cacheCreationInputTokens } = extractAnthropicUsage(
+    await callRouteHandler(
+      "claude-haiku-4-5",
+      timestamp + " " + longSystemPrompt,
+    ),
+  );
+  expect(cacheCreationInputTokens).toBeGreaterThan(4000);
+
+  const { cacheReadInputTokens } = extractAnthropicUsage(
+    await callRouteHandler(
+      "claude-haiku-4-5",
+      timestamp + " " + longSystemPrompt,
+    ),
+  );
+  expect(cacheReadInputTokens).toBeGreaterThan(4000);
+}, 30000);
+
+test("automatic caching works with openai provider", async () => {
+  const timestamp = Date.now().toString();
+
+  const { inputTokens } = extractOpenAIUsage(
+    await callRouteHandler(
+      "gpt-4.1",
+      timestamp + " " + longSystemPrompt.slice(0, 6000),
+    ),
+  );
+  expect(inputTokens).toBeGreaterThan(1000);
 }, 30000);

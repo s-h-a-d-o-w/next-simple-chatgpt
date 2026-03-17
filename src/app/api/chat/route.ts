@@ -84,9 +84,9 @@ export const POST = async (req: NextRequest) => {
 
   return result.toUIMessageStreamResponse({
     messageMetadata({ part }) {
-      // AI SDK doesn't add provider metadata to the response by default.
-      if (part.type === "finish-step" && part.providerMetadata) {
-        return part.providerMetadata;
+      // AI SDK doesn't add usage metadata to the response by default.
+      if (part.type === "finish-step") {
+        return part;
       }
     },
     onError(error) {
