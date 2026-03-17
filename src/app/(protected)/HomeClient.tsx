@@ -16,7 +16,7 @@ import { useModelSelection } from "@/hooks/useModelSelection";
 import { useScrollToBottom } from "@/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
 import type { FileUIPart, UIMessage } from "ai";
-import { cloneDeep, debounce } from "lodash";
+import { cloneDeep, debounce } from "lodash-es";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChangeEventHandler, KeyboardEvent, SubmitEvent } from "react";
 import useLocalStorageState from "use-local-storage-state";

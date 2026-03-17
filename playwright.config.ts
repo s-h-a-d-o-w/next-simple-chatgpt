@@ -4,8 +4,6 @@ import {
   type PlaywrightTestConfig,
 } from "@playwright/test";
 
-process.env["NEXT_PUBLIC_E2E"] = "true";
-
 const isDev = process.env["NODE_ENV"] !== "production";
 const baseURL = process.env["AUTH_URL"]
   ? new URL(process.env["AUTH_URL"]).origin
@@ -19,7 +17,7 @@ const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
   stderr: "pipe",
   env: {
     ...process.env,
-    NEXT_PUBLIC_E2E: "true",
+    NEXT_PUBLIC_TEST: "true",
   },
 } as const;
 

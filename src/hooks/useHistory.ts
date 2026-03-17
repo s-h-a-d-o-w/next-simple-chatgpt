@@ -1,4 +1,4 @@
-import { cloneDeep, isObject } from "lodash";
+import { cloneDeep, isObject } from "lodash-es";
 import { useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import superjson from "superjson";

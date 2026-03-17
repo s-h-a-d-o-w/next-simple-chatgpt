@@ -6,12 +6,16 @@ import { isTest } from "@/lib/utils/consts";
 const whitelist = process.env["WHITELIST"]?.split(",");
 
 export async function authGuard(doRedirect?: boolean) {
+  if (isTest) {
+    return;
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
   const isUserWhitelisted = session && whitelist?.includes(session.user.email);
 
-  if ((session && isUserWhitelisted) || isTest) {
+  if (session && isUserWhitelisted) {
     return;
   }
 
