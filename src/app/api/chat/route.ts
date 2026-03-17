@@ -6,6 +6,7 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { type UIMessage, convertToModelMessages, streamText } from "ai";
 import { NextRequest } from "next/server";
 import { createDownload } from "ai";
+import { merge } from "lodash-es";
 
 export type ChatRequest = {
   model: ModelKey;
@@ -22,40 +23,6 @@ const loggedErrors = new Set<string>();
 const openrouter = createOpenRouter({
   apiKey: process.env["OPENROUTER_API_KEY"],
 });
-
-async function convertMessagesAnthropic(messages: UIMessage[]) {
-  const coreMessages = await convertToModelMessages(messages);
-
-  const relevantIndices = coreMessages
-    .map((msg, index) =>
-      msg.role === "user" || msg.role === "tool" ? index : -1,
-    )
-    .filter((index) => index !== -1)
-    // take last 2 user/tool messages
-    .slice(-2);
-  // definitely always include the last user message
-  const lastUserMsgIndex = coreMessages.findLastIndex(
-    (msg) => msg.role === "user",
-  );
-  // it's fine if it's -1 or duplicate, since we will simply do an inclusion check
-  relevantIndices.push(lastUserMsgIndex);
-
-  const messagesWithCacheMarkers = coreMessages.map((message, index) => {
-    if (relevantIndices.includes(index)) {
-      return {
-        ...message,
-        providerOptions: {
-          anthropic: {
-            cacheControl: { type: "ephemeral" },
-          },
-        },
-      };
-    }
-    return message;
-  });
-
-  return messagesWithCacheMarkers;
-}
 
 export const POST = async (req: NextRequest) => {
   await authGuard();
@@ -88,17 +55,24 @@ export const POST = async (req: NextRequest) => {
           : openrouter(model.split("/").slice(1).join("/"), {
               extraBody: modelConfig.extraBody,
             }),
-    messages:
-      modelConfig.provider === "openai" || modelConfig.provider === "openrouter"
-        ? await convertToModelMessages(messages)
-        : await convertMessagesAnthropic(messages),
-    providerOptions: modelConfig.reasoningEffort
-      ? {
+    messages: await convertToModelMessages(messages),
+    providerOptions: merge(
+      {
+        ...(modelConfig.provider === "anthropic" && {
+          anthropic: {
+            // No manual cache markers needed any more. See here for minimum cacheable token requirements: https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-limitations
+            cacheControl: { type: "ephemeral" },
+          },
+        }),
+      },
+      {
+        ...(modelConfig.reasoningEffort && {
           [modelConfig.provider]: {
             reasoningEffort: modelConfig.reasoningEffort,
           },
-        }
-      : undefined,
+        }),
+      },
+    ),
     abortSignal: abortController.signal,
     onFinish() {
       clearTimeout(timeoutId);
@@ -109,6 +83,12 @@ export const POST = async (req: NextRequest) => {
   });
 
   return result.toUIMessageStreamResponse({
+    messageMetadata({ part }) {
+      // AI SDK doesn't add provider metadata to the response by default.
+      if (part.type === "finish-step" && part.providerMetadata) {
+        return part.providerMetadata;
+      }
+    },
     onError(error) {
       // Would add error reporting service integration in commercial product here.
       if (!loggedErrors.has((error as Error).message)) {

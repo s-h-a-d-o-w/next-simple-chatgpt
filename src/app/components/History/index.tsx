@@ -1,7 +1,7 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
 import { HistoryEntryV1, historySerializer } from "@/hooks/useHistory";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "../../../../styled-system/jsx";
 import { Messages } from "../Messages";
