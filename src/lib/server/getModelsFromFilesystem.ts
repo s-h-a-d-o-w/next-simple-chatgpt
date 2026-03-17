@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { LiteLLMModelInfo } from "../types";
+import type { LiteLLMModelInfo } from "@/types";
 import { toDirname } from "./toDirname";
 
 let cachedModelsFromFilesystem:

@@ -1,11 +1,8 @@
 import { POST, type ChatRequest } from "./route";
 import { test, expect } from "vitest";
 import { NextRequest } from "next/server";
-import type { AnthropicMessageMetadata } from "@ai-sdk/anthropic";
-import type { TextStreamPart, ToolSet } from "ai";
 import type { ModelKey } from "@/lib/server/models";
-
-type FinishStepPart = Extract<TextStreamPart<ToolSet>, { type: "finish-step" }>;
+import type { Metadata } from "@/types";
 
 type AnthropicUsage = {
   input_tokens: number;
@@ -69,25 +66,6 @@ This system prompt is designed to be sufficiently long to trigger automatic cach
 ## Final Instructions
 Please respond to all user queries following the above guidelines. Remember to be helpful, accurate, and considerate in all interactions.`;
 
-function extractAnthropicUsage(messageMetadata: FinishStepPart) {
-  const anthropic = messageMetadata.providerMetadata?.["anthropic"] as
-    | AnthropicMessageMetadata
-    | undefined;
-  const usage = anthropic?.usage as AnthropicUsage | undefined;
-  return {
-    cacheCreationInputTokens: usage?.cache_creation_input_tokens ?? 0,
-    cacheReadInputTokens: usage?.cache_read_input_tokens ?? 0,
-  };
-}
-
-function extractOpenAIUsage(messageMetadata: FinishStepPart) {
-  return {
-    inputTokens: messageMetadata.usage.inputTokens ?? 0,
-    cacheReadTokens:
-      messageMetadata.usage.inputTokenDetails.cacheReadTokens ?? 0,
-  };
-}
-
 async function callRouteHandler(model: ModelKey, systemPrompt: string) {
   const body: ChatRequest = {
     model,
@@ -120,9 +98,10 @@ async function callRouteHandler(model: ModelKey, systemPrompt: string) {
     if (line.startsWith("data: ") && !line.includes("[DONE]")) {
       const data = JSON.parse(line.slice(6)) as {
         type: string;
-        messageMetadata: FinishStepPart;
+        messageMetadata: Metadata;
       };
       if (data.type === "message-metadata") {
+        // console.log(JSON.stringify(data.messageMetadata, null, 2));
         return data.messageMetadata;
       }
     }
@@ -131,34 +110,59 @@ async function callRouteHandler(model: ModelKey, systemPrompt: string) {
   throw new Error("No message metadata found");
 }
 
-test("automatic caching works with anthropic provider", async () => {
+// Includes sanity checks for anthropic metadata, since in the past, the right numbers were in provider metadata but those in root level usage were wrong. (Or I misinterpreted them.)
+test("caching works with anthropic provider", async () => {
   const timestamp = Date.now().toString();
 
-  const { cacheCreationInputTokens } = extractAnthropicUsage(
-    await callRouteHandler(
-      "claude-haiku-4-5",
-      timestamp + " " + longSystemPrompt,
-    ),
+  const cacheWriteMetadata = await callRouteHandler(
+    "claude-haiku-4-5",
+    timestamp + " " + longSystemPrompt,
   );
-  expect(cacheCreationInputTokens).toBeGreaterThan(4000);
+  const {
+    usage: { cacheWriteTokens },
+  } = cacheWriteMetadata;
+  expect(cacheWriteTokens).toBeGreaterThan(4000);
+  const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart
+    .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
+  expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toEqual(
+    cacheWriteTokens,
+  );
 
-  const { cacheReadInputTokens } = extractAnthropicUsage(
-    await callRouteHandler(
-      "claude-haiku-4-5",
-      timestamp + " " + longSystemPrompt,
-    ),
+  const cacheReadMetadata = await callRouteHandler(
+    "claude-haiku-4-5",
+    timestamp + " " + longSystemPrompt,
   );
-  expect(cacheReadInputTokens).toBeGreaterThan(4000);
+  const {
+    usage: { cacheReadTokens, inputTokens, outputTokens },
+  } = cacheReadMetadata;
+  expect(cacheReadTokens).toBeGreaterThan(4000);
+  const anthropicCacheReadUsage = cacheReadMetadata.rawPart.providerMetadata?.[
+    "anthropic"
+  ]?.["usage"] as AnthropicUsage;
+  expect(anthropicCacheReadUsage.cache_read_input_tokens).toEqual(
+    cacheReadTokens,
+  );
+  expect(anthropicCacheReadUsage.input_tokens).toEqual(inputTokens);
+  expect(anthropicCacheReadUsage.output_tokens).toEqual(outputTokens);
 }, 30000);
 
-test("automatic caching works with openai provider", async () => {
+test("caching works with openai provider", async () => {
   const timestamp = Date.now().toString();
 
-  const { inputTokens } = extractOpenAIUsage(
-    await callRouteHandler(
-      "gpt-4.1",
-      timestamp + " " + longSystemPrompt.slice(0, 6000),
-    ),
+  const {
+    usage: { inputTokens },
+  } = await callRouteHandler(
+    "gpt-4.1",
+    timestamp + " " + longSystemPrompt.slice(0, 6000),
   );
   expect(inputTokens).toBeGreaterThan(1000);
+
+  const cacheReadMetadata = await callRouteHandler(
+    "gpt-4.1",
+    timestamp + " " + longSystemPrompt.slice(0, 6000),
+  );
+  const {
+    usage: { cacheReadTokens },
+  } = cacheReadMetadata;
+  expect(cacheReadTokens).toBeGreaterThan(1000);
 }, 30000);

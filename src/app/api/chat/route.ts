@@ -7,6 +7,9 @@ import { type UIMessage, convertToModelMessages, streamText } from "ai";
 import { NextRequest } from "next/server";
 import { createDownload } from "ai";
 import { merge } from "lodash-es";
+import { normalizeUsage } from "./normalizeUsage";
+import { getCost } from "./billing/getCost";
+import type { Metadata } from "@/types";
 
 export type ChatRequest = {
   model: ModelKey;
@@ -30,6 +33,8 @@ export const POST = async (req: NextRequest) => {
   const { model, messages } = (await req.json()) as ChatRequest;
   const models = await fetchModels();
   const modelConfig = models[model];
+  const isAnthropic = modelConfig.provider === "anthropic";
+  const isOpenAI = modelConfig.provider === "openai";
 
   const abortController = new AbortController();
   const timeoutId = setTimeout(() => {
@@ -47,14 +52,13 @@ export const POST = async (req: NextRequest) => {
           return singleDownload(req);
         }),
       ),
-    model:
-      modelConfig.provider === "openai"
-        ? openai(model)
-        : modelConfig.provider === "anthropic"
-          ? anthropic(model)
-          : openrouter(model.split("/").slice(1).join("/"), {
-              extraBody: modelConfig.extraBody,
-            }),
+    model: isOpenAI
+      ? openai(model)
+      : isAnthropic
+        ? anthropic(model)
+        : openrouter(model.split("/").slice(1).join("/"), {
+            extraBody: modelConfig.extraBody,
+          }),
     messages: await convertToModelMessages(messages),
     providerOptions: merge(
       {
@@ -83,10 +87,12 @@ export const POST = async (req: NextRequest) => {
   });
 
   return result.toUIMessageStreamResponse({
+    // AI SDK doesn't add usage metadata to the response by default. Needed for testing.
     messageMetadata({ part }) {
-      // AI SDK doesn't add usage metadata to the response by default.
       if (part.type === "finish-step") {
-        return part;
+        const usage = normalizeUsage(part.usage);
+        const cost = getCost(modelConfig, usage);
+        return { cost, usage, rawPart: part } satisfies Metadata;
       }
     },
     onError(error) {

@@ -1,6 +1,6 @@
 import { isTest } from "@/lib/utils/consts";
 import { getModelsFromFilesystem } from "./getModelsFromFilesystem";
-import type { LiteLLMModelInfo } from "../types";
+import type { LiteLLMModelInfo } from "@/types";
 
 const REVALIDATE_SECONDS = 6 * 60 * 60; // 6 hours
 const LITELLM_MODELS_URL =
