@@ -10,15 +10,14 @@ import {
   chatStartTimeAtom,
   isHistoryOpenAtom,
 } from "@/app/(protected)/atoms";
-import type { UIMessage } from "ai";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { styled } from "@/styled-system/jsx";
 import { css } from "@/styled-system/css";
 import { AuthButtonClient } from "@/components/AuthButton/AuthButtonClient";
 
 type Props = {
   disabledHistoryActions: boolean;
-  messages: UIMessage[];
+  hasFilesInChat: boolean;
 };
 
 const StyledActions = styled("div", {
@@ -44,9 +43,8 @@ const StyledButtonGroup = styled("div", {
 
 export const TopBar = memo(function TopBar({
   disabledHistoryActions,
-  messages,
+  hasFilesInChat,
 }: Props) {
-  const files = useAtomValue(promptFilesAtom);
   const setChatId = useSetAtom(chatIdAtom);
   const setFiles = useSetAtom(promptFilesAtom);
   const setIsHistoryOpen = useSetAtom(isHistoryOpenAtom);
@@ -73,14 +71,7 @@ export const TopBar = memo(function TopBar({
           Last update: <HmrTimestamp />
         </div>
       )}
-      <ModelSelector
-        showAttachmentModelsOnly={
-          files.length > 0 ||
-          messages.some(({ parts }) =>
-            parts.some((part) => part.type === "file"),
-          )
-        }
-      />
+      <ModelSelector showAttachmentModelsOnly={hasFilesInChat} />
       <StyledButtonGroup>
         <IconButton
           name="reset"

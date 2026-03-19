@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import type { KeyboardEvent, SubmitEvent } from "react";
 import { styled } from "@/styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
@@ -50,7 +50,7 @@ const StyledInputContainer = styled("div", {
   },
 });
 
-export function Prompt({
+export const Prompt = memo(function Prompt({
   disabledReplay,
   isFirstPrompt,
   isLoading,
@@ -206,4 +206,4 @@ export function Prompt({
       </StyledForm>
     </StyledPrompt>
   );
-}
+});

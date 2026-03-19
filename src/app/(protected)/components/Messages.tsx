@@ -2,6 +2,7 @@ import { Message } from "@/app/(protected)/components/Message";
 import { Button } from "@/components/Button";
 import { UIMessage } from "ai";
 import { styled } from "@/styled-system/jsx";
+import { memo } from "react";
 
 type Props = {
   messages: UIMessage[];
@@ -32,7 +33,7 @@ const MessageContainer = styled("div", {
   },
 });
 
-export const Messages = function Messages({
+export const Messages = memo(function Messages({
   hasError,
   messages,
   onDelete,
@@ -70,4 +71,4 @@ export const Messages = function Messages({
       )}
     </>
   );
-};
+});

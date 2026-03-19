@@ -6,6 +6,7 @@ import { History } from "@/app/(protected)/components/History";
 import {
   chatIdAtom,
   chatStartTimeAtom,
+  promptFilesAtom,
   systemPromptAtom,
 } from "@/app/(protected)/atoms";
 import { Messages } from "./components/Messages";
@@ -48,6 +49,7 @@ function HomeClient() {
   const [chatId] = useAtom(chatIdAtom);
   const [startTime] = useAtom(chatStartTimeAtom);
   const [systemPrompt] = useAtom(systemPromptAtom);
+  const [files] = useAtom(promptFilesAtom);
 
   const { model } = useModelSelection();
 
@@ -65,6 +67,11 @@ function HomeClient() {
     messages: [createSystemMessage(systemPrompt)],
   });
   const isLoading = status === "submitted" || status === "streaming";
+  const hasFilesInChat =
+    files.length > 0 ||
+    messages.some((message) =>
+      message.parts.some((part) => part.type === "file"),
+    );
 
   // Body to send along with the messages.
   const body = useMemo(() => {
@@ -91,6 +98,10 @@ function HomeClient() {
     },
     [setMessages],
   );
+
+  const handleRegenerate = useCallback(() => {
+    void regenerate({ body });
+  }, [body, regenerate]);
 
   const handleSendMessage = useCallback(
     ({ files, input }: { files: FileUIPart[]; input: string }) => {
@@ -120,7 +131,7 @@ function HomeClient() {
     <>
       <TopBar
         disabledHistoryActions={conversationHistory.length === 0}
-        messages={messages}
+        hasFilesInChat={hasFilesInChat}
       />
       <StyledMain>
         <SystemPrompt setMessages={setMessages} />
@@ -129,20 +140,14 @@ function HomeClient() {
           isLoading={isLoading}
           messages={messages}
           onDelete={handleDeleteMessage}
-          onRetry={() => {
-            void regenerate({ body });
-          }}
+          onRetry={handleRegenerate}
           showCopyAll
         />
         <Prompt
           disabledReplay={messages.at(-1)?.role !== "assistant"}
           isFirstPrompt={messages.length === 1}
           isLoading={isLoading}
-          onReplay={() => {
-            void regenerate({
-              body,
-            });
-          }}
+          onReplay={handleRegenerate}
           onSend={handleSendMessage}
           onStop={stop}
         />
