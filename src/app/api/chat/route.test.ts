@@ -156,7 +156,7 @@ test("caching works with openai provider", async () => {
     usage: { inputTokens },
   } = await callRouteHandler(
     "gpt-4.1",
-    timestamp + " " + longSystemPrompt.slice(0, 6000),
+    timestamp + " " + longSystemPrompt.slice(0, 7000),
   );
   expect(inputTokens).toBeGreaterThan(1024);
 
@@ -164,7 +164,7 @@ test("caching works with openai provider", async () => {
 
   const cacheReadMetadata = await callRouteHandler(
     "gpt-4.1",
-    timestamp + " " + longSystemPrompt.slice(0, 6000),
+    timestamp + " " + longSystemPrompt.slice(0, 7000),
   );
   const {
     usage: { cacheReadTokens },
