@@ -3,7 +3,6 @@ import { test, expect } from "vitest";
 import { NextRequest } from "next/server";
 import type { ModelKey } from "@/lib/server/models";
 import type { Metadata } from "@/types";
-import { pause } from "@/lib/utils/pause";
 
 type AnthropicUsage = {
   input_tokens: number;
@@ -129,8 +128,6 @@ test("caching works with anthropic provider", async () => {
     cacheWriteTokens,
   );
 
-  await pause(1000);
-
   const cacheReadMetadata = await callRouteHandler(
     "claude-haiku-4-5",
     timestamp + " " + longSystemPrompt,
@@ -149,25 +146,19 @@ test("caching works with anthropic provider", async () => {
   expect(anthropicCacheReadUsage.output_tokens).toEqual(outputTokens);
 }, 30000);
 
-test("caching works with openai provider", async () => {
+test("normalized usage is reasonable with openai provider", async () => {
   const timestamp = Date.now().toString();
 
   const {
-    usage: { inputTokens },
+    usage: { inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens },
   } = await callRouteHandler(
     "gpt-4.1",
     timestamp + " " + longSystemPrompt.slice(0, 7000),
   );
-  expect(inputTokens).toBeGreaterThan(1024);
+  expect(inputTokens).toBeGreaterThan(1023);
+  expect(outputTokens).toBeGreaterThan(0);
+  expect(cacheReadTokens).toBe(0);
+  expect(cacheWriteTokens).toBe(0);
 
-  await pause(1000);
-
-  const cacheReadMetadata = await callRouteHandler(
-    "gpt-4.1",
-    timestamp + " " + longSystemPrompt.slice(0, 7000),
-  );
-  const {
-    usage: { cacheReadTokens },
-  } = cacheReadMetadata;
-  expect(cacheReadTokens).toBeGreaterThan(1024);
+  // It's not possible to test caching, since caching with OpenAI is merely "best effort".
 }, 30000);
