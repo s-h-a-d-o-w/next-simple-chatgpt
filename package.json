@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "analyze": "cross-env ANALYZE=true next build",
+    "analyze": "next experimental-analyze",
     "beforebuild": "pnpm generate:refractor-languages && node ./scripts/generateBuildTimestamp.ts",
     "build": "pnpm beforebuild && next build && pnpm afterbuild",
     "build:e2e": "pnpm beforebuild && cross-env NEXT_PUBLIC_TEST=true next build && pnpm afterbuild",
@@ -37,6 +37,7 @@
     "concurrently": "^9.2.1",
     "date-fns": "^4.1.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "jotai": "^2.18.1",
     "lodash-es": "^4.17.23",
     "next": "^16.1.6",
     "pdfjs-dist": "5.5.207",
@@ -51,7 +52,6 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.1.6",
     "@next/eslint-plugin-next": "^16.1.6",
     "@playwright/test": "^1.58.2",
     "@types/lodash-es": "^4.17.12",

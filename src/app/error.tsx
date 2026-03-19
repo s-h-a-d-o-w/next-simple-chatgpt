@@ -1,7 +1,7 @@
 "use client";
 
 import { CenteredMain } from "@/components/CenteredMain";
-import { styled } from "../../styled-system/jsx";
+import { styled } from "@/styled-system/jsx";
 
 const StyledMessage = styled("div", {
   base: {

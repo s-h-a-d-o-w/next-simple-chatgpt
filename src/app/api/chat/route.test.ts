@@ -3,6 +3,7 @@ import { test, expect } from "vitest";
 import { NextRequest } from "next/server";
 import type { ModelKey } from "@/lib/server/models";
 import type { Metadata } from "@/types";
+import { pause } from "@/lib/utils/pause";
 
 type AnthropicUsage = {
   input_tokens: number;
@@ -121,12 +122,14 @@ test("caching works with anthropic provider", async () => {
   const {
     usage: { cacheWriteTokens },
   } = cacheWriteMetadata;
-  expect(cacheWriteTokens).toBeGreaterThan(4000);
+  expect(cacheWriteTokens).toBeGreaterThan(4096);
   const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart
     .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
   expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toEqual(
     cacheWriteTokens,
   );
+
+  await pause(1000);
 
   const cacheReadMetadata = await callRouteHandler(
     "claude-haiku-4-5",
@@ -135,7 +138,7 @@ test("caching works with anthropic provider", async () => {
   const {
     usage: { cacheReadTokens, inputTokens, outputTokens },
   } = cacheReadMetadata;
-  expect(cacheReadTokens).toBeGreaterThan(4000);
+  expect(cacheReadTokens).toBeGreaterThan(4096);
   const anthropicCacheReadUsage = cacheReadMetadata.rawPart.providerMetadata?.[
     "anthropic"
   ]?.["usage"] as AnthropicUsage;
@@ -153,16 +156,18 @@ test("caching works with openai provider", async () => {
     usage: { inputTokens },
   } = await callRouteHandler(
     "gpt-4.1",
-    timestamp + " " + longSystemPrompt.slice(0, 6000),
+    timestamp + " " + longSystemPrompt.slice(0, 7000),
   );
-  expect(inputTokens).toBeGreaterThan(1000);
+  expect(inputTokens).toBeGreaterThan(1024);
+
+  await pause(1000);
 
   const cacheReadMetadata = await callRouteHandler(
     "gpt-4.1",
-    timestamp + " " + longSystemPrompt.slice(0, 6000),
+    timestamp + " " + longSystemPrompt.slice(0, 7000),
   );
   const {
     usage: { cacheReadTokens },
   } = cacheReadMetadata;
-  expect(cacheReadTokens).toBeGreaterThan(1000);
+  expect(cacheReadTokens).toBeGreaterThan(1024);
 }, 30000);

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { styled } from "../../../styled-system/jsx";
-import { AuthButton } from "./components/AuthButton";
+import { styled } from "@/styled-system/jsx";
+import { AuthButton } from "@/components/AuthButton";
 import { CenteredMain } from "@/components/CenteredMain";
 
 const StyledMessage = styled("div", {

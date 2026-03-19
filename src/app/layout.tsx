@@ -1,6 +1,6 @@
 import "./global.css";
 import type { Metadata } from "next";
-import { styled } from "../../styled-system/jsx";
+import { styled } from "@/styled-system/jsx";
 import { Providers } from "./Providers";
 import { fonts } from "@/lib/utils/fonts";
 import type { ReactNode } from "react";

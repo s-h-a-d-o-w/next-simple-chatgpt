@@ -16,9 +16,9 @@ import {
 } from "react-icons/md";
 import { FaGithub } from "react-icons/fa6";
 import { Button } from "./Button";
-import { css } from "../../styled-system/css";
-import { ComponentProps } from "../../styled-system/types";
-import { styled } from "../../styled-system/jsx";
+import { css } from "@/styled-system/css";
+import { ComponentProps } from "@/styled-system/types";
+import { styled } from "@/styled-system/jsx";
 
 type Props = ComponentProps<typeof Button> & {
   name: keyof typeof iconMap;
