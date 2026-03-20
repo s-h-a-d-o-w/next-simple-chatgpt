@@ -5,6 +5,7 @@ import {
   CURRENT_HISTORY_VERSION,
   historySerializer,
   useHistory,
+  type HistoryEntryV1,
 } from "@/app/(protected)/hooks/useHistory";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { styled } from "@/styled-system/jsx";
@@ -136,12 +137,22 @@ export const History = memo(function History({ setMessages }: Props) {
   }, [setIsDeleteConfirmationOpen]);
 
   const handleDeleteHistoryEntry = useCallback(
-    (index: number) => {
+    (entry: HistoryEntryV1) => {
+      if (activeHistoryEntry === entry) {
+        setActiveHistoryEntry(undefined);
+      }
+
       const nextHistory = cloneDeep(conversationHistory);
-      nextHistory.splice(index, 1);
+      const entryIndex = nextHistory.findIndex((_entry) => _entry === entry);
+      nextHistory.splice(entryIndex, 1);
       setConversationHistory(nextHistory);
     },
-    [conversationHistory, setConversationHistory],
+    [
+      activeHistoryEntry,
+      conversationHistory,
+      setActiveHistoryEntry,
+      setConversationHistory,
+    ],
   );
 
   const handleLoadHistory = useCallback(async () => {
@@ -239,13 +250,7 @@ export const History = memo(function History({ setMessages }: Props) {
                 key={entry.startTime}
                 entry={entry}
                 onDeleteHistoryEntry={() => {
-                  if (activeHistoryEntry === entry) {
-                    setActiveHistoryEntry(undefined);
-                  }
-                  const index = conversationHistory.findIndex(
-                    (_entry) => _entry === entry,
-                  );
-                  handleDeleteHistoryEntry(index);
+                  handleDeleteHistoryEntry(entry);
                 }}
                 onSetActiveHistoryEntry={() => {
                   setActiveHistoryEntry(entry);
