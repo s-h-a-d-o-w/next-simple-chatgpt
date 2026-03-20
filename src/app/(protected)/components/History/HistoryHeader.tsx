@@ -2,14 +2,16 @@ import { styled } from "@/styled-system/jsx";
 import { isDev, isClientDebug } from "@/lib/utils/consts";
 import { StorageUsageWheel } from "./StorageUsageWheel";
 import { IconButton } from "@/components/IconButton";
-import { HistoryEntryV1 } from "@/app/(protected)/hooks/useHistory";
-
-type Props = {
-  conversationHistory: HistoryEntryV1[];
-  onDeleteHistory: () => void;
-  onLoad: () => void;
-  onSave: () => void;
-};
+import {
+  CURRENT_HISTORY_VERSION,
+  historySerializer,
+  useHistory,
+} from "@/app/(protected)/hooks/useHistory";
+import { saveJsonFile } from "./utils/saveJsonFile";
+import { useCallback } from "react";
+import { loadJsonFile } from "./utils/loadJsonFile";
+import { isDeleteConfirmationOpenAtom } from "./atoms";
+import { useSetAtom } from "jotai";
 
 const StyledHistoryActions = styled("div", {
   base: {
@@ -27,12 +29,32 @@ const StyledHistoryHeader = styled("div", {
   },
 });
 
-export function HistoryHeader({
-  conversationHistory,
-  onDeleteHistory,
-  onLoad,
-  onSave,
-}: Props) {
+export function HistoryHeader() {
+  const [conversationHistory, setConversationHistory] = useHistory();
+  const setIsDeleteConfirmationOpen = useSetAtom(isDeleteConfirmationOpenAtom);
+
+  const handleDeleteHistory = useCallback(() => {
+    setIsDeleteConfirmationOpen(true);
+  }, [setIsDeleteConfirmationOpen]);
+
+  const handleLoadHistory = useCallback(async () => {
+    try {
+      setConversationHistory(historySerializer.parse(await loadJsonFile()));
+    } catch {
+      // TODO: user cancelled or picked nonsense. should probably show error.
+    }
+  }, [setConversationHistory]);
+
+  const handleSaveHistory = useCallback(() => {
+    saveJsonFile(
+      {
+        version: CURRENT_HISTORY_VERSION,
+        history: conversationHistory,
+      },
+      `history-${new Date().toISOString().replaceAll(/[:.]/g, "-")}`,
+    );
+  }, [conversationHistory]);
+
   return (
     <StyledHistoryHeader>
       {/* We prune storage automatically, so this is just for debugging. */}
@@ -42,11 +64,21 @@ export function HistoryHeader({
           name="delete"
           iconSize="md"
           disabled={conversationHistory.length === 0}
-          onClick={onDeleteHistory}
+          onClick={handleDeleteHistory}
           label="Delete all"
         />
-        <IconButton name="load" iconSize="md" onClick={onLoad} label="Load" />
-        <IconButton name="save" iconSize="md" onClick={onSave} label="Save" />
+        <IconButton
+          name="load"
+          iconSize="md"
+          onClick={handleLoadHistory}
+          label="Load"
+        />
+        <IconButton
+          name="save"
+          iconSize="md"
+          onClick={handleSaveHistory}
+          label="Save"
+        />
       </StyledHistoryActions>
     </StyledHistoryHeader>
   );
