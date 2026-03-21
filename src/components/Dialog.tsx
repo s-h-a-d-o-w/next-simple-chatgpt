@@ -1,5 +1,10 @@
-import dynamic from "next/dynamic";
+import DialogImplementation, { type DialogProps } from "./DialogImplementation";
+import { ClientOnly } from "./ClientOnly";
 
-export const Dialog = dynamic(() => import("./DialogImplementation"), {
-  ssr: false,
-});
+export const Dialog = ({ ...props }: DialogProps) => {
+  return (
+    <ClientOnly>
+      <DialogImplementation {...props} />
+    </ClientOnly>
+  );
+};

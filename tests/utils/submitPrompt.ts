@@ -8,7 +8,3 @@ export async function submitPrompt(page: Page, prompt: string) {
     .getByRole("button", { name: "replay" })
     .waitFor({ state: "visible" });
 }
-
-export async function clearLocalStorage(page: Page) {
-  await page.evaluate(() => localStorage.clear());
-}

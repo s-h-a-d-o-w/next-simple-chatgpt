@@ -4,7 +4,6 @@ import useLocalStorageState from "use-local-storage-state";
 import superjson from "superjson";
 import { useStorageUsage } from "./useStorageUsage";
 import type { UIMessage } from "ai";
-import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
 export const CURRENT_HISTORY_VERSION = 1;
 
@@ -53,17 +52,6 @@ function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
     ...rest,
   }));
 }
-
-export const historyAtom = atomWithStorage(
-  "history",
-  [],
-  createJSONStorage<HistoryEntryV1[]>(() => localStorage, {
-    reviver: (_key: string, value: unknown) =>
-      maybeMigrateHistory(superjson.parse(value as string)),
-    replacer: (_key: string, value: unknown) =>
-      superjson.stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
-  }),
-);
 
 export function useHistory(namespace?: string) {
   return useLocalStorageState<HistoryEntryV1[]>(

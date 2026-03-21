@@ -4,11 +4,12 @@ import { IconButton } from "@/components/IconButton";
 import { Message } from "../Message";
 import { styled } from "@/styled-system/jsx";
 import { HistoryEntryV1 } from "@/app/(protected)/hooks/useHistory";
+import { RowComponentProps } from "react-window";
 
 type Props = {
-  entry: HistoryEntryV1;
-  onDeleteHistoryEntry: () => void;
-  onSetActiveHistoryEntry: () => void;
+  filteredHistory: HistoryEntryV1[];
+  onDeleteHistoryEntry: (entry: HistoryEntryV1) => void;
+  onSetActiveHistoryEntry: (entry: HistoryEntryV1) => void;
 };
 
 const StyledDeleteButton = styled(IconButton, {
@@ -20,38 +21,43 @@ const StyledDeleteButton = styled(IconButton, {
 });
 
 export function ShortenedEntry({
-  entry,
+  filteredHistory,
+  index,
   onDeleteHistoryEntry,
   onSetActiveHistoryEntry,
-}: Props) {
-  const firstUserMessage = entry.messages[1];
+  style,
+}: RowComponentProps<Props>) {
+  const entry = filteredHistory[index];
+  const firstUserMessage = entry?.messages[1];
 
   return !firstUserMessage ? null : (
-    <div>
-      <div
-        className={css({
-          fontSize: "sm",
-        })}
-      >
-        {entry.startTime
-          ? formatDistance(entry.startTime, new Date(), {
-              addSuffix: true,
-            })
-          : ""}
-      </div>
-      <div style={{ position: "relative" }}>
-        <Message
-          {...firstUserMessage}
-          shortened
-          onClick={onSetActiveHistoryEntry}
-        />
-        <StyledDeleteButton
-          name="delete"
-          type="button"
-          iconSize="md"
-          variant="ghost"
-          onClick={onDeleteHistoryEntry}
-        />
+    <div style={style}>
+      <div style={{ paddingBottom: "8rem" }}>
+        <div
+          className={css({
+            fontSize: "sm",
+          })}
+        >
+          {entry.startTime
+            ? formatDistance(entry.startTime, new Date(), {
+                addSuffix: true,
+              })
+            : ""}
+        </div>
+        <div style={{ position: "relative" }}>
+          <Message
+            {...firstUserMessage}
+            shortened
+            onClick={() => onSetActiveHistoryEntry(entry)}
+          />
+          <StyledDeleteButton
+            name="delete"
+            type="button"
+            iconSize="md"
+            variant="ghost"
+            onClick={() => onDeleteHistoryEntry(entry)}
+          />
+        </div>
       </div>
     </div>
   );

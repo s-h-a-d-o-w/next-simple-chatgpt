@@ -1,10 +1,14 @@
 import { test, expect } from "@playwright/test";
-import { submitPrompt } from "./utilities";
+import { submitPrompt } from "./utils/submitPrompt";
+import { mockChatResponse } from "./utils/mockChat";
 
-test(`Copying code and message works`, async ({ page, context }) => {
+test(`Copying code and full message works`, async ({ page, context }) => {
   await page.goto("/");
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
+  await mockChatResponse(page, {
+    text: "```javascript\nfunction add(a, b) { return a + b; }\n```",
+  });
   await submitPrompt(
     page,
     "Write a one-line JavaScript function named add that returns the sum of two numbers.",

@@ -1,11 +1,18 @@
 import { test, expect } from "@playwright/test";
-import { submitPrompt } from "./utilities";
+import { submitPrompt } from "./utils/submitPrompt";
+import { mockChatResponse } from "./utils/mockChat";
 
 test(`Deleting history entries works correctly`, async ({ page }) => {
   await page.goto("/");
+  await mockChatResponse(page, {
+    text: "4",
+  });
   await submitPrompt(page, "What is 2 + 2?");
   await page.getByRole("button", { name: "Reset" }).click();
 
+  await mockChatResponse(page, {
+    text: "The capital of France is Paris.",
+  });
   await submitPrompt(page, "What is the capital of France?");
   await page.getByRole("button", { name: "Reset" }).click();
 

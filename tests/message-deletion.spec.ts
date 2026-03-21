@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { submitPrompt } from "./utilities";
+import { submitPrompt } from "./utils/submitPrompt";
+import { mockChatResponse } from "./utils/mockChat";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -8,6 +9,9 @@ test.beforeEach(async ({ page }) => {
 test("should delete individual messages correctly", async ({ page }) => {
   test.setTimeout(30000);
 
+  await mockChatResponse(page, {
+    text: "Acknowledged.",
+  });
   await submitPrompt(page, "First message");
   await submitPrompt(page, "Second message");
   await submitPrompt(page, "Third message");
@@ -36,6 +40,9 @@ test("should delete individual messages correctly", async ({ page }) => {
 test("should handle rapid consecutive deletions", async ({ page }) => {
   test.setTimeout(30000);
 
+  await mockChatResponse(page, {
+    text: "Acknowledged.",
+  });
   for (let i = 1; i <= 5; i++) {
     await submitPrompt(page, `Message ${i}`);
   }
@@ -58,6 +65,9 @@ test("should handle rapid consecutive deletions", async ({ page }) => {
 });
 
 test("should handle deletion of assistant messages", async ({ page }) => {
+  await mockChatResponse(page, {
+    text: "Here is a response.",
+  });
   await submitPrompt(page, "Generate a response");
 
   const main = page.getByRole(`main`);

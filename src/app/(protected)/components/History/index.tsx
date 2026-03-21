@@ -2,13 +2,13 @@ import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
 import { cloneDeep, debounce } from "lodash-es";
 import {
-  CURRENT_HISTORY_VERSION,
-  historySerializer,
   useHistory,
+  type HistoryEntryV1,
 } from "@/app/(protected)/hooks/useHistory";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { styled } from "@/styled-system/jsx";
 import { Messages } from "../Messages";
+import { List, useDynamicRowHeight } from "react-window";
 import { HistoryHeader } from "./HistoryHeader";
 import { ShortenedEntry } from "./ShortenedEntry";
 import { useAtom, useSetAtom } from "jotai";
@@ -18,11 +18,8 @@ import {
   isHistoryOpenAtom,
   systemPromptAtom,
 } from "../../atoms";
-import { saveJsonFile } from "@/app/(protected)/components/History/utils/saveJsonFile";
-import { loadJsonFile } from "@/app/(protected)/components/History/utils/loadJsonFile";
 import type { UIMessage } from "ai";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
-import { isDeleteConfirmationOpenAtom } from "./atoms";
 
 type Props = {
   setMessages: (
@@ -71,14 +68,14 @@ const StyledHistory = styled("div", {
       },
       overview: {
         width: "85%",
-        maxHeight: "45%",
+        height: "45%",
 
         top: "64rem",
         right: "16rem",
 
         md: {
           width: "43%",
-          maxHeight: "80%",
+          height: "80%",
 
           top: "64rem",
           right: "16rem",
@@ -108,7 +105,6 @@ export const History = memo(function History({ setMessages }: Props) {
   );
   const [isOpen, setIsHistoryOpen] = useAtom(isHistoryOpenAtom);
   const setSystemPrompt = useSetAtom(systemPromptAtom);
-  const setIsDeleteConfirmationOpen = useSetAtom(isDeleteConfirmationOpenAtom);
   const setStartTime = useSetAtom(chatStartTimeAtom);
 
   const [conversationHistory, setConversationHistory] = useHistory();
@@ -131,36 +127,24 @@ export const History = memo(function History({ setMessages }: Props) {
     setActiveHistoryEntry(undefined);
   }, [setActiveHistoryEntry, setIsHistoryOpen]);
 
-  const handleDeleteHistory = useCallback(() => {
-    setIsDeleteConfirmationOpen(true);
-  }, [setIsDeleteConfirmationOpen]);
-
   const handleDeleteHistoryEntry = useCallback(
-    (index: number) => {
+    (entry: HistoryEntryV1) => {
+      if (activeHistoryEntry === entry) {
+        setActiveHistoryEntry(undefined);
+      }
+
       const nextHistory = cloneDeep(conversationHistory);
-      nextHistory.splice(index, 1);
+      const entryIndex = nextHistory.findIndex((_entry) => _entry === entry);
+      nextHistory.splice(entryIndex, 1);
       setConversationHistory(nextHistory);
     },
-    [conversationHistory, setConversationHistory],
+    [
+      activeHistoryEntry,
+      conversationHistory,
+      setActiveHistoryEntry,
+      setConversationHistory,
+    ],
   );
-
-  const handleLoadHistory = useCallback(async () => {
-    try {
-      setConversationHistory(historySerializer.parse(await loadJsonFile()));
-    } catch {
-      // TODO: user cancelled or picked nonsense. should probably show error.
-    }
-  }, [setConversationHistory]);
-
-  const handleSaveHistory = useCallback(() => {
-    saveJsonFile(
-      {
-        version: CURRENT_HISTORY_VERSION,
-        history: conversationHistory,
-      },
-      `history-${new Date().toISOString().replaceAll(/[:.]/g, "-")}`,
-    );
-  }, [conversationHistory]);
 
   const handleRestoreHistoryEntry = useCallback(() => {
     if (activeHistoryEntry) {
@@ -195,18 +179,28 @@ export const History = memo(function History({ setMessages }: Props) {
     [],
   );
 
-  const filteredHistory = !searchTerms
-    ? conversationHistory
-    : conversationHistory.filter((entry) => {
-        return searchTerms.every((term) =>
-          entry.messages.some((message) =>
-            message.parts.some(
-              (part) =>
-                part.type === "text" && part.text.toLowerCase().includes(term),
-            ),
-          ),
-        );
-      });
+  const filteredHistory = useMemo(
+    () =>
+      (!searchTerms
+        ? conversationHistory
+        : conversationHistory.filter((entry) => {
+            return searchTerms.every((term) =>
+              entry.messages.some((message) =>
+                message.parts.some(
+                  (part) =>
+                    part.type === "text" &&
+                    part.text.toLowerCase().includes(term),
+                ),
+              ),
+            );
+          })
+      ).toReversed(),
+    [conversationHistory, searchTerms],
+  );
+
+  const rowHeight = useDynamicRowHeight({
+    defaultRowHeight: 500,
+  });
 
   return (
     <Dialog
@@ -216,12 +210,7 @@ export const History = memo(function History({ setMessages }: Props) {
       onClose={handleCloseHistory}
     >
       <StyledHistory type="overview">
-        <HistoryHeader
-          conversationHistory={conversationHistory}
-          onDeleteHistory={handleDeleteHistory}
-          onLoad={handleLoadHistory}
-          onSave={handleSaveHistory}
-        />
+        <HistoryHeader />
 
         <StyledSearchInput
           ref={searchInputRef}
@@ -230,29 +219,16 @@ export const History = memo(function History({ setMessages }: Props) {
           onChange={(e) => debouncedSearch(e.target.value)}
         />
 
-        {filteredHistory
-          .slice(0)
-          .reverse()
-          .map((entry) =>
-            !entry.messages[1] ? null : (
-              <ShortenedEntry
-                key={entry.startTime}
-                entry={entry}
-                onDeleteHistoryEntry={() => {
-                  if (activeHistoryEntry === entry) {
-                    setActiveHistoryEntry(undefined);
-                  }
-                  const index = conversationHistory.findIndex(
-                    (_entry) => _entry === entry,
-                  );
-                  handleDeleteHistoryEntry(index);
-                }}
-                onSetActiveHistoryEntry={() => {
-                  setActiveHistoryEntry(entry);
-                }}
-              />
-            ),
-          )}
+        <List
+          rowComponent={ShortenedEntry}
+          rowCount={filteredHistory.length}
+          rowHeight={rowHeight}
+          rowProps={{
+            filteredHistory,
+            onDeleteHistoryEntry: handleDeleteHistoryEntry,
+            onSetActiveHistoryEntry: setActiveHistoryEntry,
+          }}
+        />
       </StyledHistory>
 
       {activeHistoryEntry && (

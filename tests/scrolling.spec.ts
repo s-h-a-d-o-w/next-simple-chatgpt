@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { submitPrompt } from "./utilities";
+import { submitPrompt } from "./utils/submitPrompt";
+import { mockChatResponse } from "./utils/mockChat";
 
 function bottomDistance(page: Page) {
   return page.evaluate(() => {
@@ -15,6 +16,9 @@ test("Auto-scroll snaps to bottom when user does not scroll", async ({
 }) => {
   await page.goto("/");
 
+  await mockChatResponse(page, {
+    text: Array.from({ length: 50 }, () => Math.random().toString()).join("\n"),
+  });
   await submitPrompt(
     page,
     "Please output 50 lines with 1 random word on each line.",
@@ -28,6 +32,9 @@ test("Auto-scroll pauses when user scrolls up during streaming, and resumes on n
 }) => {
   await page.goto("/");
 
+  await mockChatResponse(page, {
+    text: Array.from({ length: 50 }, () => Math.random().toString()).join("\n"),
+  });
   await submitPrompt(
     page,
     "Please output 50 lines with 1 random word on each line.",
@@ -45,6 +52,9 @@ test("Auto-scroll pauses when user scrolls up during streaming, and resumes on n
   expect(await bottomDistance(page)).toBeGreaterThan(200);
 
   // Start another response; after previous stream ended, the hook resets and should auto-scroll again
+  await mockChatResponse(page, {
+    text: Array.from({ length: 10 }, () => Math.random().toString()).join("\n"),
+  });
   await submitPrompt(
     page,
     "Please output 10 lines with 1 random word on each line.",
