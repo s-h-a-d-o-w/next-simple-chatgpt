@@ -10,7 +10,6 @@ import { objectEntries } from "@/lib/utils/objectEntries";
 import { promptFilesAtom, chatStartTimeAtom } from "../../atoms";
 import { useAtom, useSetAtom } from "jotai";
 import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
-import type { ModelKey } from "@/lib/server/models";
 import { useModels } from "@/app/(protected)/hooks/useModels";
 
 type Props = {
@@ -83,7 +82,7 @@ export const Prompt = memo(function Prompt({
         setModel(
           objectEntries(models).find(
             ([_, model]) => model.supportsAttachments,
-          )![0] as ModelKey,
+          )![0],
         );
       }
 

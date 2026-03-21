@@ -28,14 +28,21 @@
     "nursery": "error",
     "pedantic": "error",
     "perf": "error",
-    "restriction": "error"
+    "restriction": "error",
+    "suspicious": "error"
   },
   "rules": {
     // Configuring rules
-    "eslint/no-shadow": "error",
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
 
     // Disabling rules
+    // suspicious
+    "react/react-in-jsx-scope": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "import/no-unassigned-import": "off",
+    "promise/always-return": "off",
+
+    // all more severe
     "eslint/complexity": "off",
     "eslint/default-case": "off",
     "eslint/max-lines-per-function": "off",

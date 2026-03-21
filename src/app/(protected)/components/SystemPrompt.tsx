@@ -3,14 +3,12 @@ import { useAtom } from "jotai";
 import { Textarea } from "@/components/Textarea";
 import { styled } from "@/styled-system/jsx";
 import { cloneDeep, debounce } from "lodash-es";
-import type { UIMessage } from "ai";
 import { systemPromptAtom } from "../atoms";
 import { config } from "@/config";
+import type { SetMessages } from "@/types";
 
 type Props = {
-  setMessages: (
-    messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
-  ) => void;
+  setMessages: SetMessages;
 };
 
 const StyledForm = styled("form", {

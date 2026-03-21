@@ -18,13 +18,11 @@ import {
   isHistoryOpenAtom,
   systemPromptAtom,
 } from "../../atoms";
-import type { UIMessage } from "ai";
+import type { SetMessages } from "@/types";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 
 type Props = {
-  setMessages: (
-    messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
-  ) => void;
+  setMessages: SetMessages;
 };
 
 const StyledHistory = styled("div", {

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { UIMessage } from "ai";
 
+// Scroll to bottom whenever last non-user message changes
 export function useScrollToBottom(doScroll: boolean, messages: UIMessage[]) {
   const hasUserScrolledUp = useRef(false);
 
-  // Makes it possible to scroll to bottom whenever last non-user message changes
   const scrollKey = useMemo(() => {
     const last = messages.at(-1);
     if (!last || last.role === "user") return 0;
@@ -22,7 +22,7 @@ export function useScrollToBottom(doScroll: boolean, messages: UIMessage[]) {
     return () => window.removeEventListener("scroll", handleUserScroll);
   }, [handleUserScroll]);
 
-  // Behavior only at start and end of scrolling
+  // At start and end of scrolling
   useEffect(() => {
     // End of scrolling
     if (!doScroll && !hasUserScrolledUp.current) {

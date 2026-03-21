@@ -30,7 +30,7 @@ function getAvailableLanguages() {
     const languages = modules
       .map((file) => file.replace(".js", ""))
       .filter((lang) => lang !== "index")
-      .sort();
+      .toSorted();
 
     return [languages, aliases] as const;
   } catch (error) {

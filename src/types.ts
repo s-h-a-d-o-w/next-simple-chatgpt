@@ -1,5 +1,8 @@
 import type { NormalizedUsage } from "@/app/api/chat/normalizeUsage";
 import type { TextStreamPart, ToolSet } from "ai";
+import type { useChat } from "@ai-sdk/react";
+
+export type SetMessages = ReturnType<typeof useChat>["setMessages"];
 
 type FinishStepPart = Extract<TextStreamPart<ToolSet>, { type: "finish-step" }>;
 

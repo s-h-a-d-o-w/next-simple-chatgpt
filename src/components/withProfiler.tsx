@@ -4,9 +4,9 @@ import { Profiler } from "react";
 export function withProfiler<T>(
   Component: React.ComponentType<T>,
   passThrough = false,
-): React.FC<T> {
+) {
   if (!isDev || passThrough) {
-    return Component as React.FC<T>;
+    return Component;
   }
 
   return function WithProfiler(props: T) {

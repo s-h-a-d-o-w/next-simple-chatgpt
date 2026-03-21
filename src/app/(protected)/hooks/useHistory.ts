@@ -1,7 +1,7 @@
 import { cloneDeep, isObject } from "lodash-es";
 import { useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
-import superjson from "superjson";
+import { stringify, parse } from "superjson";
 import { useStorageUsage } from "./useStorageUsage";
 import type { UIMessage } from "ai";
 
@@ -34,8 +34,8 @@ export function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
 
 export const historySerializer = {
   stringify: (value: unknown) =>
-    superjson.stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
-  parse: (value: string) => maybeMigrateHistory(superjson.parse(value)),
+    stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
+  parse: (value: string) => maybeMigrateHistory(parse(value)),
 };
 
 function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
