@@ -1,9 +1,7 @@
 import { IconButton } from "@/components/IconButton";
-import { isDev } from "@/lib/utils/consts";
 import { ModelSelector } from "./ModelSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { memo, useCallback } from "react";
-import { HmrTimestamp } from "./HmrTimestamp";
 import {
   promptFilesAtom,
   chatIdAtom,
@@ -12,7 +10,6 @@ import {
 } from "@/app/(protected)/atoms";
 import { useSetAtom } from "jotai";
 import { styled } from "@/styled-system/jsx";
-import { css } from "@/styled-system/css";
 import { AuthButtonClient } from "@/components/AuthButton/AuthButtonClient";
 
 type Props = {
@@ -62,15 +59,6 @@ export const TopBar = memo(function TopBar({
 
   return (
     <StyledActions>
-      {isDev && (
-        <div
-          className={css({
-            fontSize: "sm",
-          })}
-        >
-          Last update: <HmrTimestamp />
-        </div>
-      )}
       <ModelSelector showAttachmentModelsOnly={hasFilesInChat} />
       <StyledButtonGroup>
         <IconButton

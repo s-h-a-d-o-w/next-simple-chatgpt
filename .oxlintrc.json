@@ -42,7 +42,7 @@
     "import/no-unassigned-import": "off",
     "promise/always-return": "off",
 
-    // all more severe
+    // more severe levels
     "eslint/complexity": "off",
     "eslint/default-case": "off",
     "eslint/max-lines-per-function": "off",
