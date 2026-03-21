@@ -2,20 +2,7 @@ import { POST, type ChatRequest } from "./route";
 import { test, expect } from "vitest";
 import { NextRequest } from "next/server";
 import type { ModelKey } from "@/lib/server/models";
-import type { Metadata } from "@/types";
-
-type AnthropicUsage = {
-  input_tokens: number;
-  output_tokens: number;
-  cache_read_input_tokens: number;
-  cache_creation_input_tokens: number;
-  service_tier: string;
-  inference_geo: string;
-  cache_creation: {
-    ephemeral_5m_input_tokens: number;
-    ephemeral_1h_input_tokens: number;
-  };
-};
+import type { Metadata, AnthropicUsage } from "@/types";
 
 // Haiku 4.5 requires a minimum of 4096 tokens for caching
 const longSystemPrompt = `You are a helpful assistant with extensive knowledge across many domains.

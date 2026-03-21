@@ -19,7 +19,7 @@ export type HistoryEntryV1 = {
 
 type LegacyHistoryEntry = HistoryEntryV1;
 
-export function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
+function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
   if (
     isObject(value) &&
     "version" in value &&

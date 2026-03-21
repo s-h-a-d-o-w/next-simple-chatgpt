@@ -18,7 +18,7 @@ type Props = UIMessage & {
   showCopyAll?: boolean;
 };
 
-export const StyledMessage = styled("div", {
+const StyledMessage = styled("div", {
   base: {
     display: "flex",
     position: "relative",

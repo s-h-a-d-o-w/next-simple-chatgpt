@@ -14,7 +14,7 @@ import { objectEntries } from "@/lib/utils/objectEntries";
 const remarkPlugins = [remarkGfm];
 
 // TODO: Should probably extract this and also use it for system messages at some point
-export const Expandable = styled("div", {
+const StyledExpandable = styled("div", {
   base: {
     display: "flex",
     alignItems: "center",
@@ -47,7 +47,7 @@ const MemoizedReactMarkdown = memo(
   (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 
-export function ToolInvocation({
+function ToolInvocation({
   toolInvocation,
 }: {
   toolInvocation: ToolUIPart | DynamicToolUIPart;
@@ -65,7 +65,7 @@ export function ToolInvocation({
         : undefined;
 
   return toolInvocation.state === "input-streaming" ? null : (
-    <Expandable isExpanded={isExpanded}>
+    <StyledExpandable isExpanded={isExpanded}>
       {toolName} (
       {objectEntries(toolInvocation.input as Record<string, string>)
         .map(([key, value]) => `${key}: ${value}`)
@@ -100,7 +100,7 @@ export function ToolInvocation({
           />
         </div>
       )}
-    </Expandable>
+    </StyledExpandable>
   );
 }
 
