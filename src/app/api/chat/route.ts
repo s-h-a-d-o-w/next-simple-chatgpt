@@ -45,11 +45,14 @@ export const POST = async (req: NextRequest) => {
     // Workaround for https://github.com/vercel/ai/issues/13103
     experimental_download: (requestedDownloads) =>
       Promise.all(
-        requestedDownloads.map((req) => {
-          if (req.isUrlSupportedByModel || req.url.protocol === "data:") {
+        requestedDownloads.map((downloadReq) => {
+          if (
+            downloadReq.isUrlSupportedByModel ||
+            downloadReq.url.protocol === "data:"
+          ) {
             return null;
           }
-          return singleDownload(req);
+          return singleDownload(downloadReq);
         }),
       ),
     model: isOpenAI

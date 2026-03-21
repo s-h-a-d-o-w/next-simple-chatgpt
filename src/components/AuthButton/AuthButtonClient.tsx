@@ -14,7 +14,7 @@ export function AuthButtonClient({
   isSignedIn?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [errorText, setErrorText] = useState<string>();
 
   const handleSignIn = async () => {
     flushSync(() => {
@@ -27,7 +27,9 @@ export function AuthButtonClient({
     });
     if (error) {
       console.error(error);
-      setError("An error occurred while signing in. Please try again later.");
+      setErrorText(
+        "An error occurred while signing in. Please try again later.",
+      );
       setIsLoading(false);
     }
   };
@@ -40,8 +42,8 @@ export function AuthButtonClient({
 
   return isLoading ? (
     <Spinner />
-  ) : error ? (
-    <div className={css({ color: "red.500" })}>{error}</div>
+  ) : errorText ? (
+    <div className={css({ color: "red.500" })}>{errorText}</div>
   ) : isSignedIn ? (
     <IconButton
       name="logout"

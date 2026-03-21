@@ -41,13 +41,13 @@ function getAvailableLanguages() {
 
 function generateLanguageLoader(
   languages: string[],
-  aliases: LanguageAlias[],
+  allAliases: LanguageAlias[],
 ): string {
   const imports = languages
     .map((lang) => `  "${lang}": () => import("refractor/${lang}"),`)
     .join("\n");
 
-  const aliasImports = aliases
+  const aliasImports = allAliases
     .map(({ file, aliases }) =>
       aliases
         .map((alias) => `  "${alias}": () => import("refractor/${file}"),`)

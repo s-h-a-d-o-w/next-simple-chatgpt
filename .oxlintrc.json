@@ -32,6 +32,7 @@
   },
   "rules": {
     // Configuring rules
+    "eslint/no-shadow": "error",
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
 
     // Disabling rules

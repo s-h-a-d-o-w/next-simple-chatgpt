@@ -17,7 +17,7 @@ import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
 import { useScrollToBottom } from "@/app/(protected)/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
 import type { FileUIPart, UIMessage } from "ai";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect, useMemo } from "react";
 import { styled } from "@/styled-system/jsx";
 import { TopBar } from "./components/TopBar";
@@ -41,7 +41,6 @@ function HomeClient() {
   const [chatId] = useAtom(chatIdAtom);
   const [startTime] = useAtom(chatStartTimeAtom);
   const [systemPrompt] = useAtom(systemPromptAtom);
-  const [files] = useAtom(promptFilesAtom);
 
   const { model } = useModelSelection();
 
@@ -66,7 +65,7 @@ function HomeClient() {
   });
   const isLoading = status === "submitted" || status === "streaming";
   const hasFilesInChat =
-    files.length > 0 ||
+    useAtomValue(promptFilesAtom).length > 0 ||
     messages.some((message) =>
       message.parts.some((part) => part.type === "file"),
     );
