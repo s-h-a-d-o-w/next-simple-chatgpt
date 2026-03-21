@@ -19,7 +19,7 @@
     "start": "dotenv -e .env.local -- node .next/standalone/server.js",
     "test": "cross-env NEXT_PUBLIC_TEST=true vitest",
     "e2e": "cross-env NODE_ENV=production NEXT_PUBLIC_TEST=true playwright test",
-    "e2e:debug": "cross-env NEXT_PUBLIC_TEST=trueplaywright test --debug",
+    "e2e:debug": "cross-env NEXT_PUBLIC_TEST=true playwright test --debug",
     "e2e:dev": "cross-env NEXT_PUBLIC_TEST=true playwright test",
     "e2e:ui": "cross-env NEXT_PUBLIC_TEST=true playwright test --ui",
     "typecheck": "tsgo",

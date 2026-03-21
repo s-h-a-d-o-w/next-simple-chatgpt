@@ -1,11 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { config } from "@/config";
-import { clearLocalStorage } from "./utilities";
 import { fetchModels } from "@/lib/server/models";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
-  await clearLocalStorage(page);
+  await page.evaluate(() => localStorage.clear());
 });
 
 test("should persist selected model across page reloads", async ({ page }) => {

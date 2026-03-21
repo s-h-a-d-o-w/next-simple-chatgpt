@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { submitPrompt } from "./utilities";
+import { submitPrompt } from "./utils/submitPrompt";
 import { join } from "node:path";
 import { toDirname } from "@/lib/server/toDirname";
 
