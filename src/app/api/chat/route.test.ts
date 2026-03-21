@@ -128,6 +128,9 @@ test("caching works with anthropic provider", async () => {
     cacheWriteTokens,
   );
 
+  // Attempt at reducing flakiness.
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const cacheReadMetadata = await callRouteHandler(
     "claude-haiku-4-5",
     timestamp + " " + longSystemPrompt,
