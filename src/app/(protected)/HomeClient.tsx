@@ -24,14 +24,6 @@ import { TopBar } from "./components/TopBar";
 import { SystemPrompt } from "./components/SystemPrompt";
 import { Prompt } from "./components/Prompt";
 
-function createSystemMessage(content: string) {
-  return {
-    parts: [{ type: "text", text: content }],
-    role: "system",
-    id: "system",
-  } satisfies UIMessage;
-}
-
 const StyledMain = styled("main", {
   base: {
     width: "100%",
@@ -64,7 +56,13 @@ function HomeClient() {
   } = useChat<UIMessage>({
     id: chatId.toString(),
     experimental_throttle: 500,
-    messages: [createSystemMessage(systemPrompt)],
+    messages: [
+      {
+        parts: [{ type: "text", text: systemPrompt }],
+        role: "system",
+        id: "system",
+      } satisfies UIMessage,
+    ],
   });
   const isLoading = status === "submitted" || status === "streaming";
   const hasFilesInChat =

@@ -2,16 +2,14 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   type ReactEventHandler,
 } from "react";
 import { createPortal } from "react-dom";
 import { styled } from "@/styled-system/jsx";
 import { SystemStyleObject } from "@/styled-system/types";
-import { isServer } from "@/lib/utils/consts";
 
-type Props = {
+export type DialogProps = {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
@@ -151,12 +149,8 @@ export default function DialogImplementation({
   onClose,
   showBackdrop = true,
   suppressNativeFocus = false,
-}: Props) {
+}: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const portalRoot = useMemo<HTMLElement | undefined>(
-    () => (isServer ? undefined : document.body),
-    [],
-  );
 
   useEffect(() => {
     const dialogElement = dialogRef.current;
@@ -188,18 +182,16 @@ export default function DialogImplementation({
     [onClose],
   );
 
-  return portalRoot
-    ? createPortal(
-        <StyledDialog
-          ref={dialogRef}
-          onClose={handleClose}
-          className={className}
-          isModal={isModal}
-        >
-          {!isModal && showBackdrop && <StyledBackdrop onClick={onClose} />}
-          {isModal ? <form method="dialog">{children}</form> : children}
-        </StyledDialog>,
-        portalRoot,
-      )
-    : null;
+  return createPortal(
+    <StyledDialog
+      ref={dialogRef}
+      onClose={handleClose}
+      className={className}
+      isModal={isModal}
+    >
+      {!isModal && showBackdrop && <StyledBackdrop onClick={onClose} />}
+      {isModal ? <form method="dialog">{children}</form> : children}
+    </StyledDialog>,
+    document.body,
+  );
 }
