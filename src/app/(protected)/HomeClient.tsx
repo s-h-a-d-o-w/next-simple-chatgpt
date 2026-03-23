@@ -52,7 +52,6 @@ function HomeClient() {
     error,
     regenerate,
     sendMessage,
-    // oxlint-disable-next-line typescript/no-unnecessary-type-arguments Needed for proper type inference
   } = useChat<UIMessage>({
     id: chatId.toString(),
     experimental_throttle: 500,

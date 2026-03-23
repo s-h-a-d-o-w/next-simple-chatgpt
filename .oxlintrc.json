@@ -6,7 +6,17 @@
     "browser": true
   },
   "options": {
-    "typeAware": true
+    "typeAware": true,
+    "reportUnusedDisableDirectives": "error"
+  },
+  // See: https://oxc.rs/docs/guide/usage/linter/rules.html
+  "categories": {
+    "correctness": "error",
+    "nursery": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "restriction": "error",
+    "suspicious": "error"
   },
   // See: https://oxc.rs/docs/guide/usage/linter/plugins.html#supported-plugins
   "plugins": [
@@ -22,15 +32,6 @@
     "promise",
     "vitest"
   ],
-  // See: https://oxc.rs/docs/guide/usage/linter/rules.html
-  "categories": {
-    "correctness": "error",
-    "nursery": "error",
-    "pedantic": "error",
-    "perf": "error",
-    "restriction": "error",
-    "suspicious": "error"
-  },
   "rules": {
     // Configuring rules
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
