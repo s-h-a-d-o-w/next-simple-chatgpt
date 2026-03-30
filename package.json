@@ -25,7 +25,7 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.58",
+    "@ai-sdk/anthropic": "^3.0.64",
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.143",
     "@openrouter/ai-sdk-provider": "^2.3.1",
