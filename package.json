@@ -36,7 +36,7 @@
     "concurrently": "^9.2.1",
     "date-fns": "^4.1.0",
     "hast-util-to-jsx-runtime": "^2.3.6",
-    "jotai": "^2.18.1",
+    "jotai": "^2.19.0",
     "lodash-es": "^4.17.23",
     "next": "^16.1.6",
     "pdfjs-dist": "5.5.207",
