@@ -57,7 +57,7 @@
     "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260307.1",
+    "@typescript/native-preview": "7.0.0-dev.20260406.1",
     "cross-env": "^10.1.0",
     "del-cli": "^7.0.0",
     "dotenv": "^17.4.1",
