@@ -37,6 +37,9 @@
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
 
     // Disabling rules
+    // restriction
+    "vitest/require-test-timeout": "off",
+    
     // suspicious
     "react/react-in-jsx-scope": "off",
     "typescript/no-unsafe-type-assertion": "off",
