@@ -69,7 +69,7 @@ export function Code(
   const isInline = !text.includes("\n");
   const isLanguageLoaded = alreadyLoaded.has(language);
 
-  const [highlightedCode, setHighlightedCode] = useState<string | JSX.Element>(
+  const [highlightedCode, setHighlightedCode] = useState(
     isLanguageLoaded && isSupportedLanguage(language)
       ? renderCode(text, language)
       : "",
