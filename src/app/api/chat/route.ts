@@ -53,7 +53,7 @@ export const POST = async (req: NextRequest) => {
             return null;
           }
           return singleDownload(downloadReq);
-        }),
+        }).filter((item): item is NonNullable<typeof item> => item !== null),
       ),
     model: isOpenAI
       ? openai(model)

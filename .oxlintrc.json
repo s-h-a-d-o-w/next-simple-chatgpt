@@ -70,9 +70,9 @@
     "import/no-relative-parent-imports": "off",
     "import/unambiguous": "off",
 
-    "jest/no-conditional-in-test": "off",
-    "jest/no-focused-tests": "off",
-    "jest/valid-title": "off",
+    "vitest/no-conditional-in-test": "off",
+    "vitest/no-focused-tests": "off",
+    "vitest/valid-title": "off",
 
     "jsx_a11y/no-autofocus": "off",
 
@@ -98,6 +98,7 @@
     "typescript/strict-void-return": "off",
     "typescript/use-unknown-in-catch-callback-variable": "off",
 
+    "unicorn/import-style": "off",
     "unicorn/no-array-callback-reference": "off",
     "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
