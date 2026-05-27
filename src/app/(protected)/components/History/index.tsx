@@ -114,7 +114,7 @@ export const History = memo(function History({ setMessages }: Props) {
     if (
       isOpen &&
       searchInputRef.current &&
-      !/Mobi|Android/i.test(navigator.userAgent)
+      !/Mobi|Android/iu.test(navigator.userAgent)
     ) {
       searchInputRef.current.focus();
     }

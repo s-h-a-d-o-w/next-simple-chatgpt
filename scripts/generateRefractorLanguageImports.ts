@@ -17,7 +17,7 @@ function getAvailableLanguages() {
     const aliases: LanguageAlias[] = modules
       .map((file) => {
         const content = readFileSync(join(langDir, file), "utf-8");
-        const match = /\.aliases\s*=\s*(\[(?:'|").+?(?:'|")\])/s.exec(content);
+        const match = /\.aliases\s*=\s*(\[(?:'|").+?(?:'|")\])/su.exec(content);
         return match?.[1]
           ? {
               file: file.replace(".js", ""),

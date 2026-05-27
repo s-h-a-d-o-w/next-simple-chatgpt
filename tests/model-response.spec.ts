@@ -13,7 +13,7 @@ for (const modelId of Object.keys(await fetchModels())) {
 
     const assistantMessage = page.locator('[data-testid$="-assistant"]');
     await assistantMessage.waitFor({ state: "visible" });
-    await expect(assistantMessage).toHaveText(/\S/);
+    await expect(assistantMessage).toHaveText(/\S/u);
 
     await page.getByRole("button", { name: "reset" }).click();
     await expect(
