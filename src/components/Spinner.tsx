@@ -1,7 +1,7 @@
 import { HTMLAttributes } from "react";
 import { styled } from "@/styled-system/jsx";
 
-const SpinnerContainer = styled("div", {
+const SpinnerContainer = styled("output", {
   base: {
     display: "flex",
     justifyContent: "center",
@@ -31,9 +31,9 @@ const SpinnerImplementation = styled("div", {
   },
 });
 
-function Spinner(props: HTMLAttributes<HTMLDivElement>) {
+function Spinner(props: HTMLAttributes<HTMLOutputElement>) {
   return (
-    <SpinnerContainer {...props} role="status" aria-label="Loading...">
+    <SpinnerContainer {...props} aria-label="Loading...">
       <SpinnerImplementation />
     </SpinnerContainer>
   );

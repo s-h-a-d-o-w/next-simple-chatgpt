@@ -70,7 +70,7 @@ function isModels(models: Partial<Models>): models is Models {
 }
 
 export async function fetchModels() {
-  let data: Record<string, LiteLLMModelInfo> | undefined = undefined;
+  let data: Record<string, LiteLLMModelInfo>;
 
   try {
     if (isTest) {

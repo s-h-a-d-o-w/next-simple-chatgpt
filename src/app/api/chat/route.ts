@@ -45,15 +45,17 @@ export const POST = async (req: NextRequest) => {
     // Workaround for https://github.com/vercel/ai/issues/13103
     experimental_download: (requestedDownloads) =>
       Promise.all(
-        requestedDownloads.map((downloadReq) => {
-          if (
-            downloadReq.isUrlSupportedByModel ||
-            downloadReq.url.protocol === "data:"
-          ) {
-            return null;
-          }
-          return singleDownload(downloadReq);
-        }),
+        requestedDownloads
+          .map((downloadReq) => {
+            if (
+              downloadReq.isUrlSupportedByModel ||
+              downloadReq.url.protocol === "data:"
+            ) {
+              return null;
+            }
+            return singleDownload(downloadReq);
+          })
+          .filter((item): item is NonNullable<typeof item> => item !== null),
       ),
     model: isOpenAI
       ? openai(model)

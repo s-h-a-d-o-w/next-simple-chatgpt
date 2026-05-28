@@ -51,7 +51,7 @@ export function HistoryHeader() {
         version: CURRENT_HISTORY_VERSION,
         history: conversationHistory,
       },
-      `history-${new Date().toISOString().replaceAll(/[:.]/g, "-")}`,
+      `history-${new Date().toISOString().replaceAll(/[:.]/gu, "-")}`,
     );
   }, [conversationHistory]);
 

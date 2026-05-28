@@ -65,7 +65,7 @@ export function Code(
   const { children, className } = props;
   // oxlint-disable-next-line typescript/no-base-to-string
   const text = children ? String(children) : "";
-  const language = /language-(\w+)/.exec(className ?? "")?.[1] ?? "";
+  const language = /language-(\w+)/u.exec(className ?? "")?.[1] ?? "";
   const isInline = !text.includes("\n");
   const isLanguageLoaded = alreadyLoaded.has(language);
 
