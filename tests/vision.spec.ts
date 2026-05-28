@@ -23,7 +23,10 @@ async function addFile(page: Page, filePath: string) {
 test(`Vision works correctly with PDF`, async ({ page }) => {
   await page.goto("/");
 
-  await addFile(page, path.join(toDirname(import.meta.url), "./data/vision.pdf"));
+  await addFile(
+    page,
+    path.join(toDirname(import.meta.url), "./data/vision.pdf"),
+  );
   await submitPrompt(
     page,
     "What number can you see here? (No commentary, just output the number)",
@@ -35,7 +38,10 @@ test(`Vision works correctly with PDF`, async ({ page }) => {
 test(`Vision works correctly with PNG`, async ({ page }) => {
   await page.goto("/");
 
-  await addFile(page, path.join(toDirname(import.meta.url), "./data/vision.png"));
+  await addFile(
+    page,
+    path.join(toDirname(import.meta.url), "./data/vision.png"),
+  );
   await submitPrompt(
     page,
     "What number can you see here? (No commentary, just output the number)",

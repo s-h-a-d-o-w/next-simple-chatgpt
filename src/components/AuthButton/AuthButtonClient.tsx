@@ -8,6 +8,12 @@ import { authClient } from "@/lib/utils/authClient";
 import { flushSync } from "react-dom";
 import { css } from "@/styled-system/css";
 
+const handleSignOut = async () => {
+  // Is done locally => instant, no need to set isLoading
+  await authClient.signOut();
+  window.location.reload();
+};
+
 export function AuthButtonClient({
   isSignedIn = false,
 }: {
@@ -32,12 +38,6 @@ export function AuthButtonClient({
       );
       setIsLoading(false);
     }
-  };
-
-  const handleSignOut = async () => {
-    // Is done locally => instant, no need to set isLoading
-    await authClient.signOut();
-    window.location.reload();
   };
 
   return isLoading ? (
