@@ -3,7 +3,13 @@ import { fetchModels, type ModelKey } from "@/lib/server/models";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { type UIMessage, convertToModelMessages, streamText } from "ai";
+import {
+  type UIMessage,
+  convertToModelMessages,
+  streamText,
+  toUIMessageStream,
+  createUIMessageStreamResponse,
+} from "ai";
 import { NextRequest } from "next/server";
 import { createDownload } from "ai";
 import { merge } from "lodash-es";
@@ -27,10 +33,29 @@ const openrouter = createOpenRouter({
   apiKey: process.env["OPENROUTER_API_KEY"],
 });
 
+async function processChatRequest(request: ChatRequest) {
+  const { model, messages: rawMessages } = request;
+  const instructions = rawMessages
+    .filter(({ role }) => role === "system")
+    .flatMap((message) =>
+      message.parts
+        .filter((part) => part.type === "text")
+        .map(({ text }) => text),
+    )
+    .join("\n\n");
+  const messages = await convertToModelMessages(
+    rawMessages.filter(({ role }) => role !== "system"),
+  );
+
+  return { model, instructions, messages };
+}
+
 export const POST = async (req: NextRequest) => {
   await authGuard();
 
-  const { model, messages } = (await req.json()) as ChatRequest;
+  const { model, messages, instructions } = await processChatRequest(
+    (await req.json()) as ChatRequest,
+  );
   const models = await fetchModels();
   const modelConfig = models[model];
   const isAnthropic = modelConfig.provider === "anthropic";
@@ -64,7 +89,8 @@ export const POST = async (req: NextRequest) => {
         : openrouter(model.split("/").slice(1).join("/"), {
             extraBody: modelConfig.extraBody,
           }),
-    messages: await convertToModelMessages(messages),
+    instructions,
+    messages,
     providerOptions: merge(
       {
         ...(modelConfig.provider === "anthropic" && {
@@ -83,7 +109,7 @@ export const POST = async (req: NextRequest) => {
       },
     ),
     abortSignal: abortController.signal,
-    onFinish() {
+    onEnd() {
       clearTimeout(timeoutId);
     },
     onError() {
@@ -91,7 +117,8 @@ export const POST = async (req: NextRequest) => {
     },
   });
 
-  return result.toUIMessageStreamResponse({
+  const stream = toUIMessageStream({
+    stream: result.stream,
     // AI SDK doesn't add usage metadata to the response by default. Needed for testing.
     messageMetadata({ part }) {
       if (part.type === "finish-step") {
@@ -113,6 +140,10 @@ export const POST = async (req: NextRequest) => {
 
       return "An error occurred.";
     },
+  });
+
+  return createUIMessageStreamResponse({
+    stream,
     headers: {
       // Required for nginx to work with streaming responses.
       "X-Accel-Buffering": "no",

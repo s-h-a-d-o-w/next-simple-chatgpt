@@ -1,6 +1,7 @@
 *.log
 .eslintcache
 refractorLanguages.ts
+.pnpm-store
 
 .env
 public/pdf.worker.min.mjs
