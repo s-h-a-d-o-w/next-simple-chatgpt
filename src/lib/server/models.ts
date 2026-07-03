@@ -5,7 +5,14 @@ import type { LiteLLMModelInfo } from "@/types";
 const REVALIDATE_SECONDS = 6 * 60 * 60; // 6 hours
 const LITELLM_MODELS_URL =
   "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json";
-const modelWhitelist = [
+type RemoteModelsCache = {
+  expiresAt: number;
+  promise: Promise<Record<string, LiteLLMModelInfo>>;
+};
+
+let remoteModelsCache: RemoteModelsCache | undefined = undefined;
+
+const modelSelection = [
   "gpt-4.1",
   "claude-opus-4-5",
   "claude-haiku-4-5",
@@ -14,7 +21,7 @@ const modelWhitelist = [
 ] as const;
 
 // How we want to use certain models by default.
-const modelAugments: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
+const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
   "gpt-5.4": {
     reasoningEffort: "low",
   },
@@ -40,7 +47,7 @@ export type ModelConfig = {
   reasoningEffort?: "low" | "medium" | "high";
 };
 
-export type ModelKey = (typeof modelWhitelist)[number];
+export type ModelKey = (typeof modelSelection)[number];
 
 export type Models = Record<ModelKey, ModelConfig>;
 
@@ -66,7 +73,52 @@ function transformLiteLLMModel(name: ModelKey, info: LiteLLMModelInfo) {
 }
 
 function isModels(models: Partial<Models>): models is Models {
-  return modelWhitelist.every((model) => models[model] !== undefined);
+  return modelSelection.every((model) => models[model] !== undefined);
+}
+
+async function fetchRemoteModels() {
+  const response = await fetch(LITELLM_MODELS_URL, {
+    cache: "no-store",
+    signal: AbortSignal.timeout(30000),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return (await response.json()) as Record<string, LiteLLMModelInfo>;
+}
+
+function getRemoteModels() {
+  const now = Date.now();
+
+  if (!remoteModelsCache || remoteModelsCache.expiresAt <= now) {
+    const promise = fetchRemoteModels().catch((error: unknown) => {
+      remoteModelsCache = undefined;
+      throw error;
+    });
+
+    if (!remoteModelsCache) {
+      remoteModelsCache = {
+        expiresAt: now + REVALIDATE_SECONDS * 1000,
+        promise,
+      };
+    } else {
+      promise
+        .then((data) => {
+          remoteModelsCache = {
+            expiresAt: now + REVALIDATE_SECONDS * 1000,
+            promise: Promise.resolve(data),
+          };
+        })
+        .catch((error: unknown) => {
+          remoteModelsCache = undefined;
+          throw error;
+        });
+    }
+  }
+
+  return remoteModelsCache.promise;
 }
 
 export async function fetchModels() {
@@ -76,16 +128,7 @@ export async function fetchModels() {
     if (isTest) {
       data = await getModelsFromFilesystem();
     } else {
-      const response = await fetch(LITELLM_MODELS_URL, {
-        signal: AbortSignal.timeout(30000),
-        next: { revalidate: REVALIDATE_SECONDS },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      data = (await response.json()) as Record<string, LiteLLMModelInfo>;
+      data = await getRemoteModels();
     }
   } catch (error) {
     console.error("Failed to fetch model data:", error);
@@ -94,7 +137,7 @@ export async function fetchModels() {
   }
 
   const nextModels: Partial<Models> = {};
-  for (const modelId of modelWhitelist) {
+  for (const modelId of modelSelection) {
     const liteLLMInfo = data[modelId];
     if (liteLLMInfo) {
       nextModels[modelId] = transformLiteLLMModel(modelId, liteLLMInfo);
@@ -103,17 +146,16 @@ export async function fetchModels() {
 
   if (!isModels(nextModels)) {
     throw new Error(
-      `Model "${modelWhitelist.find((model) => nextModels[model] === undefined)}" from whitelist is missing in fetched models.`,
+      `Model "${modelSelection.find((model) => nextModels[model] === undefined)}" from whitelist is missing in fetched models.`,
     );
   }
 
-  // Augment the models with the modelAugments.
-  for (const modelId of modelWhitelist) {
-    const augment = modelAugments[modelId];
-    if (augment) {
+  for (const modelId of modelSelection) {
+    const defaultConfig = modelDefaults[modelId];
+    if (defaultConfig) {
       nextModels[modelId] = {
         ...nextModels[modelId],
-        ...augment,
+        ...defaultConfig,
       };
     }
   }
