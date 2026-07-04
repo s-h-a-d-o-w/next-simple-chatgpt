@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 export default {
-  allowedDevOrigins: process.env["ALLOWED_DEV_ORIGINS"]
-    ? process.env["ALLOWED_DEV_ORIGINS"].split(",")
+  allowedDevOrigins: process.env["AUTH_URL"]
+    ? [new URL(process.env["AUTH_URL"]).hostname]
     : undefined,
   devIndicators: false,
   output: "standalone",

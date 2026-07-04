@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getSession } from "@/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { isTest } from "@/lib/utils/consts";
@@ -10,7 +10,7 @@ export async function authGuard(doRedirect?: boolean) {
     return;
   }
 
-  const session = await auth.api.getSession({
+  const session = getSession({
     headers: await headers(),
   });
   const isUserWhitelisted = session && whitelist?.includes(session.user.email);

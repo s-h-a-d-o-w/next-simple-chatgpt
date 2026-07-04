@@ -4,13 +4,10 @@
 import { IconButton } from "@/components/IconButton";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
-import { authClient } from "@/lib/utils/authClient";
 import { flushSync } from "react-dom";
-import { css } from "@/styled-system/css";
 
 const handleSignOut = async () => {
-  // Is done locally => instant, no need to set isLoading
-  await authClient.signOut();
+  await fetch("/api/auth/sign-out", { method: "POST" });
   window.location.reload();
 };
 
@@ -20,30 +17,17 @@ export function AuthButtonClient({
   isSignedIn?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [errorText, setErrorText] = useState<string>();
 
-  const handleSignIn = async () => {
+  const handleSignIn = () => {
     flushSync(() => {
       setIsLoading(true);
     });
 
-    const { error } = await authClient.signIn.social({
-      provider: "github",
-      callbackURL: "/",
-    });
-    if (error) {
-      console.error(error);
-      setErrorText(
-        "An error occurred while signing in. Please try again later.",
-      );
-      setIsLoading(false);
-    }
+    window.location.href = "/api/auth/sign-in?callbackURL=/";
   };
 
   return isLoading ? (
     <Spinner />
-  ) : errorText ? (
-    <div className={css({ color: "red.500" })}>{errorText}</div>
   ) : isSignedIn ? (
     <IconButton
       name="logout"

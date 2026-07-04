@@ -42,6 +42,7 @@ Run `pnpm dev:e2e` before using playwright in any situation other than testing t
 
 ## Dev notes
 
+- Why roll our own auth? Better-auth seems to be the only popular auth library that is still being maintained but it's very buggy. First, there were issues with sessions not getting refreshed, then random auth failures with no good error message. Plus, we only need simple, database-less auth.
 - Why node scripts for infrastructure tasks? Easy cross-platform compatibility.
 - Why stick with port 3000? Being able to reuse the same OAuth app for dev.
 - Why `react-window` for virtualized history? Scrolling is jankier than `react-virtuoso` but it takes fewer scrollbar pulls to get to the bottom => better estimates/measurements. (tanstack virtual apparently uses patterns that the React team finds problematic: https://github.com/facebook/react/blob/main/compiler/packages/babel-plugin-react-compiler/src/HIR/DefaultModuleTypeProvider.ts And the scrollbar behavior likely would be similar to the other two based on their dynamic demo anyway.)
