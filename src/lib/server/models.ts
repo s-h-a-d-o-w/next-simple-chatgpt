@@ -14,7 +14,7 @@ let remoteModelsCache: RemoteModelsCache | undefined = undefined;
 
 const modelSelection = [
   "gpt-4.1",
-  "claude-opus-4-5",
+  "claude-opus-4-8",
   "claude-haiku-4-5",
   "gpt-5.4",
   "openrouter/z-ai/glm-5",
