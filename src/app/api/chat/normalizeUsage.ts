@@ -1,11 +1,11 @@
 import type { LanguageModelUsage } from "ai";
 
-export interface NormalizedUsage {
+export type NormalizedUsage = {
   inputTokens: number;
   cacheReadTokens: number;
   cacheWriteTokens: number;
   outputTokens: number;
-}
+};
 
 export function normalizeUsage({
   outputTokens = 0,

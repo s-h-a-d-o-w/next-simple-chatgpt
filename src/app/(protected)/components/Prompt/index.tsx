@@ -169,7 +169,6 @@ export const Prompt = memo(function Prompt({
 
           {modelConfig.supportsAttachments && (
             <>
-              {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
               <input
                 ref={fileInputRef}
                 type="file"

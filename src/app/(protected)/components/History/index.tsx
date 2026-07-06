@@ -169,8 +169,9 @@ export const History = memo(function History({ setMessages }: Props) {
     setSystemPrompt,
   ]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
+    // oxlint-disable-next-line react/react-compiler
     debounce((value: string) => {
       setSearchTerms(value === "" ? undefined : value.toLowerCase().split(" "));
     }, 200),

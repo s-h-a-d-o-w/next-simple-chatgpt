@@ -59,6 +59,7 @@ export function SystemPrompt({ setMessages }: Props) {
   // Syncs the system prompt into the array of messages when it changes.
   // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   const debouncedSyncSystemMessage = useCallback(
+    // oxlint-disable-next-line react/react-compiler
     debounce((content: string) => {
       syncSystemMessage(content);
     }, config.ui.systemMessageDebounce),
