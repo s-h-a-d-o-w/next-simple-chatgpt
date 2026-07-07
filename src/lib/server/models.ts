@@ -1,4 +1,3 @@
-import { isTest } from "@/lib/utils/consts";
 import { getModelsFromFilesystem } from "./getModelsFromFilesystem";
 import type { LiteLLMModelInfo } from "@/types";
 
@@ -125,11 +124,7 @@ export async function fetchModels() {
   let data: Record<string, LiteLLMModelInfo>;
 
   try {
-    if (isTest) {
-      data = await getModelsFromFilesystem();
-    } else {
-      data = await getRemoteModels();
-    }
+    data = await getRemoteModels();
   } catch (error) {
     console.error("Failed to fetch model data:", error);
 
