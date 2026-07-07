@@ -16,8 +16,6 @@ for (const modelId of Object.keys(await fetchModels())) {
     await expect(assistantMessage).toHaveText(/\S/u);
 
     await page.getByRole("button", { name: "reset" }).click();
-    await expect(
-      page.getByPlaceholder("Enter your prompt here."),
-    ).toBeVisible();
+    await expect(promptInput).toBeVisible();
   });
 }
