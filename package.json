@@ -21,6 +21,7 @@
     "e2e": "cross-env NODE_ENV=production NEXT_PUBLIC_TEST=true playwright test",
     "e2e:debug": "cross-env NEXT_PUBLIC_TEST=true playwright test --debug",
     "e2e:dev": "cross-env NEXT_PUBLIC_TEST=true playwright test",
+    "e2e:install": "playwright install --with-deps chromium",
     "e2e:ui": "cross-env NEXT_PUBLIC_TEST=true playwright test --ui",
     "typecheck": "tsgo"
   },
