@@ -1,19 +1,21 @@
 import { padNewlines } from "./padNewlines";
-import { test, expect } from "vitest";
+import { it, describe, expect } from "vitest";
 
-test(padNewlines.name, () => {
-  expect(
-    padNewlines(
-      "This is a test\n`code line\nanother line`\n```\ninside triple\n backticks\n```\noutside backticks",
-    ),
-  ).toMatchInlineSnapshot(`
-    "This is a test  
-    \`code line
-    another line\`  
-    \`\`\`
-    inside triple
-     backticks
-    \`\`\`  
-    outside backticks"
-  `);
+describe(padNewlines, () => {
+  it("pads newlines correctly", () => {
+    expect(
+      padNewlines(
+        "This is a test\n`code line\nanother line`\n```\ninside triple\n backticks\n```\noutside backticks",
+      ),
+    ).toMatchInlineSnapshot(`
+      "This is a test  
+      \`code line
+      another line\`  
+      \`\`\`
+      inside triple
+       backticks
+      \`\`\`  
+      outside backticks"
+    `);
+  });
 });

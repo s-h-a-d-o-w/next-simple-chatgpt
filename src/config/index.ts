@@ -5,8 +5,7 @@ export const config = {
   ui: {
     messageStreamThrottle: 500,
     copyStatusTimeout: 1000,
-    systemMessage:
-      "You are a concise assistant. Use markdown for your responses.",
+    systemMessage: "You are a concise assistant. Use markdown for your responses.",
     systemMessageDebounce: 300,
   },
   storage: {

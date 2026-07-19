@@ -51,7 +51,7 @@ function getColor(usage: number) {
 export function StorageUsageWheel() {
   const storageUsage = useStorageUsage();
   if (!storageUsage) {
-    return null;
+    return undefined;
   }
 
   const radius = (SIZE - 4) / 2;
@@ -59,7 +59,7 @@ export function StorageUsageWheel() {
 
   return (
     <StyledContainer>
-      <svg width={"100%"} height={"100%"} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+      <svg width="100%" height="100%" viewBox={`0 0 ${SIZE} ${SIZE}`}>
         <circle
           cx={SIZE / 2}
           cy={SIZE / 2}

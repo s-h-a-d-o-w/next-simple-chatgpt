@@ -19,13 +19,9 @@ export default function Login() {
       <StyledMessage>
         <h1>This is a private app.</h1>
         <p>
-          If you aren&apos;t on the whitelist, you will not be able to sign in!
-          At the moment, I recommend everybody run their own instance of this -
-          see{" "}
-          <Link href="https://github.com/s-h-a-d-o-w/next-simple-chatgpt">
-            README
-          </Link>
-          .
+          If you aren&apos;t on the whitelist, you will not be able to sign in! At the moment, I
+          recommend everybody run their own instance of this - see{" "}
+          <Link href="https://github.com/s-h-a-d-o-w/next-simple-chatgpt">README</Link>.
         </p>
         <AuthButton />
       </StyledMessage>

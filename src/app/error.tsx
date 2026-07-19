@@ -18,7 +18,7 @@ export default function GlobalError() {
   if (history) {
     try {
       JSON.parse(history);
-    } catch (_) {
+    } catch {
       // This has happened to me once but I've not been able to reproduce it.
       console.error("History might be corrupted:");
       console.error(history);
@@ -28,9 +28,9 @@ export default function GlobalError() {
   return (
     <CenteredMain>
       <StyledMessage>
-        If this was a commercial project, I&apos;d say something like: &quot;We
-        have encountered an unexpected error. It has been reported automatically
-        but if you keep experiencing this please reach out to support.&quot;
+        If this was a commercial project, I&apos;d say something like: &quot;We have encountered an
+        unexpected error. It has been reported automatically but if you keep experiencing this
+        please reach out to support.&quot;
       </StyledMessage>
     </CenteredMain>
   );

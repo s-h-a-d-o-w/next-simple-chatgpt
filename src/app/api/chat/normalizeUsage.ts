@@ -9,11 +9,7 @@ export type NormalizedUsage = {
 
 export function normalizeUsage({
   outputTokens = 0,
-  inputTokenDetails: {
-    cacheReadTokens = 0,
-    cacheWriteTokens = 0,
-    noCacheTokens = 0,
-  },
+  inputTokenDetails: { cacheReadTokens = 0, cacheWriteTokens = 0, noCacheTokens = 0 },
 }: LanguageModelUsage): NormalizedUsage {
   return {
     // Because Anthropic splits out write tokens, we can't use the overall inputTokens number

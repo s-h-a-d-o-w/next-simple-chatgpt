@@ -1,8 +1,4 @@
-import {
-  defineConfig,
-  devices,
-  type PlaywrightTestConfig,
-} from "@playwright/test";
+import { defineConfig, devices, type PlaywrightTestConfig } from "@playwright/test";
 
 const isDev = process.env["NODE_ENV"] !== "production";
 const baseURL = process.env["AUTH_URL"]
@@ -26,11 +22,11 @@ const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
  */
 export default defineConfig({
   testDir: "./tests",
-  timeout: 10000,
+  timeout: 10_000,
 
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env["CI"],
+  forbidOnly: Boolean(process.env["CI"]),
   retries: isDev ? 0 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",

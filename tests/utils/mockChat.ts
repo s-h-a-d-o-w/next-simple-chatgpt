@@ -29,10 +29,7 @@ function createMockStreamResponse(text: string, metadata?: Metadata) {
   ].join("\n\n");
 }
 
-export async function mockChatResponse(
-  page: Page,
-  { text, metadata }: MockChatOptions,
-) {
+export async function mockChatResponse(page: Page, { text, metadata }: MockChatOptions) {
   await page.route("**/api/chat", async (route: Route) => {
     const response = createMockStreamResponse(text, metadata);
 

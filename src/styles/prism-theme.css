@@ -75,8 +75,7 @@ code[class*="language-"],
 pre[class*="language-"] {
   background: var(--syntax-bg);
   color: var(--syntax-fg);
-  font-family:
-    "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
   direction: ltr;
   text-align: left;
   white-space: pre;
@@ -319,9 +318,7 @@ div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
   box-shadow: 0 2px 0 0 var(--box-shadow);
 }
 
-pre[id].linkable-line-numbers.linkable-line-numbers
-  span.line-numbers-rows
-  > span:hover:before {
+pre[id].linkable-line-numbers.linkable-line-numbers span.line-numbers-rows > span:hover:before {
   background-color: var(--syntax-cursor-line);
 }
 

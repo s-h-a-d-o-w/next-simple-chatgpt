@@ -9,9 +9,9 @@ import {
   streamText,
   toUIMessageStream,
   createUIMessageStreamResponse,
+  createDownload,
 } from "ai";
 import { NextRequest } from "next/server";
-import { createDownload } from "ai";
 import { merge } from "lodash-es";
 import { normalizeUsage } from "./normalizeUsage";
 import { getCost } from "./billing/getCost";
@@ -38,9 +38,7 @@ async function processChatRequest(request: ChatRequest) {
   const instructions = rawMessages
     .filter(({ role }) => role === "system")
     .flatMap((message) =>
-      message.parts
-        .filter((part) => part.type === "text")
-        .map(({ text }) => text),
+      message.parts.filter((part) => part.type === "text").map(({ text }) => text),
     )
     .join("\n\n");
   const messages = await convertToModelMessages(
@@ -72,15 +70,12 @@ export const POST = async (req: NextRequest) => {
       Promise.all(
         requestedDownloads
           .map((downloadReq) => {
-            if (
-              downloadReq.isUrlSupportedByModel ||
-              downloadReq.url.protocol === "data:"
-            ) {
-              return null;
+            if (downloadReq.isUrlSupportedByModel || downloadReq.url.protocol === "data:") {
+              return undefined;
             }
             return singleDownload(downloadReq);
           })
-          .filter((item): item is NonNullable<typeof item> => item !== null),
+          .filter((item): item is NonNullable<typeof item> => item !== undefined),
       ),
     model: isOpenAI
       ? openai(model)

@@ -24,7 +24,7 @@ export function CopyButton({ className, children }: Props) {
     [children],
   );
 
-  return !clipboardItem ? null : (
+  return !clipboardItem ? undefined : (
     <IconButton
       name={hasCopied ? "check" : "copy"}
       iconSize="md"

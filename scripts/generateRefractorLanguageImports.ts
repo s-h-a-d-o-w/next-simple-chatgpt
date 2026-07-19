@@ -1,23 +1,22 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import path from "node:path";
 
 type LanguageAlias = {
   file: string;
   aliases: string[];
 };
 
-const refractorLanguagesPath =
-  "src/app/(protected)/components/Message/Code/refractorLanguages.ts";
+const refractorLanguagesPath = "src/app/(protected)/components/Message/Code/refractorLanguages.ts";
 
 function getAvailableLanguages() {
   try {
-    const langDir = join(resolve("node_modules/refractor"), "lang");
+    const langDir = path.join(path.resolve("node_modules/refractor"), "lang");
     const modules = readdirSync(langDir).filter((file) => file.endsWith(".js"));
 
     const aliases: LanguageAlias[] = modules
       .map((file) => {
-        const content = readFileSync(join(langDir, file), "utf-8");
-        const match = /\.aliases\s*=\s*(\[(?:'|").+?(?:'|")\])/su.exec(content);
+        const content = readFileSync(path.join(langDir, file), "utf8");
+        const match = /\.aliases\s*=\s*(?<aliases>\[(?:'|").+?(?:'|")\])/su.exec(content);
         return match?.[1]
           ? {
               file: file.replace(".js", ""),
@@ -39,19 +38,14 @@ function getAvailableLanguages() {
   }
 }
 
-function generateLanguageLoader(
-  languages: string[],
-  allAliases: LanguageAlias[],
-): string {
+function generateLanguageLoader(languages: string[], allAliases: LanguageAlias[]): string {
   const imports = languages
     .map((lang) => `  "${lang}": () => import("refractor/${lang}"),`)
     .join("\n");
 
   const aliasImports = allAliases
     .map(({ file, aliases }) =>
-      aliases
-        .map((alias) => `  "${alias}": () => import("refractor/${file}"),`)
-        .join("\n"),
+      aliases.map((alias) => `  "${alias}": () => import("refractor/${file}"),`).join("\n"),
     )
     .join("\n");
 
@@ -83,15 +77,10 @@ function main() {
 
     console.log("🔍 Scanning for available syntax highlighting languages...");
     const [languages, aliases] = getAvailableLanguages();
-    console.log(
-      `📝 Found ${languages.length} languages and ${aliases.length} aliases`,
-    );
+    console.log(`📝 Found ${languages.length} languages and ${aliases.length} aliases`);
 
     console.log("🏗️  Generating language loader...");
-    writeFileSync(
-      refractorLanguagesPath,
-      generateLanguageLoader(languages, aliases),
-    );
+    writeFileSync(refractorLanguagesPath, generateLanguageLoader(languages, aliases));
 
     console.log(`✅ Done`);
   } catch (error) {

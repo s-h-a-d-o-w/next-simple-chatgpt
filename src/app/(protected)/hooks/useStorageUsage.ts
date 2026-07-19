@@ -8,8 +8,7 @@ export function useStorageUsage() {
   if (!isServer) {
     const history = localStorage.getItem("history");
     if (history) {
-      const currentStorageUsage =
-        history.length / config.storage.localStorageQuota;
+      const currentStorageUsage = history.length / config.storage.localStorageQuota;
       if (currentStorageUsage !== storageUsage) {
         setStorageUsage(currentStorageUsage);
       }

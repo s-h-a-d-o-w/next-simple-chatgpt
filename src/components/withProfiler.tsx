@@ -1,10 +1,7 @@
 import { isDev } from "@/lib/utils/consts";
 import { Profiler } from "react";
 
-export function withProfiler<T>(
-  Component: React.ComponentType<T>,
-  passThrough = false,
-) {
+export function withProfiler<T>(Component: React.ComponentType<T>, passThrough = false) {
   if (!isDev || passThrough) {
     return Component;
   }

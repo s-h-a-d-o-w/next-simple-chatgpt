@@ -3,7 +3,7 @@ import { test } from "@playwright/test";
 test("authenticate", async ({ page, context }) => {
   const ngrokCookies = [];
   if (process.env["AUTH_URL"]?.includes("ngrok")) {
-    const hostname = new URL(process.env["AUTH_URL"]).hostname;
+    const { hostname } = new URL(process.env["AUTH_URL"]);
     ngrokCookies.push({
       name: "abuse_interstitial",
       value: hostname,

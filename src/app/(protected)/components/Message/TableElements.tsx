@@ -14,9 +14,7 @@ export const HeaderCell = ({
   node,
   children,
   ...props
-}: ClassAttributes<HTMLTableCellElement> &
-  HTMLAttributes<HTMLTableCellElement> &
-  ExtraProps) => (
+}: ClassAttributes<HTMLTableCellElement> & HTMLAttributes<HTMLTableCellElement> & ExtraProps) => (
   <th {...props} className={cellStyle}>
     {children}
   </th>
@@ -26,9 +24,7 @@ export const Cell = ({
   node,
   children,
   ...props
-}: ClassAttributes<HTMLTableCellElement> &
-  HTMLAttributes<HTMLTableCellElement> &
-  ExtraProps) => (
+}: ClassAttributes<HTMLTableCellElement> & HTMLAttributes<HTMLTableCellElement> & ExtraProps) => (
   <td {...props} className={cellStyle}>
     {children}
   </td>
@@ -47,9 +43,7 @@ export const Row = ({
   node,
   children,
   ...props
-}: ClassAttributes<HTMLTableRowElement> &
-  HTMLAttributes<HTMLTableRowElement> &
-  ExtraProps) => (
+}: ClassAttributes<HTMLTableRowElement> & HTMLAttributes<HTMLTableRowElement> & ExtraProps) => (
   <tr {...props} className={rowStyle}>
     {children}
   </tr>

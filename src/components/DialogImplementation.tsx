@@ -1,10 +1,4 @@
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  type ReactEventHandler,
-} from "react";
+import { ReactNode, useCallback, useEffect, useRef, type ReactEventHandler } from "react";
 import { createPortal } from "react-dom";
 import { styled } from "@/styled-system/jsx";
 import { SystemStyleObject } from "@/styled-system/types";
@@ -183,12 +177,7 @@ export default function DialogImplementation({
   );
 
   return createPortal(
-    <StyledDialog
-      ref={dialogRef}
-      onClose={handleClose}
-      className={className}
-      isModal={isModal}
-    >
+    <StyledDialog ref={dialogRef} onClose={handleClose} className={className} isModal={isModal}>
       {!isModal && showBackdrop && <StyledBackdrop onClick={onClose} />}
       {isModal ? <form method="dialog">{children}</form> : children}
     </StyledDialog>,

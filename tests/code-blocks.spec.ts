@@ -3,9 +3,7 @@ import { submitPrompt } from "./utils/submitPrompt";
 import { assistantMessage } from "./utils/locators";
 import { mockChatResponse } from "./utils/mockChat";
 
-test(`Code blocks render plaintext when the language is not supported`, async ({
-  page,
-}) => {
+test(`Code blocks render plaintext when the language is not supported`, async ({ page }) => {
   await mockChatResponse(page, {
     text: "```unsupported\nsomething\n```",
   });
@@ -24,9 +22,7 @@ something
   await expect(assistantMessage(page)).toHaveText("something");
 });
 
-test(`Code blocks render plaintext when no language is specified`, async ({
-  page,
-}) => {
+test(`Code blocks render plaintext when no language is specified`, async ({ page }) => {
   await mockChatResponse(page, {
     text: "```\nsomething\n```",
   });

@@ -1,25 +1,30 @@
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["public/**/*", "**/model_prices_and_context_window.json"],
-  "env": {
-    "node": true,
-    "browser": true
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  // NOT INHERITED
+  // =========================================
+  env: {
+    node: true,
+    browser: true,
   },
-  "options": {
-    "typeAware": true,
-    "reportUnusedDisableDirectives": "error"
+  // INHERITED BUT NOT MERGED
+  // =========================================
+  options: {
+    typeAware: true,
+    reportUnusedDisableDirectives: "error",
   },
   // See: https://oxc.rs/docs/guide/usage/linter/rules.html
-  "categories": {
-    "correctness": "error",
-    "nursery": "error",
-    "pedantic": "error",
-    "perf": "error",
-    "restriction": "error",
-    "suspicious": "error"
+  categories: {
+    correctness: "error",
+    nursery: "error",
+    pedantic: "error",
+    perf: "error",
+    restriction: "error",
+    suspicious: "error",
+    style: "error",
   },
   // See: https://oxc.rs/docs/guide/usage/linter/plugins.html#supported-plugins
-  "plugins": [
+  plugins: [
     "eslint",
     "typescript",
     "unicorn",
@@ -30,18 +35,20 @@
     "import",
     "jsx-a11y",
     "promise",
-    "vitest"
   ],
-  "rules": {
+  // MERGED
+  // =========================================
+  rules: {
+    // "import/extensions": ["error", "always"],
+
     // Configuring rules
     "typescript/consistent-type-definitions": ["error", "type"],
-    "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
-    "typescript/explicit-member-accessibility": [
-      "error",
-      { "accessibility": "no-public" }
-    ],
+    "typescript/no-misused-promises": ["error", { checksVoidReturn: false }],
+    "typescript/no-unnecessary-condition": ["error", { allowConstantLoopConditions: true }],
+    "typescript/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
 
     // Worth reconsidering depending on the project
+    "eslint/max-depth": "off",
     "eslint/no-underscore-dangle": "off",
     "react/jsx-no-literals": "off",
 
@@ -50,11 +57,45 @@
 
     // Disabling rules
     // pedantic
-    "unicorn/no-negated-condition": "off",
     "react/forbid-component-props": "off", // Might make sense on projects that don't use styled components pattern
+    "unicorn/no-negated-condition": "off",
+    "unicorn/prefer-event-target": "off",
 
-    // restriction
-    "vitest/require-test-timeout": "off",
+    // style
+    "eslint/capitalized-comments": "off",
+    "eslint/func-style": "off",
+    "eslint/id-length": "off",
+    "eslint/init-declarations": "off",
+    "eslint/max-params": "off",
+    "eslint/max-statements": "off",
+    "eslint/new-cap": "off",
+    "eslint/no-continue": "off",
+    "eslint/no-magic-numbers": "off",
+    "eslint/no-nested-ternary": "off",
+    "eslint/no-ternary": "off",
+    "eslint/prefer-arrow-callback": "off",
+    "eslint/prefer-template": "off",
+    "eslint/sort-imports": "off",
+    "eslint/sort-keys": "off",
+    "import/consistent-type-specifier-style": "off",
+    "import/exports-last": "off",
+    "import/group-exports": "off",
+    "import/no-anonymous-default-export": "off",
+    "import/no-named-export": "off",
+    "import/no-nodejs-modules": "off",
+    "import/prefer-default-export": "off",
+    "promise/avoid-new": "off",
+    "promise/prefer-await-to-callbacks": "off",
+    "promise/prefer-await-to-then": "off",
+    "react/jsx-max-depth": "off",
+    "react/jsx-props-no-spreading": "off",
+    "typescript/consistent-type-imports": "off",
+    "unicorn/error-message": "off",
+    "unicorn/filename-case": "off",
+    "unicorn/no-await-expression-member": "off",
+    "unicorn/no-nested-ternary": "off",
+    "unicorn/prefer-global-this": "off",
+    "unicorn/prefer-ternary": "off",
 
     // suspicious
     "react/react-in-jsx-scope": "off",
@@ -86,10 +127,6 @@
     "import/no-relative-parent-imports": "off",
     "import/unambiguous": "off",
 
-    "vitest/no-conditional-in-test": "off",
-    "vitest/no-focused-tests": "off",
-    "vitest/valid-title": "off",
-
     "jsx_a11y/no-autofocus": "off",
 
     "oxc/no-async-await": "off",
@@ -114,18 +151,41 @@
     "typescript/strict-void-return": "off",
     "typescript/use-unknown-in-catch-callback-variable": "off",
 
-    "unicorn/import-style": "off",
+    "unicorn/max-nested-calls": "off",
     "unicorn/no-array-callback-reference": "off",
     "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
     "unicorn/no-process-exit": "off",
     "unicorn/no-useless-undefined": "off",
-    "unicorn/prefer-module": "off"
+    "unicorn/prefer-import-meta-properties": "off",
+    "unicorn/prefer-module": "off",
   },
-  "overrides": [
+  overrides: [
     {
-      "files": ["**/*.mjs", "**/*.cjs", "**/*.js"],
-      "rules": {
+      files: ["**/*.test.ts", "**/*.test.tsx"],
+      plugins: ["vitest"],
+      rules: {
+        // restriction
+        "vitest/require-test-timeout": "off",
+
+        // style
+        "vitest/consistent-test-filename": "off",
+        "vitest/no-importing-vitest-globals": "off",
+        "vitest/prefer-to-be-truthy": "off",
+        "vitest/require-hook": "off", // Lots of false positives
+
+        // more severe levels
+        "vitest/max-expects": "off",
+        "vitest/no-conditional-in-test": "off",
+        "vitest/no-focused-tests": "off",
+        "vitest/prefer-expect-assertions": "off",
+        "vitest/valid-title": "off",
+        "vitest/no-hooks": "off",
+      },
+    },
+    {
+      files: ["**/*.mjs", "**/*.cjs", "**/*.js"],
+      rules: {
         "typescript/await-thenable": "off",
         "typescript/ban-ts-comment": "off",
         "typescript/ban-types": "off",
@@ -206,8 +266,8 @@
         "typescript/switch-exhaustiveness-check": "off",
         "typescript/triple-slash-reference": "off",
         "typescript/unbound-method": "off",
-        "typescript/use-unknown-in-catch-callback-variable": "off"
-      }
-    }
-  ]
-}
+        "typescript/use-unknown-in-catch-callback-variable": "off",
+      },
+    },
+  ],
+});

@@ -47,11 +47,7 @@ const MemoizedReactMarkdown = memo(
   (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 
-function ToolInvocation({
-  toolInvocation,
-}: {
-  toolInvocation: ToolUIPart | DynamicToolUIPart;
-}) {
+function ToolInvocation({ toolInvocation }: { toolInvocation: ToolUIPart | DynamicToolUIPart }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const toolName =
     toolInvocation.type === "dynamic-tool"
@@ -64,7 +60,7 @@ function ToolInvocation({
         ? toolInvocation.errorText
         : undefined;
 
-  return toolInvocation.state === "input-streaming" ? null : (
+  return toolInvocation.state === "input-streaming" ? undefined : (
     <StyledExpandable isExpanded={isExpanded}>
       {toolName} (
       {objectEntries(toolInvocation.input as Record<string, string>)
@@ -78,9 +74,7 @@ function ToolInvocation({
           "..."
         )
       ) : (
-        <Spinner
-          style={{ display: "inline-block", width: "16rem", height: "16rem" }}
-        />
+        <Spinner style={{ display: "inline-block", width: "16rem", height: "16rem" }} />
       )}
       {Boolean(output) && (
         <div
@@ -92,7 +86,7 @@ function ToolInvocation({
             gap: "6rem",
           }}
         >
-          {<CopyButton>{JSON.stringify(output)}</CopyButton>}
+          <CopyButton>{JSON.stringify(output)}</CopyButton>
           <IconButton
             name={isExpanded ? "collapse" : "expand"}
             iconSize="sm"
@@ -104,11 +98,7 @@ function ToolInvocation({
   );
 }
 
-export function Part({
-  part,
-}: {
-  part: NonNullable<UIMessage["parts"]>[number];
-}) {
+export function Part({ part }: { part: NonNullable<UIMessage["parts"]>[number] }) {
   return part.type === "text" ? (
     <MemoizedReactMarkdown
       remarkPlugins={remarkPlugins}
@@ -132,5 +122,5 @@ export function Part({
     <p>
       File ({part.mediaType}): {part.url}
     </p>
-  ) : null;
+  ) : undefined;
 }

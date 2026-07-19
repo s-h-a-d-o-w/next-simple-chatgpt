@@ -1,5 +1,4 @@
-import { memo, useCallback, useRef, useState } from "react";
-import type { KeyboardEvent, SubmitEvent } from "react";
+import { memo, useCallback, useRef, useState, type KeyboardEvent, type SubmitEvent } from "react";
 import { styled } from "@/styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { Textarea } from "@/components/Textarea";
@@ -69,21 +68,12 @@ export const Prompt = memo(function Prompt({
   const handleFileInputChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       // TODO: If processing takes longer than ~500ms, render a spinner.
-      const newAttachments = await filesToAttachments(
-        Array.from(event.target.files ?? []),
-      );
-      setFiles((previousAttachments) => [
-        ...previousAttachments,
-        ...newAttachments,
-      ]);
+      const newAttachments = await filesToAttachments([...(event.target.files ?? [])]);
+      setFiles((previousAttachments) => [...previousAttachments, ...newAttachments]);
 
       if (!modelConfig.supportsAttachments) {
         // fall back to any model that supports attachments
-        setModel(
-          objectEntries(models).find(
-            ([_, model]) => model.supportsAttachments,
-          )![0],
-        );
+        setModel(objectEntries(models).find(([_, model]) => model.supportsAttachments)![0]);
       }
 
       if (fileInputRef.current) {
@@ -95,17 +85,13 @@ export const Prompt = memo(function Prompt({
 
   const handleRemoveAttachment = useCallback(
     (index: number) => {
-      setFiles((previousAttachments) =>
-        previousAttachments.filter((_, i) => i !== index),
-      );
+      setFiles((previousAttachments) => previousAttachments.filter((_, i) => i !== index));
     },
     [setFiles],
   );
 
   const handleSubmit = useCallback(
-    (
-      event: KeyboardEvent<HTMLTextAreaElement> | SubmitEvent<HTMLFormElement>,
-    ) => {
+    (event: KeyboardEvent<HTMLTextAreaElement> | SubmitEvent<HTMLFormElement>) => {
       event.preventDefault();
 
       if (value === "" && files.length === 0) {
@@ -125,37 +111,21 @@ export const Prompt = memo(function Prompt({
         setStartTime(Date.now());
       }
     },
-    [
-      files,
-      isFirstPrompt,
-      value,
-      onReplay,
-      onSend,
-      setStartTime,
-      setValue,
-      setFiles,
-    ],
+    [files, isFirstPrompt, value, onReplay, onSend, setStartTime, setValue, setFiles],
   );
 
   return (
     <StyledPrompt>
       <StyledForm onSubmit={handleSubmit}>
         {files.length > 0 && (
-          <FilesPreview
-            files={files}
-            onRemoveAttachment={handleRemoveAttachment}
-          />
+          <FilesPreview files={files} onRemoveAttachment={handleRemoveAttachment} />
         )}
 
         <StyledInputContainer>
           <Textarea
             autoFocus
             aria-label="chat prompt"
-            placeholder={
-              isFirstPrompt
-                ? "Enter your prompt here."
-                : "Leave empty to re-run."
-            }
+            placeholder={isFirstPrompt ? "Enter your prompt here." : "Leave empty to re-run."}
             value={value}
             onChange={(event) => setValue(event.target.value)}
             onKeyDown={(event) => {

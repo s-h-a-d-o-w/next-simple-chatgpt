@@ -67,18 +67,8 @@ export function HistoryHeader() {
           onClick={handleDeleteHistory}
           label="Delete all"
         />
-        <IconButton
-          name="load"
-          iconSize="md"
-          onClick={handleLoadHistory}
-          label="Load"
-        />
-        <IconButton
-          name="save"
-          iconSize="md"
-          onClick={handleSaveHistory}
-          label="Save"
-        />
+        <IconButton name="load" iconSize="md" onClick={handleLoadHistory} label="Load" />
+        <IconButton name="save" iconSize="md" onClick={handleSaveHistory} label="Save" />
       </StyledHistoryActions>
     </StyledHistoryHeader>
   );

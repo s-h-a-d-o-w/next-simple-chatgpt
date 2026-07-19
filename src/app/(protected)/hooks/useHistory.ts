@@ -1,4 +1,4 @@
-import { cloneDeep, isObject } from "lodash-es";
+import { isObject } from "lodash-es";
 import { useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
 import { stringify, parse } from "superjson";
@@ -20,11 +20,7 @@ export type HistoryEntryV1 = {
 type LegacyHistoryEntry = HistoryEntryV1;
 
 function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
-  if (
-    isObject(value) &&
-    "version" in value &&
-    value.version === CURRENT_HISTORY_VERSION
-  ) {
+  if (isObject(value) && "version" in value && value.version === CURRENT_HISTORY_VERSION) {
     return (value as HistoryV1).history;
   }
 
@@ -33,8 +29,7 @@ function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
 }
 
 export const historySerializer = {
-  stringify: (value: unknown) =>
-    stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
+  stringify: (value: unknown) => stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
   parse: (value: string) => maybeMigrateHistory(parse(value)),
 };
 
@@ -54,13 +49,10 @@ function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
 }
 
 export function useHistory(namespace?: string) {
-  return useLocalStorageState<HistoryEntryV1[]>(
-    `history${namespace ? `-${namespace}` : ""}`,
-    {
-      defaultValue: [],
-      serializer: historySerializer,
-    },
-  );
+  return useLocalStorageState<HistoryEntryV1[]>(`history${namespace ? `-${namespace}` : ""}`, {
+    defaultValue: [],
+    serializer: historySerializer,
+  });
 }
 
 export function useSyncHistory(
@@ -75,7 +67,7 @@ export function useSyncHistory(
   useEffect(() => {
     if (!isLoading && startTime && messages.length > 1) {
       setConversationHistory((history) => {
-        const nextHistory = cloneDeep(history);
+        const nextHistory = structuredClone(history);
         const newEntry: HistoryEntryV1 = {
           startTime,
           messages: stripAttachmentsFromMessages(messages),
@@ -84,7 +76,7 @@ export function useSyncHistory(
         const index = nextHistory.findIndex(
           (entry: HistoryEntryV1) => entry.startTime === startTime,
         );
-        if (index >= 0) {
+        if (index !== -1) {
           // Change a history entry that already existed (like the most recent one).
           nextHistory[index] = newEntry;
         } else {

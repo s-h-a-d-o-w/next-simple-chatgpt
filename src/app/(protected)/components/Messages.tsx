@@ -62,8 +62,7 @@ export const Messages = memo(function Messages({
         ))}
       {hasError && (
         <div style={{ alignSelf: "flex-end" }}>
-          An error occurred. If it keeps happening, please try refreshing the
-          page.{" "}
+          An error occurred. If it keeps happening, please try refreshing the page.{" "}
           <Button type="button" onClick={onRetry}>
             Retry
           </Button>

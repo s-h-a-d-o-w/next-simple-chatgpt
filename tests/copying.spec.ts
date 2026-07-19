@@ -17,9 +17,7 @@ test(`Copying code and full message works`, async ({ page, context }) => {
   const assistantMessage = page.locator('[data-testid$="-assistant"]');
   const copyButtons = assistantMessage.locator('button[aria-label="copy"]');
   const checkButton = page.locator(`button[aria-label="check"]`);
-  const renderedCode = (
-    await assistantMessage.locator("pre").innerText()
-  ).trim();
+  const renderedCode = (await assistantMessage.locator("pre").textContent())?.trim();
 
   await expect
     .poll(async () => {
@@ -30,8 +28,6 @@ test(`Copying code and full message works`, async ({ page, context }) => {
 
   await copyButtons.nth(1).click();
   await checkButton.waitFor({ state: "visible" });
-  const clipboardFull = await page.evaluate(() =>
-    navigator.clipboard.readText(),
-  );
+  const clipboardFull = await page.evaluate(() => navigator.clipboard.readText());
   expect(clipboardFull).toContain(renderedCode);
 });

@@ -7,7 +7,9 @@ export function useScrollToBottom(doScroll: boolean, messages: UIMessage[]) {
 
   const scrollKey = useMemo(() => {
     const last = messages.at(-1);
-    if (!last || last.role === "user") return 0;
+    if (!last || last.role === "user") {
+      return 0;
+    }
     const text = last.parts.findLast((p) => p.type === "text")?.text;
     return text?.length;
   }, [messages]);

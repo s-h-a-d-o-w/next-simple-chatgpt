@@ -53,10 +53,7 @@ export function ModelSelector({ showAttachmentModelsOnly }: Props) {
 
   return (
     <StyledSelectContainer>
-      <StyledSelect
-        value={model}
-        onChange={(e) => setModel(e.target.value as ModelKey)}
-      >
+      <StyledSelect value={model} onChange={(e) => setModel(e.target.value as ModelKey)}>
         {objectEntries(models)
           .filter(([, { supportsAttachments }]) =>
             showAttachmentModelsOnly ? supportsAttachments : true,

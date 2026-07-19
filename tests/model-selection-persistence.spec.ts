@@ -11,9 +11,7 @@ test("should persist selected model across page reloads", async ({ page }) => {
   const modelSelect = page.locator("select");
   expect(await modelSelect.inputValue()).toBe(config.models.default);
 
-  const differentModel = Object.keys(await fetchModels()).find(
-    (m) => m !== config.models.default,
-  );
+  const differentModel = Object.keys(await fetchModels()).find((m) => m !== config.models.default);
   await modelSelect.selectOption(differentModel!);
   await page.reload();
   expect(await modelSelect.inputValue()).toBe(differentModel);

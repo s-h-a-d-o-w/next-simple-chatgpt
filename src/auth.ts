@@ -57,13 +57,10 @@ const getRequiredEnv = (name: string) => {
 
 const encode = (value: string) => Buffer.from(value).toString("base64url");
 
-const decode = (value: string) =>
-  Buffer.from(value, "base64url").toString("utf8");
+const decode = (value: string) => Buffer.from(value, "base64url").toString("utf8");
 
 const sign = (value: string) =>
-  createHmac("sha256", getRequiredEnv("AUTH_SECRET"))
-    .update(value)
-    .digest("base64url");
+  createHmac("sha256", getRequiredEnv("AUTH_SECRET")).update(value).digest("base64url");
 
 const createSignedValue = (value: unknown) => {
   const payload = encode(JSON.stringify(value));
@@ -71,14 +68,11 @@ const createSignedValue = (value: unknown) => {
   return `${payload}.${sign(payload)}`;
 };
 
-const verifySignedValue = <Schema extends z.ZodType>(
-  value: string,
-  schema: Schema,
-) => {
+const verifySignedValue = <Schema extends z.ZodType>(value: string, schema: Schema) => {
   const [payload, signature] = value.split(".");
 
   if (!payload || !signature) {
-    return null;
+    return undefined;
   }
 
   const expectedSignature = sign(payload);
@@ -89,15 +83,15 @@ const verifySignedValue = <Schema extends z.ZodType>(
     signatureBuffer.length !== expectedSignatureBuffer.length ||
     !timingSafeEqual(signatureBuffer, expectedSignatureBuffer)
   ) {
-    return null;
+    return undefined;
   }
 
   try {
     const parsedValue = schema.safeParse(JSON.parse(decode(payload)));
 
-    return parsedValue.success ? parsedValue.data : null;
+    return parsedValue.success ? parsedValue.data : undefined;
   } catch {
-    return null;
+    return undefined;
   }
 };
 
@@ -107,15 +101,12 @@ const getCookie = (headers: Headers, name: string) =>
     ?.split(";")
     .map((cookie) => cookie.trim())
     .find((cookie) => cookie.startsWith(`${name}=`))
-    ?.slice(name.length + 1) ?? null;
+    ?.slice(name.length + 1) ?? undefined;
 
 const isSecureCookie = () => process.env["NODE_ENV"] === "production";
 
-const getBaseUrl = (request: NextRequest) => {
-  return process.env["AUTH_URL"]
-    ? new URL(process.env["AUTH_URL"]).origin
-    : request.url;
-};
+const getBaseUrl = (request: NextRequest) =>
+  process.env["AUTH_URL"] ? new URL(process.env["AUTH_URL"]).origin : request.url;
 
 const getAuthUrl = (request: NextRequest) =>
   process.env["AUTH_URL"] ??
@@ -135,13 +126,13 @@ export const getSession = ({ headers }: { headers: Headers }) => {
   const cookie = getCookie(headers, SESSION_COOKIE);
 
   if (!cookie) {
-    return null;
+    return undefined;
   }
 
   const session = verifySignedValue(cookie, sessionSchema);
 
   if (!session || session.expiresAt < Date.now()) {
-    return null;
+    return undefined;
   }
 
   return session satisfies Session;
@@ -157,7 +148,7 @@ export const refreshSession = ({
   const session = getSession({ headers });
 
   if (!session) {
-    return null;
+    return undefined;
   }
 
   const refreshedSession = {
@@ -263,9 +254,7 @@ export const finishGitHubSignIn = async (request: NextRequest) => {
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
   const stateCookie = getCookie(request.headers, STATE_COOKIE);
-  const storedState = stateCookie
-    ? verifySignedValue(stateCookie, stateSchema)
-    : null;
+  const storedState = stateCookie ? verifySignedValue(stateCookie, stateSchema) : undefined;
 
   if (!code || !state || !storedState || storedState.state !== state) {
     return redirectToLogin(request);
@@ -280,9 +269,7 @@ export const finishGitHubSignIn = async (request: NextRequest) => {
       return redirectToLogin(request);
     }
 
-    const response = NextResponse.redirect(
-      new URL(storedState.callbackPath, getBaseUrl(request)),
-    );
+    const response = NextResponse.redirect(new URL(storedState.callbackPath, getBaseUrl(request)));
 
     clearCookie(response, STATE_COOKIE, "/api/auth");
     setSessionCookie(response, {
@@ -305,9 +292,7 @@ export const finishGitHubSignIn = async (request: NextRequest) => {
 };
 
 export const signOut = (request: NextRequest) => {
-  const response = NextResponse.redirect(
-    new URL("/login", getBaseUrl(request)),
-  );
+  const response = NextResponse.redirect(new URL("/login", getBaseUrl(request)));
 
   deleteAuthCookies(response);
 

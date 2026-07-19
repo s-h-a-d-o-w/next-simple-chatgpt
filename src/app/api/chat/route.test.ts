@@ -1,5 +1,5 @@
 import { POST, type ChatRequest } from "./route";
-import { test, expect } from "vitest";
+import { it, describe, expect } from "vitest";
 import { NextRequest } from "next/server";
 import type { ModelKey } from "@/lib/server/models";
 import type { Metadata, AnthropicUsage } from "@/types";
@@ -8,7 +8,7 @@ import type { Metadata, AnthropicUsage } from "@/types";
 const longSystemPrompt = `You are a helpful assistant with extensive knowledge across many domains.
 
 ${Array.from({ length: 11 })
-  .fill(null)
+  .fill(undefined)
   .map(
     (_, i) => `
 ## Section ${i + 1}: Important Guidelines and Information
@@ -97,58 +97,54 @@ async function callRouteHandler(model: ModelKey, systemPrompt: string) {
   throw new Error("No message metadata found");
 }
 
-// Includes sanity checks for anthropic metadata, since in the past, the right numbers were in provider metadata but those in root level usage were wrong. (Or I misinterpreted them.)
-test("caching works with anthropic provider", async () => {
-  const timestamp = Date.now().toString();
+describe("/api/chat", () => {
+  // Includes sanity checks for anthropic metadata, since in the past, the right numbers were in provider metadata but those in root level usage were wrong. (Or I misinterpreted them.)
+  it("caches correctly with anthropic provider", async () => {
+    const timestamp = Date.now().toString();
 
-  const cacheWriteMetadata = await callRouteHandler(
-    "claude-haiku-4-5",
-    timestamp + " " + longSystemPrompt,
-  );
-  const {
-    usage: { cacheWriteTokens },
-  } = cacheWriteMetadata;
-  expect(cacheWriteTokens).toBeGreaterThan(4096);
-  const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart
-    .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
-  expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toEqual(
-    cacheWriteTokens,
-  );
+    const cacheWriteMetadata = await callRouteHandler(
+      "claude-haiku-4-5",
+      timestamp + " " + longSystemPrompt,
+    );
+    const {
+      usage: { cacheWriteTokens },
+    } = cacheWriteMetadata;
+    expect(cacheWriteTokens).toBeGreaterThan(4096);
+    const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart.providerMetadata?.["anthropic"]?.[
+      "usage"
+    ] as AnthropicUsage;
+    expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toStrictEqual(cacheWriteTokens);
 
-  // Attempt at reducing flakiness.
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Attempt at reducing flakiness.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const cacheReadMetadata = await callRouteHandler(
-    "claude-haiku-4-5",
-    timestamp + " " + longSystemPrompt,
-  );
-  const {
-    usage: { cacheReadTokens, inputTokens, outputTokens },
-  } = cacheReadMetadata;
-  expect(cacheReadTokens).toBeGreaterThan(4096);
-  const anthropicCacheReadUsage = cacheReadMetadata.rawPart.providerMetadata?.[
-    "anthropic"
-  ]?.["usage"] as AnthropicUsage;
-  expect(anthropicCacheReadUsage.cache_read_input_tokens).toEqual(
-    cacheReadTokens,
-  );
-  expect(anthropicCacheReadUsage.input_tokens).toEqual(inputTokens);
-  expect(anthropicCacheReadUsage.output_tokens).toEqual(outputTokens);
-}, 30000);
+    const cacheReadMetadata = await callRouteHandler(
+      "claude-haiku-4-5",
+      timestamp + " " + longSystemPrompt,
+    );
+    const {
+      usage: { cacheReadTokens, inputTokens, outputTokens },
+    } = cacheReadMetadata;
+    expect(cacheReadTokens).toBeGreaterThan(4096);
+    const anthropicCacheReadUsage = cacheReadMetadata.rawPart.providerMetadata?.["anthropic"]?.[
+      "usage"
+    ] as AnthropicUsage;
+    expect(anthropicCacheReadUsage.cache_read_input_tokens).toStrictEqual(cacheReadTokens);
+    expect(anthropicCacheReadUsage.input_tokens).toStrictEqual(inputTokens);
+    expect(anthropicCacheReadUsage.output_tokens).toStrictEqual(outputTokens);
+  }, 30_000);
 
-test("normalized usage is reasonable with openai provider", async () => {
-  const timestamp = Date.now().toString();
+  it("has reasonable normalized usage with openai provider", async () => {
+    const timestamp = Date.now().toString();
 
-  const {
-    usage: { inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens },
-  } = await callRouteHandler(
-    "gpt-4.1",
-    timestamp + " " + longSystemPrompt.slice(0, 7000),
-  );
-  expect(inputTokens).toBeGreaterThan(1023);
-  expect(outputTokens).toBeGreaterThan(0);
-  expect(cacheReadTokens).toBe(0);
-  expect(cacheWriteTokens).toBe(0);
+    const {
+      usage: { inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens },
+    } = await callRouteHandler("gpt-4.1", timestamp + " " + longSystemPrompt.slice(0, 7000));
+    expect(inputTokens).toBeGreaterThan(1023);
+    expect(outputTokens).toBeGreaterThan(0);
+    expect(cacheReadTokens).toBe(0);
+    expect(cacheWriteTokens).toBe(0);
 
-  // It's not possible to test caching, since caching with OpenAI is merely "best effort".
-}, 30000);
+    // It's not possible to test caching, since caching with OpenAI is merely "best effort".
+  }, 30_000);
+});

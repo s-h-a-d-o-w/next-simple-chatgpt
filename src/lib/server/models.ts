@@ -78,7 +78,7 @@ function isModels(models: Partial<Models>): models is Models {
 async function fetchRemoteModels() {
   const response = await fetch(LITELLM_MODELS_URL, {
     cache: "no-store",
-    signal: AbortSignal.timeout(30000),
+    signal: AbortSignal.timeout(30_000),
   });
 
   if (!response.ok) {

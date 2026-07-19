@@ -68,16 +68,16 @@ function HomeClient() {
   const isLoading = status === "submitted" || status === "streaming";
   const hasFilesInChat =
     useAtomValue(promptFilesAtom).length > 0 ||
-    messages.some((message) =>
-      message.parts.some((part) => part.type === "file"),
-    );
+    messages.some((message) => message.parts.some((part) => part.type === "file"));
 
   // Body to send along with the messages.
-  const body = useMemo(() => {
-    return {
-      model,
-    } satisfies Omit<ChatRequest, "messages">;
-  }, [model]);
+  const body = useMemo(
+    () =>
+      ({
+        model,
+      }) satisfies Omit<ChatRequest, "messages">,
+    [model],
+  );
 
   useEffect(() => {
     if (error) {
@@ -91,9 +91,7 @@ function HomeClient() {
 
   const handleDeleteMessage = useCallback(
     (id: string) => {
-      setMessages((previousMessages) =>
-        previousMessages.filter((message) => message.id !== id),
-      );
+      setMessages((previousMessages) => previousMessages.filter((message) => message.id !== id));
     },
     [setMessages],
   );
@@ -109,14 +107,15 @@ function HomeClient() {
           parts: [
             { type: "text", text: input },
             ...(files.length > 0
-              ? files.map(({ filename, mediaType, url }) => {
-                  return {
-                    type: "file",
-                    filename,
-                    mediaType,
-                    url,
-                  } satisfies FileUIPart;
-                })
+              ? files.map(
+                  ({ filename, mediaType, url }) =>
+                    ({
+                      type: "file",
+                      filename,
+                      mediaType,
+                      url,
+                    }) satisfies FileUIPart,
+                )
               : []),
           ],
         },

@@ -49,11 +49,7 @@ export function DeleteConfirmationModal() {
     setConversationHistory([]);
     setActiveHistoryEntry(undefined);
     setIsDeleteConfirmationOpen(false);
-  }, [
-    setConversationHistory,
-    setActiveHistoryEntry,
-    setIsDeleteConfirmationOpen,
-  ]);
+  }, [setConversationHistory, setActiveHistoryEntry, setIsDeleteConfirmationOpen]);
 
   return (
     <Dialog isOpen={isDeleteConfirmationOpen} onClose={handleClose}>

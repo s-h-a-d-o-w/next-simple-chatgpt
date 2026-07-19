@@ -11,5 +11,5 @@ export function ClientOnly({ children }: { children: React.ReactNode }) {
     () => false,
   );
 
-  return hasMounted ? children : null;
+  return hasMounted ? children : undefined;
 }

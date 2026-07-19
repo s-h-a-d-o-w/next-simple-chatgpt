@@ -82,12 +82,9 @@ export const Message = memo(
       .join("\n");
     const lastPart = parts.at(-1);
 
-    const files = useMemo(
-      () => parts.filter((part) => part.type === "file"),
-      [parts],
-    );
+    const files = useMemo(() => parts.filter((part) => part.type === "file"), [parts]);
 
-    return role === "system" ? null : (
+    return role === "system" ? undefined : (
       <StyledMessage
         variant={isUser ? "user" : "default"}
         key={id}
@@ -108,11 +105,9 @@ export const Message = memo(
           </div>
         )}
 
-        {!isLoading &&
-          lastPart?.type === "reasoning" &&
-          lastPart.state === "streaming" && (
-            <div>Request timed out during model reasoning</div>
-          )}
+        {!isLoading && lastPart?.type === "reasoning" && lastPart.state === "streaming" && (
+          <div>Request timed out during model reasoning</div>
+        )}
 
         {(isLoading || showCopyAll || onDelete) && (
           <div
@@ -125,11 +120,7 @@ export const Message = memo(
           >
             {isLoading && content === "" && <Spinner />}
             {!isLoading && onDelete && (
-              <IconButton
-                name="delete"
-                iconSize="md"
-                onClick={() => onDelete(id)}
-              />
+              <IconButton name="delete" iconSize="md" onClick={() => onDelete(id)} />
             )}
             {!isLoading && showCopyAll && <CopyButton>{content}</CopyButton>}
           </div>
@@ -137,8 +128,6 @@ export const Message = memo(
       </StyledMessage>
     );
   }, true),
-  (prev, next) => {
-    return prev.parts === next.parts && prev.isLoading === next.isLoading;
-  },
+  (prev, next) => prev.parts === next.parts && prev.isLoading === next.isLoading,
 );
 Message.displayName = "Message";

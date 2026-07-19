@@ -4,7 +4,7 @@ import { fetchModels } from "@/lib/server/models";
 
 const models = await fetchModels();
 
-describe(getCost.name, () => {
+describe(getCost, () => {
   it("handles usage without cached tokens", () => {
     const result = getCost(models["gpt-5.4"], {
       inputTokens: 1359,
@@ -20,7 +20,7 @@ describe(getCost.name, () => {
     const result = getCost(models["gpt-5.4"], {
       inputTokens: 1380,
       outputTokens: 33,
-      cacheReadTokens: 128000,
+      cacheReadTokens: 128_000,
       cacheWriteTokens: 0,
     });
 

@@ -11,11 +11,7 @@ const handleSignOut = async () => {
   window.location.reload();
 };
 
-export function AuthButtonClient({
-  isSignedIn = false,
-}: {
-  isSignedIn?: boolean;
-}) {
+export function AuthButtonClient({ isSignedIn = false }: { isSignedIn?: boolean }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = () => {
@@ -29,18 +25,8 @@ export function AuthButtonClient({
   return isLoading ? (
     <Spinner />
   ) : isSignedIn ? (
-    <IconButton
-      name="logout"
-      iconSize="md"
-      label="Sign out"
-      onClick={handleSignOut}
-    />
+    <IconButton name="logout" iconSize="md" label="Sign out" onClick={handleSignOut} />
   ) : (
-    <IconButton
-      name="github"
-      iconSize="md"
-      label="Sign in with GitHub"
-      onClick={handleSignIn}
-    />
+    <IconButton name="github" iconSize="md" label="Sign in with GitHub" onClick={handleSignIn} />
   );
 }

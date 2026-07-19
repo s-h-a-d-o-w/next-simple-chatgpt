@@ -50,10 +50,7 @@ export async function filesToAttachments(files: File[]): Promise<FileUIPart[]> {
                     ({
                       type: "file",
                       mediaType: "image/png",
-                      filename: file.name.replaceAll(
-                        ".pdf",
-                        `-page${index + 1}.png`,
-                      ),
+                      filename: file.name.replaceAll(".pdf", `-page${index + 1}.png`),
                       url: dataURL,
                     }) satisfies FileUIPart,
                 );

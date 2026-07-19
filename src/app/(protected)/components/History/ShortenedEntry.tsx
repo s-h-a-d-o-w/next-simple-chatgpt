@@ -30,7 +30,9 @@ export function ShortenedEntry({
   const entry = filteredHistory[index];
   const firstUserMessage = entry?.messages[1];
 
-  return !firstUserMessage ? null : (
+  return !firstUserMessage ? (
+    <div />
+  ) : (
     <div style={style}>
       <div style={{ paddingBottom: "8rem" }}>
         <div
@@ -45,11 +47,7 @@ export function ShortenedEntry({
             : ""}
         </div>
         <div style={{ position: "relative" }}>
-          <Message
-            {...firstUserMessage}
-            shortened
-            onClick={() => onSetActiveHistoryEntry(entry)}
-          />
+          <Message {...firstUserMessage} shortened onClick={() => onSetActiveHistoryEntry(entry)} />
           <StyledDeleteButton
             name="delete"
             type="button"

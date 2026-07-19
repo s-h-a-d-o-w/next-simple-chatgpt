@@ -92,11 +92,7 @@ const ToggleThumb = styled("div", {
 });
 
 function applyTheme(isDark: boolean) {
-  if (isDark) {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-  }
+  document.documentElement.classList.toggle("dark", isDark);
 }
 
 export function ThemeToggle() {

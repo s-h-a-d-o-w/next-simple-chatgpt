@@ -12,11 +12,7 @@ import { styled } from "@/styled-system/jsx";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";
 import { Fragment, jsxs, jsx } from "react/jsx-runtime";
 import { refractor } from "refractor/core";
-import {
-  isSupportedLanguage,
-  languageLoaders,
-  type SupportedLanguage,
-} from "./refractorLanguages";
+import { isSupportedLanguage, languageLoaders, type SupportedLanguage } from "./refractorLanguages";
 
 const StyledCopyButton = styled(CopyButton, {
   base: {
@@ -52,27 +48,23 @@ function renderCode(text: string, language: SupportedLanguage) {
   try {
     const tree = refractor.highlight(text, language);
     return toJsxRuntime(tree, { Fragment, jsxs, jsx }) as JSX.Element;
-  } catch (error) {
+  } catch {
     return text;
   }
 }
 
 export function Code(
-  props: ClassAttributes<HTMLElement> &
-    HTMLAttributes<HTMLElement> &
-    ExtraProps,
+  props: ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps,
 ) {
   const { children, className } = props;
   // oxlint-disable-next-line typescript/no-base-to-string
   const text = children ? String(children) : "";
-  const language = /language-(\w+)/u.exec(className ?? "")?.[1] ?? "";
+  const language = /language-(?<language>\w+)/u.exec(className ?? "")?.[1] ?? "";
   const isInline = !text.includes("\n");
   const isLanguageLoaded = alreadyLoaded.has(language);
 
   const [highlightedCode, setHighlightedCode] = useState(
-    isLanguageLoaded && isSupportedLanguage(language)
-      ? renderCode(text, language)
-      : "",
+    isLanguageLoaded && isSupportedLanguage(language) ? renderCode(text, language) : "",
   );
   const deferredHighlightedCode = useDeferredValue(highlightedCode);
 

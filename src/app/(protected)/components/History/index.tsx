@@ -1,10 +1,7 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
-import { cloneDeep, debounce } from "lodash-es";
-import {
-  useHistory,
-  type HistoryEntryV1,
-} from "@/app/(protected)/hooks/useHistory";
+import { debounce } from "lodash-es";
+import { useHistory, type HistoryEntryV1 } from "@/app/(protected)/hooks/useHistory";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { styled } from "@/styled-system/jsx";
 import { Messages } from "../Messages";
@@ -98,9 +95,7 @@ const StyledSearchInput = styled("input", {
 });
 
 export const History = memo(function History({ setMessages }: Props) {
-  const [activeHistoryEntry, setActiveHistoryEntry] = useAtom(
-    activeHistoryEntryAtom,
-  );
+  const [activeHistoryEntry, setActiveHistoryEntry] = useAtom(activeHistoryEntryAtom);
   const [isOpen, setIsHistoryOpen] = useAtom(isHistoryOpenAtom);
   const setSystemPrompt = useSetAtom(systemPromptAtom);
   const setStartTime = useSetAtom(chatStartTimeAtom);
@@ -111,11 +106,7 @@ export const History = memo(function History({ setMessages }: Props) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (
-      isOpen &&
-      searchInputRef.current &&
-      !/Mobi|Android/iu.test(navigator.userAgent)
-    ) {
+    if (isOpen && searchInputRef.current && !/Mobi|Android/iu.test(navigator.userAgent)) {
       searchInputRef.current.focus();
     }
   }, [isOpen]);
@@ -131,25 +122,18 @@ export const History = memo(function History({ setMessages }: Props) {
         setActiveHistoryEntry(undefined);
       }
 
-      const nextHistory = cloneDeep(conversationHistory);
-      const entryIndex = nextHistory.findIndex((_entry) => _entry === entry);
+      const nextHistory = structuredClone(conversationHistory);
+      const entryIndex = nextHistory.indexOf(entry);
       nextHistory.splice(entryIndex, 1);
       setConversationHistory(nextHistory);
     },
-    [
-      activeHistoryEntry,
-      conversationHistory,
-      setActiveHistoryEntry,
-      setConversationHistory,
-    ],
+    [activeHistoryEntry, conversationHistory, setActiveHistoryEntry, setConversationHistory],
   );
 
   const handleRestoreHistoryEntry = useCallback(() => {
     if (activeHistoryEntry) {
       setConversationHistory((history) =>
-        history.filter(
-          (entry) => entry.startTime !== activeHistoryEntry.startTime,
-        ),
+        history.filter((entry) => entry.startTime !== activeHistoryEntry.startTime),
       );
       setMessages(activeHistoryEntry.messages);
       setStartTime(Date.now());
@@ -182,17 +166,15 @@ export const History = memo(function History({ setMessages }: Props) {
     () =>
       (!searchTerms
         ? conversationHistory
-        : conversationHistory.filter((entry) => {
-            return searchTerms.every((term) =>
+        : conversationHistory.filter((entry) =>
+            searchTerms.every((term) =>
               entry.messages.some((message) =>
                 message.parts.some(
-                  (part) =>
-                    part.type === "text" &&
-                    part.text.toLowerCase().includes(term),
+                  (part) => part.type === "text" && part.text.toLowerCase().includes(term),
                 ),
               ),
-            );
-          })
+            ),
+          )
       ).toReversed(),
     [conversationHistory, searchTerms],
   );
@@ -202,12 +184,7 @@ export const History = memo(function History({ setMessages }: Props) {
   });
 
   return (
-    <Dialog
-      suppressNativeFocus
-      isModal={false}
-      isOpen={isOpen}
-      onClose={handleCloseHistory}
-    >
+    <Dialog suppressNativeFocus isModal={false} isOpen={isOpen} onClose={handleCloseHistory}>
       <StyledHistory type="overview">
         <HistoryHeader />
 
@@ -232,10 +209,7 @@ export const History = memo(function History({ setMessages }: Props) {
 
       {activeHistoryEntry && (
         <StyledHistory type="entry">
-          <Button
-            onClick={handleRestoreHistoryEntry}
-            style={{ alignSelf: "flex-end" }}
-          >
+          <Button onClick={handleRestoreHistoryEntry} style={{ alignSelf: "flex-end" }}>
             Restore
           </Button>
           <Messages messages={activeHistoryEntry.messages} />

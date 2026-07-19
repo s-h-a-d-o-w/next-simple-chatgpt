@@ -2,7 +2,7 @@ import { ChangeEventHandler, useCallback } from "react";
 import { useAtom } from "jotai";
 import { Textarea } from "@/components/Textarea";
 import { styled } from "@/styled-system/jsx";
-import { cloneDeep, debounce } from "lodash-es";
+import { debounce } from "lodash-es";
 import { systemPromptAtom } from "../atoms";
 import { config } from "@/config";
 import type { SetMessages } from "@/types";
@@ -37,11 +37,9 @@ export function SystemPrompt({ setMessages }: Props) {
   const syncSystemMessage = useCallback(
     (content: string) => {
       setMessages((innerMessages) => {
-        const nextMessages = cloneDeep(innerMessages);
-        const systemIndex = nextMessages.findIndex(
-          (message) => message.role === "system",
-        );
-        if (systemIndex >= 0 && nextMessages[systemIndex]) {
+        const nextMessages = structuredClone(innerMessages);
+        const systemIndex = nextMessages.findIndex((message) => message.role === "system");
+        if (systemIndex !== -1 && nextMessages[systemIndex]) {
           nextMessages[systemIndex].parts = [{ type: "text", text: content }];
         } else {
           nextMessages.unshift({
@@ -66,23 +64,18 @@ export function SystemPrompt({ setMessages }: Props) {
     [syncSystemMessage],
   );
 
-  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> =
-    useCallback(
-      (event) => {
-        setSystemPrompt(event.target.value);
-        debouncedSyncSystemMessage(event.target.value);
-      },
-      [debouncedSyncSystemMessage, setSystemPrompt],
-    );
+  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      setSystemPrompt(event.target.value);
+      debouncedSyncSystemMessage(event.target.value);
+    },
+    [debouncedSyncSystemMessage, setSystemPrompt],
+  );
 
   return (
     <StyledForm>
       <div>System prompt</div>
-      <StyledTextArea
-        name="prompt"
-        value={systemPrompt}
-        onChange={handleChangeSystemInput}
-      />
+      <StyledTextArea name="prompt" value={systemPrompt} onChange={handleChangeSystemInput} />
     </StyledForm>
   );
 }
