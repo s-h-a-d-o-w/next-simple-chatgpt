@@ -1,4 +1,4 @@
-import sharedConfig from "@s-h-a-d-o-w/oxlint-config/oxlint.js";
+import sharedConfig from "@s-h-a-d-o-w/oxlint-config/lint.js";
 import { defineConfig } from "oxlint";
 
 export default defineConfig({

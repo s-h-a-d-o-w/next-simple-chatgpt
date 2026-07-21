@@ -1,4 +1,4 @@
-import baseConfig from "@s-h-a-d-o-w/oxlint-config/oxfmt.js";
+import baseConfig from "@s-h-a-d-o-w/oxlint-config/fmt.js";
 import { defineConfig } from "oxfmt";
 
 export default defineConfig({

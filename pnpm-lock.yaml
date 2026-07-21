@@ -85,8 +85,8 @@ importers:
         specifier: ^1.61.1
         version: 1.61.1
       '@s-h-a-d-o-w/oxlint-config':
-        specifier: ^1.0.4
-        version: 1.0.4(oxfmt@0.58.0)(oxlint-tsgolint@0.24.0)(oxlint@1.74.0(oxlint-tsgolint@0.24.0))
+        specifier: ^1.1.2
+        version: 1.1.2(oxfmt@0.58.0)(oxlint-tsgolint@0.24.0)(oxlint@1.74.0(oxlint-tsgolint@0.24.0))
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -1175,8 +1175,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@s-h-a-d-o-w/oxlint-config@1.0.4':
-    resolution: {integrity: sha512-Y/S4WqwP8BBw6kWZGhM0HpcaSO6ZxwuZKfAKRy5v3i+twIwGqoAjFOORnM8wM5wGgI7kS4gZ8oLqB30I9DuRXg==}
+  '@s-h-a-d-o-w/oxlint-config@1.1.2':
+    resolution: {integrity: sha512-9TyWgP9vFY7HZxFVVVEbbvVeEs3x0mjKtep7NW1fPjy6fUJ0RwF+P85GlPfyKb929QC9gZ0nSLhMbP9Y+8KNYA==}
     peerDependencies:
       oxfmt: '*'
       oxlint: '*'
@@ -2562,8 +2562,8 @@ packages:
     resolution: {integrity: sha512-SoSL4+OSEtR99LHFZQiJLkT59C5B1amGO1NzTwj7TT1qCUgUO6hxOvzkOYxD+vMrXBM3XJIKzokoERdqQq/Zmg==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postcss@8.5.19:
-    resolution: {integrity: sha512-Mz8SaolMd8nB+G13WkORcxQKHZ/NE4xXevtkJHVuG+guo9/wYKlIMTKAqGdEmYOXR2ijPjTYNHssizdaVSUNdQ==}
+  postcss@8.5.18:
+    resolution: {integrity: sha512-xdB1oSLHbz1vRWgCDalrCqEFTWzFlhqFC5tIHLMOSUIjhm3XXQ1qrFy8S/ESr1JYRRXqM3c1QFiMZUJdUTqyMQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   presentable-error@0.0.1:
@@ -3940,7 +3940,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@s-h-a-d-o-w/oxlint-config@1.0.4(oxfmt@0.58.0)(oxlint-tsgolint@0.24.0)(oxlint@1.74.0(oxlint-tsgolint@0.24.0))':
+  '@s-h-a-d-o-w/oxlint-config@1.1.2(oxfmt@0.58.0)(oxlint-tsgolint@0.24.0)(oxlint@1.74.0(oxlint-tsgolint@0.24.0))':
     dependencies:
       oxfmt: 0.58.0
       oxlint: 1.74.0(oxlint-tsgolint@0.24.0)
@@ -5471,7 +5471,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postcss@8.5.19:
+  postcss@8.5.18:
     dependencies:
       nanoid: 3.3.16
       picocolors: 1.1.1
@@ -5979,7 +5979,7 @@ snapshots:
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.5
-      postcss: 8.5.19
+      postcss: 8.5.18
       rolldown: 1.1.5
       tinyglobby: 0.2.17
     optionalDependencies:
