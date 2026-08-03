@@ -10,25 +10,33 @@ const cellStyle = css({
   },
 });
 
-export const HeaderCell = ({
+export function HeaderCell({
   node,
   children,
   ...props
-}: ClassAttributes<HTMLTableCellElement> & HTMLAttributes<HTMLTableCellElement> & ExtraProps) => (
-  <th {...props} className={cellStyle}>
-    {children}
-  </th>
-);
+}: ClassAttributes<HTMLTableCellElement> &
+  HTMLAttributes<HTMLTableCellElement> &
+  ExtraProps) {
+  return (
+    <th {...props} className={cellStyle}>
+      {children}
+    </th>
+  );
+}
 
-export const Cell = ({
+export function Cell({
   node,
   children,
   ...props
-}: ClassAttributes<HTMLTableCellElement> & HTMLAttributes<HTMLTableCellElement> & ExtraProps) => (
-  <td {...props} className={cellStyle}>
-    {children}
-  </td>
-);
+}: ClassAttributes<HTMLTableCellElement> &
+  HTMLAttributes<HTMLTableCellElement> &
+  ExtraProps) {
+  return (
+    <td {...props} className={cellStyle}>
+      {children}
+    </td>
+  );
+}
 
 const rowStyle = css({
   _even: {
@@ -39,12 +47,16 @@ const rowStyle = css({
   },
 });
 
-export const Row = ({
+export function Row({
   node,
   children,
   ...props
-}: ClassAttributes<HTMLTableRowElement> & HTMLAttributes<HTMLTableRowElement> & ExtraProps) => (
-  <tr {...props} className={rowStyle}>
-    {children}
-  </tr>
-);
+}: ClassAttributes<HTMLTableRowElement> &
+  HTMLAttributes<HTMLTableRowElement> &
+  ExtraProps) {
+  return (
+    <tr {...props} className={rowStyle}>
+      {children}
+    </tr>
+  );
+}

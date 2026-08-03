@@ -1,8 +1,10 @@
 import DialogImplementation, { type DialogProps } from "./DialogImplementation";
 import { ClientOnly } from "./ClientOnly";
 
-export const Dialog = ({ ...props }: DialogProps) => (
-  <ClientOnly>
-    <DialogImplementation {...props} />
-  </ClientOnly>
-);
+export function Dialog({ ...props }: DialogProps) {
+  return (
+    <ClientOnly>
+      <DialogImplementation {...props} />
+    </ClientOnly>
+  );
+}
