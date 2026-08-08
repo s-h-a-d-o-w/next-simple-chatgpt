@@ -6,7 +6,7 @@ const models = await fetchModels();
 
 describe(getCost, () => {
   it("handles usage without cached tokens", () => {
-    const result = getCost(models["gpt-5.4"], {
+    const result = getCost(models["gpt-5.6-sol"], {
       inputTokens: 1359,
       outputTokens: 15,
       cacheReadTokens: 0,
@@ -17,14 +17,14 @@ describe(getCost, () => {
   });
 
   it("handles usage with cached tokens", () => {
-    const result = getCost(models["gpt-5.4"], {
+    const result = getCost(models["gpt-5.6-sol"], {
       inputTokens: 1380,
       outputTokens: 33,
       cacheReadTokens: 128_000,
       cacheWriteTokens: 0,
     });
 
-    expect(result).toMatchInlineSnapshot(`0.04`);
+    expect(result).toMatchInlineSnapshot(`0.08`);
   });
 
   it("handles usage with cache writes", () => {

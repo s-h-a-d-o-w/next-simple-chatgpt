@@ -13,16 +13,16 @@ let remoteModelsCache: RemoteModelsCache | undefined = undefined;
 
 const modelSelection = [
   "gpt-4.1",
-  "claude-opus-4-8",
+  "claude-opus-5",
   "claude-haiku-4-5",
-  "gpt-5.4",
+  "gpt-5.6-sol",
   "openrouter/z-ai/glm-5",
 ] as const;
 
 // How we want to use certain models by default.
 const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
-  "gpt-5.4": {
-    reasoningEffort: "low",
+  "gpt-5.6-sol": {
+    reasoningEffort: "medium",
   },
   "openrouter/z-ai/glm-5": {
     extraBody: {
