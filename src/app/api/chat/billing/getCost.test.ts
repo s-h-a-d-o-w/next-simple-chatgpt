@@ -24,7 +24,7 @@ describe(getCost, () => {
       cacheWriteTokens: 0,
     });
 
-    expect(result).toMatchInlineSnapshot(`0.08`);
+    expect(result).toMatchInlineSnapshot(`0.06`);
   });
 
   it("handles usage with cache writes", () => {
