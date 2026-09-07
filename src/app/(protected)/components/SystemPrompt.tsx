@@ -1,8 +1,8 @@
-import { ChangeEventHandler, useCallback } from "react";
+import { ChangeEventHandler, useCallback, useEffect } from "react";
 import { useAtom } from "jotai";
 import { Textarea } from "@/components/Textarea";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { styled } from "@/styled-system/jsx";
-import { debounce } from "lodash-es";
 import { systemPromptAtom } from "../atoms";
 import { config } from "@/config";
 import type { SetMessages } from "@/types";
@@ -33,12 +33,18 @@ const StyledTextArea = styled(Textarea, {
 
 export function SystemPrompt({ setMessages }: Props) {
   const [systemPrompt, setSystemPrompt] = useAtom(systemPromptAtom);
+  const debouncedSystemPrompt = useDebouncedValue(
+    systemPrompt,
+    config.ui.systemMessageDebounce,
+  );
 
   const syncSystemMessage = useCallback(
     (content: string) => {
       setMessages((innerMessages) => {
         const nextMessages = structuredClone(innerMessages);
-        const systemIndex = nextMessages.findIndex((message) => message.role === "system");
+        const systemIndex = nextMessages.findIndex(
+          (message) => message.role === "system",
+        );
         if (systemIndex !== -1 && nextMessages[systemIndex]) {
           nextMessages[systemIndex].parts = [{ type: "text", text: content }];
         } else {
@@ -54,28 +60,26 @@ export function SystemPrompt({ setMessages }: Props) {
     [setMessages],
   );
 
-  // Syncs the system prompt into the array of messages when it changes.
-  // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
-  const debouncedSyncSystemMessage = useCallback(
-    // oxlint-disable-next-line react/react-compiler
-    debounce((content: string) => {
-      syncSystemMessage(content);
-    }, config.ui.systemMessageDebounce),
-    [syncSystemMessage],
-  );
+  useEffect(() => {
+    syncSystemMessage(debouncedSystemPrompt);
+  }, [debouncedSystemPrompt, syncSystemMessage]);
 
-  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
-    (event) => {
-      setSystemPrompt(event.target.value);
-      debouncedSyncSystemMessage(event.target.value);
-    },
-    [debouncedSyncSystemMessage, setSystemPrompt],
-  );
+  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> =
+    useCallback(
+      (event) => {
+        setSystemPrompt(event.target.value);
+      },
+      [setSystemPrompt],
+    );
 
   return (
     <StyledForm>
       <div>System prompt</div>
-      <StyledTextArea name="prompt" value={systemPrompt} onChange={handleChangeSystemInput} />
+      <StyledTextArea
+        name="prompt"
+        value={systemPrompt}
+        onChange={handleChangeSystemInput}
+      />
     </StyledForm>
   );
 }

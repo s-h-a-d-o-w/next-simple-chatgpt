@@ -1,18 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { UIMessage } from "ai";
+import { useCallback, useEffect, useRef } from "react";
 
-// Scroll to bottom whenever last non-user message changes
-export function useScrollToBottom(doScroll: boolean, messages: UIMessage[]) {
+// Scroll to bottom while the document grows (e.g. a response streaming in)
+export function useScrollToBottom(doScroll: boolean) {
   const hasUserScrolledUp = useRef(false);
-
-  const scrollKey = useMemo(() => {
-    const last = messages.at(-1);
-    if (!last || last.role === "user") {
-      return 0;
-    }
-    const text = last.parts.findLast((p) => p.type === "text")?.text;
-    return text?.length;
-  }, [messages]);
 
   // Detect whether user scrolled up
   const handleUserScroll = useCallback(() => {
@@ -39,13 +29,26 @@ export function useScrollToBottom(doScroll: boolean, messages: UIMessage[]) {
 
   // Throughout scrolling
   useEffect(() => {
-    if (!doScroll || hasUserScrolledUp.current) {
+    if (!doScroll) {
       return;
     }
 
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "instant",
-    });
-  }, [doScroll, scrollKey]);
+    const scrollToBottom = () => {
+      if (hasUserScrolledUp.current) {
+        return;
+      }
+
+      console.log("scrolling to bottom");
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "instant",
+      });
+    };
+    scrollToBottom();
+
+    const observer = new ResizeObserver(scrollToBottom);
+    observer.observe(document.body);
+
+    return () => observer.disconnect();
+  }, [doScroll]);
 }

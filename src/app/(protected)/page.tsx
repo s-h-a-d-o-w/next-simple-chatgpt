@@ -1,14 +1,18 @@
 import "@/styles/prism-theme.css";
 import { fetchModels } from "@/lib/server/models";
 import HomeClient from "./HomeClient";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { MODELS_QUERY_KEY } from "@/lib/utils/queryKeys";
 import { ClientOnly } from "@/components/ClientOnly";
 
 export default async function Home() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
+  await queryClient.query({
     queryKey: MODELS_QUERY_KEY,
     queryFn: fetchModels,
   });
