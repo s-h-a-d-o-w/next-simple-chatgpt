@@ -1,6 +1,6 @@
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
-import { debounce } from "lodash-es";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import {
   useHistory,
   type HistoryEntryV1,
@@ -107,7 +107,8 @@ export const History = memo(function History({ setMessages }: Props) {
 
   const [conversationHistory, setConversationHistory] = useHistory();
 
-  const [searchTerms, setSearchTerms] = useState<string[]>();
+  const [searchValue, setSearchValue] = useState("");
+  const debouncedSearchValue = useDebouncedValue(searchValue, 200);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -169,13 +170,12 @@ export const History = memo(function History({ setMessages }: Props) {
     setSystemPrompt,
   ]);
 
-  // oxlint-disable-next-line react/rule-suppression
-  // oxlint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      setSearchTerms(value === "" ? undefined : value.toLowerCase().split(" "));
-    }, 200),
-    [],
+  const searchTerms = useMemo(
+    () =>
+      debouncedSearchValue === ""
+        ? undefined
+        : debouncedSearchValue.toLowerCase().split(" "),
+    [debouncedSearchValue],
   );
 
   const filteredHistory = useMemo(
@@ -215,7 +215,8 @@ export const History = memo(function History({ setMessages }: Props) {
           ref={searchInputRef}
           type="text"
           placeholder="Search..."
-          onChange={(e) => debouncedSearch(e.target.value)}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
         />
 
         <List
