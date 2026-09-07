@@ -89,7 +89,7 @@ function HomeClient() {
 
   const [conversationHistory] = useSyncHistory(isLoading, startTime, messages);
 
-  useScrollToBottom(isLoading, messages);
+  useScrollToBottom(isLoading);
 
   const handleDeleteMessage = useCallback(
     (id: string) => {

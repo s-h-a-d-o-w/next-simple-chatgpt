@@ -38,7 +38,9 @@ export function SystemPrompt({ setMessages }: Props) {
     (content: string) => {
       setMessages((innerMessages) => {
         const nextMessages = structuredClone(innerMessages);
-        const systemIndex = nextMessages.findIndex((message) => message.role === "system");
+        const systemIndex = nextMessages.findIndex(
+          (message) => message.role === "system",
+        );
         if (systemIndex !== -1 && nextMessages[systemIndex]) {
           nextMessages[systemIndex].parts = [{ type: "text", text: content }];
         } else {
@@ -55,27 +57,32 @@ export function SystemPrompt({ setMessages }: Props) {
   );
 
   // Syncs the system prompt into the array of messages when it changes.
-  // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react/rule-suppression
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSyncSystemMessage = useCallback(
-    // oxlint-disable-next-line react/react-compiler
     debounce((content: string) => {
       syncSystemMessage(content);
     }, config.ui.systemMessageDebounce),
     [syncSystemMessage],
   );
 
-  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
-    (event) => {
-      setSystemPrompt(event.target.value);
-      debouncedSyncSystemMessage(event.target.value);
-    },
-    [debouncedSyncSystemMessage, setSystemPrompt],
-  );
+  const handleChangeSystemInput: ChangeEventHandler<HTMLTextAreaElement> =
+    useCallback(
+      (event) => {
+        setSystemPrompt(event.target.value);
+        debouncedSyncSystemMessage(event.target.value);
+      },
+      [debouncedSyncSystemMessage, setSystemPrompt],
+    );
 
   return (
     <StyledForm>
       <div>System prompt</div>
-      <StyledTextArea name="prompt" value={systemPrompt} onChange={handleChangeSystemInput} />
+      <StyledTextArea
+        name="prompt"
+        value={systemPrompt}
+        onChange={handleChangeSystemInput}
+      />
     </StyledForm>
   );
 }
