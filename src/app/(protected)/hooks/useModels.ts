@@ -4,7 +4,7 @@ import type { Models } from "@/lib/server/models";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { MODELS_QUERY_KEY } from "@/lib/utils/queryKeys";
 
-const MODELS_REFRESH_INTERVAL_MS = 60 * 60 * 1000; // 60 minutes
+const MODELS_REFRESH_INTERVAL_MS = 60 * 60 * 1_000; // 60 minutes
 
 async function fetchModels() {
   const response = await fetch("/api/models");

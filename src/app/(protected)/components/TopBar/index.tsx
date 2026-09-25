@@ -38,7 +38,10 @@ const StyledButtonGroup = styled("div", {
   },
 });
 
-export const TopBar = memo(function TopBar({ disabledHistoryActions, hasFilesInChat }: Props) {
+export const TopBar = memo(function TopBar({
+  disabledHistoryActions,
+  hasFilesInChat,
+}: Props) {
   const setChatId = useSetAtom(chatIdAtom);
   const setFiles = useSetAtom(promptFilesAtom);
   const setIsHistoryOpen = useSetAtom(isHistoryOpenAtom);
@@ -58,7 +61,12 @@ export const TopBar = memo(function TopBar({ disabledHistoryActions, hasFilesInC
     <StyledActions>
       <ModelSelector showAttachmentModelsOnly={hasFilesInChat} />
       <StyledButtonGroup>
-        <IconButton name="reset" iconSize="md" onClick={handleReset} label="Reset" />
+        <IconButton
+          name="reset"
+          iconSize="md"
+          onClick={handleReset}
+          label="Reset"
+        />
         <IconButton
           name="history"
           iconSize="md"

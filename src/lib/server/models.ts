@@ -1,15 +1,9 @@
+import { unstable_rethrow } from "next/navigation";
 import { getModelsFromFilesystem } from "./getModelsFromFilesystem";
 import type { LiteLLMModelInfo } from "@/types";
 
-const REVALIDATE_SECONDS = 6 * 60 * 60; // 6 hours
 const LITELLM_MODELS_URL =
   "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json";
-type RemoteModelsCache = {
-  expiresAt: number;
-  promise: Promise<Record<string, LiteLLMModelInfo>>;
-};
-
-let remoteModelsCache: RemoteModelsCache | undefined = undefined;
 
 const modelSelection = [
   "gpt-4.1",
@@ -76,6 +70,7 @@ function isModels(models: Partial<Models>): models is Models {
 }
 
 async function fetchRemoteModels() {
+  // The upstream file is several MB, which exceeds the 2 MB limit of Next's data cache.
   const response = await fetch(LITELLM_MODELS_URL, {
     cache: "no-store",
     signal: AbortSignal.timeout(30_000),
@@ -88,49 +83,7 @@ async function fetchRemoteModels() {
   return (await response.json()) as Record<string, LiteLLMModelInfo>;
 }
 
-function getRemoteModels() {
-  const now = Date.now();
-
-  if (!remoteModelsCache || remoteModelsCache.expiresAt <= now) {
-    const promise = fetchRemoteModels().catch((error: unknown) => {
-      remoteModelsCache = undefined;
-      throw error;
-    });
-
-    if (!remoteModelsCache) {
-      remoteModelsCache = {
-        expiresAt: now + REVALIDATE_SECONDS * 1000,
-        promise,
-      };
-    } else {
-      promise
-        .then((data) => {
-          remoteModelsCache = {
-            expiresAt: now + REVALIDATE_SECONDS * 1000,
-            promise: Promise.resolve(data),
-          };
-        })
-        .catch((error: unknown) => {
-          remoteModelsCache = undefined;
-          throw error;
-        });
-    }
-  }
-
-  return remoteModelsCache.promise;
-}
-
-export async function fetchModels() {
-  let data: Record<string, LiteLLMModelInfo>;
-
-  try {
-    data = await getRemoteModels();
-  } catch (error) {
-    console.error("Failed to fetch model data:", error);
-
-    data = await getModelsFromFilesystem();
-  }
-
+function selectModels(data: Record<string, LiteLLMModelInfo>) {
   const nextModels: Partial<Models> = {};
   for (const modelId of modelSelection) {
     const liteLLMInfo = data[modelId];
@@ -156,4 +109,17 @@ export async function fetchModels() {
   }
 
   return nextModels;
+}
+
+export async function fetchModels() {
+  try {
+    return selectModels(await fetchRemoteModels());
+  } catch (error) {
+    // Next.js signals dynamic rendering/redirects via thrown errors.
+    unstable_rethrow(error);
+
+    console.error("Failed to fetch model data:", error);
+
+    return selectModels(await getModelsFromFilesystem());
+  }
 }

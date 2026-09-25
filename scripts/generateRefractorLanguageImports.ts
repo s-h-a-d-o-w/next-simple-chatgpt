@@ -6,7 +6,8 @@ type LanguageAlias = {
   aliases: string[];
 };
 
-const refractorLanguagesPath = "src/app/(protected)/components/Message/Code/refractorLanguages.ts";
+const refractorLanguagesPath =
+  "src/app/(protected)/components/Message/Code/refractorLanguages.ts";
 
 function getAvailableLanguages() {
   try {
@@ -16,7 +17,8 @@ function getAvailableLanguages() {
     const aliases: LanguageAlias[] = modules
       .map((file) => {
         const content = readFileSync(path.join(langDir, file), "utf8");
-        const match = /\.aliases\s*=\s*(?<aliases>\[(?:'|").+?(?:'|")\])/su.exec(content);
+        const match =
+          /\.aliases\s*=\s*(?<aliases>\[(?:'|").+?(?:'|")\])/su.exec(content);
         return match?.[1]
           ? {
               file: file.replace(".js", ""),
@@ -38,14 +40,19 @@ function getAvailableLanguages() {
   }
 }
 
-function generateLanguageLoader(languages: string[], allAliases: LanguageAlias[]): string {
+function generateLanguageLoader(
+  languages: string[],
+  allAliases: LanguageAlias[],
+): string {
   const imports = languages
     .map((lang) => `  "${lang}": () => import("refractor/${lang}"),`)
     .join("\n");
 
   const aliasImports = allAliases
     .map(({ file, aliases }) =>
-      aliases.map((alias) => `  "${alias}": () => import("refractor/${file}"),`).join("\n"),
+      aliases
+        .map((alias) => `  "${alias}": () => import("refractor/${file}"),`)
+        .join("\n"),
     )
     .join("\n");
 
@@ -77,10 +84,15 @@ function main() {
 
     console.log("🔍 Scanning for available syntax highlighting languages...");
     const [languages, aliases] = getAvailableLanguages();
-    console.log(`📝 Found ${languages.length} languages and ${aliases.length} aliases`);
+    console.log(
+      `📝 Found ${languages.length} languages and ${aliases.length} aliases`,
+    );
 
     console.log("🏗️  Generating language loader...");
-    writeFileSync(refractorLanguagesPath, generateLanguageLoader(languages, aliases));
+    writeFileSync(
+      refractorLanguagesPath,
+      generateLanguageLoader(languages, aliases),
+    );
 
     console.log(`✅ Done`);
   } catch (error) {

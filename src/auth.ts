@@ -57,10 +57,13 @@ const getRequiredEnv = (name: string) => {
 
 const encode = (value: string) => Buffer.from(value).toString("base64url");
 
-const decode = (value: string) => Buffer.from(value, "base64url").toString("utf8");
+const decode = (value: string) =>
+  Buffer.from(value, "base64url").toString("utf8");
 
 const sign = (value: string) =>
-  createHmac("sha256", getRequiredEnv("AUTH_SECRET")).update(value).digest("base64url");
+  createHmac("sha256", getRequiredEnv("AUTH_SECRET"))
+    .update(value)
+    .digest("base64url");
 
 const createSignedValue = (value: unknown) => {
   const payload = encode(JSON.stringify(value));
@@ -68,7 +71,10 @@ const createSignedValue = (value: unknown) => {
   return `${payload}.${sign(payload)}`;
 };
 
-const verifySignedValue = <Schema extends z.ZodType>(value: string, schema: Schema) => {
+const verifySignedValue = <Schema extends z.ZodType>(
+  value: string,
+  schema: Schema,
+) => {
   const [payload, signature] = value.split(".");
 
   if (!payload || !signature) {
@@ -106,7 +112,9 @@ const getCookie = (headers: Headers, name: string) =>
 const isSecureCookie = () => process.env["NODE_ENV"] === "production";
 
 const getBaseUrl = (request: NextRequest) =>
-  process.env["AUTH_URL"] ? new URL(process.env["AUTH_URL"]).origin : request.url;
+  process.env["AUTH_URL"]
+    ? new URL(process.env["AUTH_URL"]).origin
+    : request.url;
 
 const getAuthUrl = (request: NextRequest) =>
   process.env["AUTH_URL"] ??
@@ -153,7 +161,7 @@ export const refreshSession = ({
 
   const refreshedSession = {
     ...session,
-    expiresAt: Date.now() + SESSION_MAX_AGE_SECONDS * 1000,
+    expiresAt: Date.now() + SESSION_MAX_AGE_SECONDS * 1_000,
   } satisfies Session;
 
   setSessionCookie(response, refreshedSession);
@@ -254,7 +262,9 @@ export const finishGitHubSignIn = async (request: NextRequest) => {
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
   const stateCookie = getCookie(request.headers, STATE_COOKIE);
-  const storedState = stateCookie ? verifySignedValue(stateCookie, stateSchema) : undefined;
+  const storedState = stateCookie
+    ? verifySignedValue(stateCookie, stateSchema)
+    : undefined;
 
   if (!code || !state || !storedState || storedState.state !== state) {
     return redirectToLogin(request);
@@ -269,11 +279,13 @@ export const finishGitHubSignIn = async (request: NextRequest) => {
       return redirectToLogin(request);
     }
 
-    const response = NextResponse.redirect(new URL(storedState.callbackPath, getBaseUrl(request)));
+    const response = NextResponse.redirect(
+      new URL(storedState.callbackPath, getBaseUrl(request)),
+    );
 
     clearCookie(response, STATE_COOKIE, "/api/auth");
     setSessionCookie(response, {
-      expiresAt: Date.now() + SESSION_MAX_AGE_SECONDS * 1000,
+      expiresAt: Date.now() + SESSION_MAX_AGE_SECONDS * 1_000,
       user: {
         email,
         githubId: githubUser.id,
@@ -292,7 +304,9 @@ export const finishGitHubSignIn = async (request: NextRequest) => {
 };
 
 export const signOut = (request: NextRequest) => {
-  const response = NextResponse.redirect(new URL("/login", getBaseUrl(request)));
+  const response = NextResponse.redirect(
+    new URL("/login", getBaseUrl(request)),
+  );
 
   deleteAuthCookies(response);
 

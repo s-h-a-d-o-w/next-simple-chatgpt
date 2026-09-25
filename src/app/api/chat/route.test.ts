@@ -109,14 +109,15 @@ describe("/api/chat", () => {
     const {
       usage: { cacheWriteTokens },
     } = cacheWriteMetadata;
-    expect(cacheWriteTokens).toBeGreaterThan(4096);
-    const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart.providerMetadata?.["anthropic"]?.[
-      "usage"
-    ] as AnthropicUsage;
-    expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toStrictEqual(cacheWriteTokens);
+    expect(cacheWriteTokens).toBeGreaterThan(4_096);
+    const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart
+      .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
+    expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toStrictEqual(
+      cacheWriteTokens,
+    );
 
     // Attempt at reducing flakiness.
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
 
     const cacheReadMetadata = await callRouteHandler(
       "claude-haiku-4-5",
@@ -125,11 +126,12 @@ describe("/api/chat", () => {
     const {
       usage: { cacheReadTokens, inputTokens, outputTokens },
     } = cacheReadMetadata;
-    expect(cacheReadTokens).toBeGreaterThan(4096);
-    const anthropicCacheReadUsage = cacheReadMetadata.rawPart.providerMetadata?.["anthropic"]?.[
-      "usage"
-    ] as AnthropicUsage;
-    expect(anthropicCacheReadUsage.cache_read_input_tokens).toStrictEqual(cacheReadTokens);
+    expect(cacheReadTokens).toBeGreaterThan(4_096);
+    const anthropicCacheReadUsage = cacheReadMetadata.rawPart
+      .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
+    expect(anthropicCacheReadUsage.cache_read_input_tokens).toStrictEqual(
+      cacheReadTokens,
+    );
     expect(anthropicCacheReadUsage.input_tokens).toStrictEqual(inputTokens);
     expect(anthropicCacheReadUsage.output_tokens).toStrictEqual(outputTokens);
   }, 30_000);
@@ -139,8 +141,11 @@ describe("/api/chat", () => {
 
     const {
       usage: { inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens },
-    } = await callRouteHandler("gpt-4.1", timestamp + " " + longSystemPrompt.slice(0, 7000));
-    expect(inputTokens).toBeGreaterThan(1023);
+    } = await callRouteHandler(
+      "gpt-4.1",
+      timestamp + " " + longSystemPrompt.slice(0, 7_000),
+    );
+    expect(inputTokens).toBeGreaterThan(1_023);
     expect(outputTokens).toBeGreaterThan(0);
     expect(cacheReadTokens).toBe(0);
     expect(cacheWriteTokens).toBe(0);

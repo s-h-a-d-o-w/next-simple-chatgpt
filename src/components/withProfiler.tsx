@@ -1,7 +1,10 @@
 import { isDev } from "@/lib/utils/consts";
 import { Profiler } from "react";
 
-export function withProfiler<T>(Component: React.ComponentType<T>, passThrough = false) {
+export function withProfiler<T>(
+  Component: React.ComponentType<T>,
+  passThrough = false,
+) {
   if (!isDev || passThrough) {
     return Component;
   }
@@ -15,7 +18,7 @@ export function withProfiler<T>(Component: React.ComponentType<T>, passThrough =
             id,
             phase,
             actualDuration,
-            startTime / 1000, // convert to seconds
+            startTime / 1_000, // convert to seconds
           );
         }}
       >

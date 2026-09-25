@@ -28,9 +28,9 @@ export default function GlobalError() {
   return (
     <CenteredMain>
       <StyledMessage>
-        If this was a commercial project, I&apos;d say something like: &quot;We have encountered an
-        unexpected error. It has been reported automatically but if you keep experiencing this
-        please reach out to support.&quot;
+        If this was a commercial project, I&apos;d say something like: &quot;We
+        have encountered an unexpected error. It has been reported automatically
+        but if you keep experiencing this please reach out to support.&quot;
       </StyledMessage>
     </CenteredMain>
   );

@@ -6,9 +6,12 @@ import { useModels } from "./useModels";
 
 export function useModelSelection() {
   const models = useModels();
-  const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>("model", {
-    defaultValue: config.models.default,
-  });
+  const [storedModel, setStoredModel] = useLocalStorageState<ModelKey>(
+    "model",
+    {
+      defaultValue: config.models.default,
+    },
+  );
   const model = useMemo<ModelKey>(
     () => (!(storedModel in models) ? config.models.default : storedModel),
     [storedModel, models],

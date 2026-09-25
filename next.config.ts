@@ -10,4 +10,11 @@ export default {
     // disables running tsc
     ignoreBuildErrors: true,
   },
+  experimental: {
+    turbopackAdditionalRoots: {
+      "pnpm-store": {
+        path: "/.pnpm-store",
+      },
+    },
+  },
 } satisfies NextConfig;

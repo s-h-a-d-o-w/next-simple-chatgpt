@@ -26,7 +26,7 @@ export type ChatRequest = {
 const singleDownload = createDownload();
 
 export const maxDuration = 60;
-const DEV_TIMEOUT = maxDuration * 1000 + 1000; // 1 second more to use environment timeout behavior in production
+const DEV_TIMEOUT = maxDuration * 1_000 + 1_000; // 1 second more to use environment timeout behavior in production
 const loggedErrors = new Set<string>();
 
 const openrouter = createOpenRouter({
@@ -38,7 +38,9 @@ async function processChatRequest(request: ChatRequest) {
   const instructions = rawMessages
     .filter(({ role }) => role === "system")
     .flatMap((message) =>
-      message.parts.filter((part) => part.type === "text").map(({ text }) => text),
+      message.parts
+        .filter((part) => part.type === "text")
+        .map(({ text }) => text),
     )
     .join("\n\n");
   const messages = await convertToModelMessages(
@@ -70,12 +72,17 @@ export const POST = async (req: NextRequest) => {
       Promise.all(
         requestedDownloads
           .map((downloadReq) => {
-            if (downloadReq.isUrlSupportedByModel || downloadReq.url.protocol === "data:") {
+            if (
+              downloadReq.isUrlSupportedByModel ||
+              downloadReq.url.protocol === "data:"
+            ) {
               return undefined;
             }
             return singleDownload(downloadReq);
           })
-          .filter((item): item is NonNullable<typeof item> => item !== undefined),
+          .filter(
+            (item): item is NonNullable<typeof item> => item !== undefined,
+          ),
       ),
     model: isOpenAI
       ? openai(model)

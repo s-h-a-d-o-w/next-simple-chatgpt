@@ -20,7 +20,11 @@ export type HistoryEntryV1 = {
 type LegacyHistoryEntry = HistoryEntryV1;
 
 function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
-  if (isObject(value) && "version" in value && value.version === CURRENT_HISTORY_VERSION) {
+  if (
+    isObject(value) &&
+    "version" in value &&
+    value.version === CURRENT_HISTORY_VERSION
+  ) {
     return (value as HistoryV1).history;
   }
 
@@ -29,7 +33,8 @@ function maybeMigrateHistory(value: unknown): HistoryEntryV1[] {
 }
 
 export const historySerializer = {
-  stringify: (value: unknown) => stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
+  stringify: (value: unknown) =>
+    stringify({ version: CURRENT_HISTORY_VERSION, history: value }),
   parse: (value: string) => maybeMigrateHistory(parse(value)),
 };
 
@@ -49,10 +54,13 @@ function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
 }
 
 export function useHistory(namespace?: string) {
-  return useLocalStorageState<HistoryEntryV1[]>(`history${namespace ? `-${namespace}` : ""}`, {
-    defaultValue: [],
-    serializer: historySerializer,
-  });
+  return useLocalStorageState<HistoryEntryV1[]>(
+    `history${namespace ? `-${namespace}` : ""}`,
+    {
+      defaultValue: [],
+      serializer: historySerializer,
+    },
+  );
 }
 
 export function useSyncHistory(

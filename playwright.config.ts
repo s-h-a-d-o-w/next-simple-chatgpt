@@ -1,13 +1,17 @@
-import { defineConfig, devices, type PlaywrightTestConfig } from "@playwright/test";
+import {
+  defineConfig,
+  devices,
+  type PlaywrightTestConfig,
+} from "@playwright/test";
 
 const isDev = process.env["NODE_ENV"] !== "production";
 const baseURL = process.env["AUTH_URL"]
   ? new URL(process.env["AUTH_URL"]).origin
-  : `http://localhost:${process.env["PORT"] ?? 3000}`;
+  : `http://localhost:${process.env["PORT"] ?? 3_000}`;
 
 const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
   url: baseURL,
-  timeout: 20 * 1000,
+  timeout: 20 * 1_000,
   ignoreHTTPSErrors: true,
   stdout: "pipe",
   stderr: "pipe",

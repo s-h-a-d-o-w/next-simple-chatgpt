@@ -3,5 +3,10 @@
 
   "features": {
     "ghcr.io/s-h-a-d-o-w/devcontainers-features/js-base": {}
+  },
+
+  // until next next.js release
+  "containerEnv": {
+    "pnpm_config_enable_global_virtual_store": "false"
   }
 }

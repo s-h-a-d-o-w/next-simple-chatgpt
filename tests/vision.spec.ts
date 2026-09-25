@@ -23,8 +23,14 @@ async function addFile(page: Page, filePath: string) {
 test(`Vision works correctly with PDF`, async ({ page }) => {
   await page.goto("/");
 
-  await addFile(page, path.join(toDirname(import.meta.url), "./data/vision.pdf"));
-  await submitPrompt(page, "What number can you see here? (No commentary, just output the number)");
+  await addFile(
+    page,
+    path.join(toDirname(import.meta.url), "./data/vision.pdf"),
+  );
+  await submitPrompt(
+    page,
+    "What number can you see here? (No commentary, just output the number)",
+  );
 
   await expect(page.locator('[data-testid$="-assistant"]')).toHaveText("427");
 });
@@ -32,8 +38,14 @@ test(`Vision works correctly with PDF`, async ({ page }) => {
 test(`Vision works correctly with PNG`, async ({ page }) => {
   await page.goto("/");
 
-  await addFile(page, path.join(toDirname(import.meta.url), "./data/vision.png"));
-  await submitPrompt(page, "What number can you see here? (No commentary, just output the number)");
+  await addFile(
+    page,
+    path.join(toDirname(import.meta.url), "./data/vision.png"),
+  );
+  await submitPrompt(
+    page,
+    "What number can you see here? (No commentary, just output the number)",
+  );
 
   await expect(page.locator('[data-testid$="-assistant"]')).toHaveText("427");
 });

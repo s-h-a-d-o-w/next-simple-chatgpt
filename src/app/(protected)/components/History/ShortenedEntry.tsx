@@ -47,7 +47,11 @@ export function ShortenedEntry({
             : ""}
         </div>
         <div style={{ position: "relative" }}>
-          <Message {...firstUserMessage} shortened onClick={() => onSetActiveHistoryEntry(entry)} />
+          <Message
+            {...firstUserMessage}
+            shortened
+            onClick={() => onSetActiveHistoryEntry(entry)}
+          />
           <StyledDeleteButton
             name="delete"
             type="button"

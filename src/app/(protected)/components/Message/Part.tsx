@@ -47,7 +47,11 @@ const MemoizedReactMarkdown = memo(
   (prevProps, nextProps) => prevProps.children === nextProps.children,
 );
 
-function ToolInvocation({ toolInvocation }: { toolInvocation: ToolUIPart | DynamicToolUIPart }) {
+function ToolInvocation({
+  toolInvocation,
+}: {
+  toolInvocation: ToolUIPart | DynamicToolUIPart;
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const toolName =
     toolInvocation.type === "dynamic-tool"
@@ -74,7 +78,9 @@ function ToolInvocation({ toolInvocation }: { toolInvocation: ToolUIPart | Dynam
           "..."
         )
       ) : (
-        <Spinner style={{ display: "inline-block", width: "16rem", height: "16rem" }} />
+        <Spinner
+          style={{ display: "inline-block", width: "16rem", height: "16rem" }}
+        />
       )}
       {Boolean(output) && (
         <div
@@ -98,7 +104,11 @@ function ToolInvocation({ toolInvocation }: { toolInvocation: ToolUIPart | Dynam
   );
 }
 
-export function Part({ part }: { part: NonNullable<UIMessage["parts"]>[number] }) {
+export function Part({
+  part,
+}: {
+  part: NonNullable<UIMessage["parts"]>[number];
+}) {
   return part.type === "text" ? (
     <MemoizedReactMarkdown
       remarkPlugins={remarkPlugins}

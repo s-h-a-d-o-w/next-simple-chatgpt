@@ -25,7 +25,9 @@ test("should delete individual messages correctly", async ({ page }) => {
   await expect(assistantMessages).toHaveCount(3);
 
   // Delete the middle message
-  const secondUserMessage = userMessages.getByText("Second message").locator("../..");
+  const secondUserMessage = userMessages
+    .getByText("Second message")
+    .locator("../..");
   await secondUserMessage.getByRole("button", { name: "delete" }).click();
 
   // Verify remaining messages are correct
@@ -51,7 +53,9 @@ test("should handle rapid consecutive deletions", async ({ page }) => {
 
   // Delete messages rapidly without waiting
   for (let i = 1; i <= 3; i++) {
-    const message = main.getByText(`Message ${i}`, { exact: true }).locator("../..");
+    const message = main
+      .getByText(`Message ${i}`, { exact: true })
+      .locator("../..");
     await message.getByRole("button", { name: "delete" }).click();
   }
 
