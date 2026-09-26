@@ -1,5 +1,5 @@
 import { config } from "@/config";
-import type { ModelKey } from "@/lib/server/models";
+import type { ModelKey } from "@/lib/models";
 import useLocalStorageState from "use-local-storage-state";
 import { useMemo, useEffect } from "react";
 import { useModels } from "./useModels";

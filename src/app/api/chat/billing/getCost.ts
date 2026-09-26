@@ -1,4 +1,4 @@
-import type { ModelConfig } from "@/lib/server/models";
+import type { ModelConfig } from "@/lib/models";
 import type { NormalizedUsage } from "../normalizeUsage";
 
 export function getCost(

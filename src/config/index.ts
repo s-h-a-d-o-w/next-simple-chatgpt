@@ -1,5 +1,5 @@
 import { isTest } from "@/lib/utils/consts";
-import type { ModelKey } from "@/lib/server/models";
+import type { ModelKey } from "@/lib/models";
 
 export const config = {
   ui: {

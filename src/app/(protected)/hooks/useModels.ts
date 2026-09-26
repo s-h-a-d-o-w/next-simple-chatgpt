@@ -1,6 +1,6 @@
 "use client";
 
-import type { Models } from "@/lib/server/models";
+import type { Models } from "@/lib/models";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { MODELS_QUERY_KEY } from "@/lib/utils/queryKeys";
 

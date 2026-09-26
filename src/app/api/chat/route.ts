@@ -1,5 +1,6 @@
 import { authGuard } from "@/lib/server/authGuard";
-import { fetchModels, type ModelKey } from "@/lib/server/models";
+import type { ModelKey } from "@/lib/models";
+import { fetchModels } from "@/lib/server/models";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";

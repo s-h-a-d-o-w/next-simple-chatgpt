@@ -1,17 +1,15 @@
 import { unstable_rethrow } from "next/navigation";
 import { getModelsFromFilesystem } from "./getModelsFromFilesystem";
+import {
+  modelSelection,
+  type ModelConfig,
+  type ModelKey,
+  type Models,
+} from "@/lib/models";
 import type { LiteLLMModelInfo } from "@/types";
 
 const LITELLM_MODELS_URL =
   "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json";
-
-const modelSelection = [
-  "gpt-4.1",
-  "claude-opus-5",
-  "claude-haiku-4-5",
-  "gpt-5.6-sol",
-  "openrouter/z-ai/glm-5",
-] as const;
 
 // How we want to use certain models by default.
 const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
@@ -26,23 +24,6 @@ const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
     },
   },
 };
-
-export type ModelConfig = {
-  name: ModelKey; // Maybe we'll have beautified names here later.
-  input: number;
-  output: number;
-  provider: string;
-
-  cacheRead?: number;
-  cacheWrite?: number;
-  extraBody?: Record<string, unknown>;
-  supportsAttachments: boolean;
-  reasoningEffort?: "low" | "medium" | "high";
-};
-
-export type ModelKey = (typeof modelSelection)[number];
-
-export type Models = Record<ModelKey, ModelConfig>;
 
 function perTokenToPerMillion(costPerToken: number) {
   const result = costPerToken * 1_000_000;

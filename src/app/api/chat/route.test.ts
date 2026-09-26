@@ -1,7 +1,7 @@
 import { POST, type ChatRequest } from "./route";
 import { it, describe, expect } from "vitest";
 import { NextRequest } from "next/server";
-import type { ModelKey } from "@/lib/server/models";
+import type { ModelKey } from "@/lib/models";
 import type { Metadata, AnthropicUsage } from "@/types";
 
 // Haiku 4.5 requires a minimum of 4096 tokens for caching

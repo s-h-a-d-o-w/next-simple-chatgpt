@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { fetchModels } from "@/lib/server/models";
+import { modelSelection } from "@/lib/models";
 
-for (const modelId of Object.keys(await fetchModels())) {
+for (const modelId of modelSelection) {
   test(`Model ${modelId} generates a valid response`, async ({ page }) => {
     await page.goto("/");
 

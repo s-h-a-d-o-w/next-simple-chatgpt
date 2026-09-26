@@ -1,4 +1,4 @@
-import type { ModelKey } from "@/lib/server/models";
+import type { ModelKey } from "@/lib/models";
 import { MdImage } from "react-icons/md";
 import { styled } from "@/styled-system/jsx";
 import { objectEntries } from "@/lib/utils/objectEntries";

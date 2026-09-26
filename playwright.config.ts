@@ -3,11 +3,13 @@ import {
   devices,
   type PlaywrightTestConfig,
 } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 
 const isDev = process.env["NODE_ENV"] !== "production";
+const port = process.env["PORT"] ?? 3_000;
 const baseURL = process.env["AUTH_URL"]
   ? new URL(process.env["AUTH_URL"]).origin
-  : `http://localhost:${process.env["PORT"] ?? 3_000}`;
+  : `http://localhost:${port}`;
 
 const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
   url: baseURL,
@@ -20,6 +22,20 @@ const sharedWebServerOptions: Partial<PlaywrightTestConfig["webServer"]> = {
     NEXT_PUBLIC_TEST: "true",
   },
 } as const;
+
+// kill possible existing server on the port, but only if we're not running in a test worker
+if (!isDev && process.env["TEST_WORKER_INDEX"] === undefined) {
+  execFileSync(
+    "sh",
+    [
+      "-c",
+      `(lsof -tiTCP:"$1" -sTCP:LISTEN 2>/dev/null || ss -H -ltnp "sport = :$1" 2>/dev/null | sed -n 's/.*pid=\\([0-9][0-9]*\\).*/\\1/p') | xargs -r kill -9`,
+      "sh",
+      String(port),
+    ],
+    { stdio: "ignore" },
+  );
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -76,7 +92,11 @@ export default defineConfig({
       }
     : {
         reuseExistingServer: false,
-        command: "pnpm start",
+        command: "node --env-file=.env.local .next/standalone/server.js",
         ...sharedWebServerOptions,
+        env: {
+          ...sharedWebServerOptions.env,
+          HOSTNAME: "0.0.0.0",
+        },
       },
 });

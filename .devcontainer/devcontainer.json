@@ -5,8 +5,12 @@
     "ghcr.io/s-h-a-d-o-w/devcontainers-features/js-base": {}
   },
 
-  // until next next.js release
+  // Support headed playwright in devcontainer
   "containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}",
+    // until next next.js release
     "pnpm_config_enable_global_virtual_store": "false"
-  }
+  },
+  "mounts": ["source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"],
+  "postCreateCommand": "pnpm exec playwright install --with-deps chromium"
 }
