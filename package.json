@@ -72,7 +72,7 @@
     "oxlint-tsgolint": "^7.0.2003",
     "shx": "^0.4.0",
     "typescript": "7.0.2",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.2"
   },
   "engines": {
     "node": ">=24"
