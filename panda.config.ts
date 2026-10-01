@@ -43,6 +43,9 @@ const globalCss = defineGlobalStyles({
   "ul > li": {
     listStyleType: "disc",
   },
+  "*:focus-visible": {
+    outlineColor: "text",
+  },
 });
 
 export default defineConfig({

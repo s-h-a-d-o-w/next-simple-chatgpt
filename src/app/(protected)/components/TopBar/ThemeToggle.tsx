@@ -9,6 +9,7 @@ const ToggleLabel = styled("label", {
     display: "inline-flex",
     alignItems: "center",
     cursor: "pointer",
+    color: "text",
   },
 });
 
@@ -36,6 +37,12 @@ const ToggleTrack = styled("div", {
 
     backgroundColor: "surface.field",
     borderColor: "accent",
+
+    _peerFocusVisible: {
+      outline: "2px solid",
+      outlineColor: "outline",
+      outlineOffset: "-2px",
+    },
   },
 });
 
@@ -54,16 +61,6 @@ const Icon = styled("svg", {
   base: {
     height: "12rem",
     width: "12rem",
-  },
-  variants: {
-    type: {
-      sun: {
-        color: "black",
-      },
-      moon: {
-        color: "white",
-      },
-    },
   },
 });
 
@@ -107,6 +104,7 @@ export function ThemeToggle() {
     <ToggleLabel>
       <div style={{ position: "relative" }}>
         <HiddenInput
+          className="peer"
           type="checkbox"
           checked={isDarkMode}
           onChange={toggleDarkMode}
