@@ -22,11 +22,10 @@ const StyledTextArea = styled(Textarea, {
   base: {
     borderLeftWidth: "2rem",
 
-    border: "2rem solid token(colors.amber.800)",
-    backgroundColor: "white",
+    border: "2rem solid token(colors.surface.border)",
+    backgroundColor: "surface.field",
     _dark: {
       border: "none",
-      backgroundColor: "gray.700",
     },
   },
 });

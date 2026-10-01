@@ -108,6 +108,73 @@ export default defineConfig({
           },
         },
       },
+
+      semanticTokens: {
+        colors: {
+          accent: {
+            DEFAULT: {
+              value: {
+                base: "{colors.amber.800}",
+                _dark: "{colors.brand.500}",
+              },
+            },
+            fg: { value: { base: "white", _dark: "white" } },
+            disabled: {
+              value: { base: "{colors.stone.200}", _dark: "{colors.gray.600}" },
+            },
+            hover: {
+              value: {
+                base: "{colors.amber.700}",
+                _dark: "{colors.brand.100}",
+              },
+            },
+          },
+          surface: {
+            DEFAULT: {
+              value: { base: "{colors.amber.50}", _dark: "{colors.gray.900}" },
+            },
+            border: {
+              value: { base: "{colors.amber.800}", _dark: "none" },
+            },
+            field: {
+              value: { base: "white", _dark: "{colors.gray.700}" },
+            },
+            raised: {
+              value: { base: "{colors.amber.100}", _dark: "{colors.gray.700}" },
+            },
+            // e.g. agent messages
+            secondary: {
+              DEFAULT: {
+                value: {
+                  base: "{colors.stone.100}",
+                  _dark: "{colors.gray.700}",
+                },
+              },
+              border: {
+                value: {
+                  base: "{colors.stone.500}",
+                  _dark: "{colors.gray.100}",
+                },
+              },
+              raised: {
+                value: {
+                  base: "{colors.stone.200}",
+                  _dark: "{colors.gray.600}",
+                },
+              },
+              sunken: {
+                value: { base: "white", _dark: "{colors.gray.900}" },
+              },
+            },
+          },
+          text: {
+            DEFAULT: { value: { base: "black", _dark: "white" } },
+            disabled: {
+              value: { base: "{colors.stone.500}", _dark: "{colors.gray.100}" },
+            },
+          },
+        },
+      },
     },
   },
 

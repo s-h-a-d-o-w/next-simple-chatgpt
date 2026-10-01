@@ -15,11 +15,8 @@ const Body = styled("body", {
   base: {
     fontSize: "lg",
 
-    backgroundColor: "amber.50",
-    _dark: {
-      backgroundColor: "gray.900",
-      color: "gray.50",
-    },
+    backgroundColor: "surface",
+    color: "text",
   },
 });
 

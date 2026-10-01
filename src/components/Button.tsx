@@ -6,38 +6,24 @@ export const Button = styled("button", {
     cursor: "pointer",
     fontSize: "md",
 
-    backgroundColor: "amber.800",
-    color: "white",
-    _dark: {
-      backgroundColor: "brand.500",
-      color: "white",
-    },
-
     transitionDuration: "0.15s",
     transitionTimingFunction: "ease-out",
     transitionProperty: "background-color,opacity",
 
+    backgroundColor: "accent",
+    color: "accent.fg",
     _hover: {
-      backgroundColor: "amber.700",
-      _dark: {
-        backgroundColor: "brand.100",
-      },
+      backgroundColor: "accent.hover",
     },
 
     _disabled: {
-      backgroundColor: "stone.200",
-      color: "stone.500",
       cursor: "default",
-      _dark: {
-        backgroundColor: "gray.200",
-        color: "gray.500",
-      },
 
+      backgroundColor: "accent.disabled",
+      color: "text.disabled",
       _hover: {
-        backgroundColor: "stone.200",
-        _dark: {
-          backgroundColor: "gray.200",
-        },
+        backgroundColor: "accent.disabled",
+        color: "text.disabled",
       },
     },
   },

@@ -22,12 +22,8 @@ const SpinnerImplementation = styled("div", {
     height: "100%",
     animation: "spin 1s linear infinite",
 
-    border: "medium solid token(colors.amber.300)",
-    borderTop: "medium solid token(colors.amber.800)",
-    _dark: {
-      border: "medium solid token(colors.brand.100)",
-      borderTop: "medium solid white",
-    },
+    border: "medium solid token(colors.accent.fg)",
+    borderTop: "medium solid token(colors.accent)",
   },
 });
 

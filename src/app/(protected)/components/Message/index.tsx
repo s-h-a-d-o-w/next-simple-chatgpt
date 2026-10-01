@@ -4,7 +4,7 @@ import { withProfiler } from "@/components/withProfiler";
 import type { UIMessage } from "ai";
 import { memo, useMemo } from "react";
 import { styled } from "@/styled-system/jsx";
-import { FilesPreview } from "./FilesPreview";
+import { FilesPreview } from "@/components/FilesPreview";
 import { CopyButton } from "./CopyButton";
 import { Part } from "./Part";
 
@@ -33,24 +33,16 @@ const StyledMessage = styled("div", {
   variants: {
     variant: {
       default: {
-        backgroundColor: "stone.100",
+        backgroundColor: "surface.secondary",
         borderRightWidth: "4rem",
 
-        borderColor: "stone.400",
-        _dark: {
-          backgroundColor: "gray.700",
-          borderColor: "gray.100",
-        },
+        borderColor: "surface.secondary.border",
       },
       user: {
-        backgroundColor: "amber.100",
+        backgroundColor: "surface.raised",
         borderLeftWidth: "4rem",
 
-        borderColor: "amber.800",
-        _dark: {
-          backgroundColor: "gray.700",
-          borderColor: "brand.500",
-        },
+        borderColor: "accent",
       },
     },
     shortened: {

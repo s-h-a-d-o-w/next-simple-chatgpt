@@ -5,7 +5,7 @@ import { styled } from "@/styled-system/jsx";
 
 type Props = {
   files: FileUIPart[];
-  onRemoveAttachment: (index: number) => void;
+  onRemoveAttachment?: (index: number) => void;
 };
 
 const StyledAttachmentsContainer = styled("div", {
@@ -29,8 +29,6 @@ const StyledRemoveIcon = styled(IconButton, {
     position: "absolute",
     top: "4rem",
     right: "4rem",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    color: "white",
     minWidth: "24rem",
     minHeight: "24rem",
     padding: "2rem",
@@ -40,22 +38,34 @@ const StyledRemoveIcon = styled(IconButton, {
 export function FilesPreview({ files, onRemoveAttachment }: Props) {
   return (
     <StyledAttachmentsContainer>
-      {files.map(({ url, filename }, index) => (
+      {files.map(({ mediaType, url, filename }, index) => (
         <StyledImageContainer key={filename ?? url}>
-          <Image
-            src={url}
-            alt={filename ?? `Image ${index + 1}`}
-            fill
-            style={{
-              objectFit: "contain",
-            }}
-          />
-          <StyledRemoveIcon
-            name="delete"
-            iconSize="sm"
-            type="button"
-            onClick={() => onRemoveAttachment(index)}
-          />
+          {mediaType.startsWith("image/") ? (
+            <>
+              <Image
+                src={url}
+                alt={filename ?? `Image ${index + 1}`}
+                fill
+                style={{
+                  objectFit: "contain",
+                }}
+              />
+              {onRemoveAttachment && (
+                <StyledRemoveIcon
+                  name="delete"
+                  iconSize="sm"
+                  type="button"
+                  onClick={() => onRemoveAttachment(index)}
+                />
+              )}
+            </>
+          ) : (
+            <div>
+              <p>Preview not supported</p>
+              <p>{filename}</p>
+              <p>{mediaType}</p>
+            </div>
+          )}
         </StyledImageContainer>
       ))}
     </StyledAttachmentsContainer>

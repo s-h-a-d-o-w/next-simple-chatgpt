@@ -8,17 +8,12 @@ import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
 const StyledSelect = styled("select", {
   base: {
     padding: "4rem 8rem",
-    border: "2rem solid token(colors.amber.800)",
-    backgroundColor: "white",
+    border: "2rem solid token(colors.accent)",
+    backgroundColor: "surface.field",
     cursor: "pointer",
     width: "100%",
     maxWidth: "340rem",
     textOverflow: "ellipsis",
-
-    _dark: {
-      borderColor: "brand.500",
-      backgroundColor: "gray.700",
-    },
   },
 });
 

@@ -30,18 +30,17 @@ const StyledHistory = styled("div", {
     position: "fixed",
 
     overflow: "auto",
-    backgroundColor: "amber.50",
+    backgroundColor: "surface",
+    color: "text",
     padding: "12rem",
-    border: "2px solid token(colors.amber.800)",
-    boxShadow: "token(colors.amber.800) 1px 1px 0px 0px",
+    border: "2px solid token(colors.surface.border)",
+    boxShadow: "token(colors.surface.border) 1px 1px 0px 0px",
 
     display: "flex",
     flexDirection: "column",
     gap: "8rem",
 
     _dark: {
-      backgroundColor: "gray.900",
-      color: "gray.50",
       border: "none",
       boxShadow: "none",
     },
@@ -88,12 +87,8 @@ const StyledSearchInput = styled("input", {
     width: "100%",
     padding: "8rem",
 
-    backgroundColor: "white",
-    border: "2rem solid token(colors.amber.800)",
-    _dark: {
-      backgroundColor: "gray.700",
-      borderColor: "gray.50",
-    },
+    backgroundColor: "surface.field",
+    border: "2rem solid token(colors.accent)",
   },
 });
 

@@ -24,8 +24,8 @@ const StyledDeleteConfirmationModal = styled("div", {
     alignItems: "center",
     gap: "8rem",
 
-    boxShadow: "token(colors.amber.800) 1px 1px 0px 0px",
-    border: "1px solid token(colors.amber.800)",
+    boxShadow: "token(colors.surface.border) 1px 1px 0px 0px",
+    border: "1px solid token(colors.surface.border)",
     _dark: {
       boxShadow: "none",
       border: "none",

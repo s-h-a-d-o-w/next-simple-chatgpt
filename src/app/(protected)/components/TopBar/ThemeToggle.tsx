@@ -34,12 +34,8 @@ const ToggleTrack = styled("div", {
     borderRadius: "full !important",
     border: "2px solid",
 
-    backgroundColor: "white",
-    borderColor: "amber.800",
-    _dark: {
-      backgroundColor: "gray.700",
-      borderColor: "brand.500",
-    },
+    backgroundColor: "surface.field",
+    borderColor: "accent",
   },
 });
 
@@ -82,10 +78,9 @@ const ToggleThumb = styled("div", {
     transitionDuration: "200ms",
     transitionTimingFunction: "ease-in-out",
 
-    backgroundColor: "amber.800",
+    backgroundColor: "text",
     left: "4rem",
     _dark: {
-      backgroundColor: "gray.50",
       left: "28rem",
     },
   },

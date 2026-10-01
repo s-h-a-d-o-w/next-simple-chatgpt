@@ -9,7 +9,7 @@ import {
 import { styled } from "@/styled-system/jsx";
 import { IconButton } from "@/components/IconButton";
 import { Textarea } from "@/components/Textarea";
-import { FilesPreview } from "./FilesPreview";
+import { FilesPreview } from "../../../../components/FilesPreview";
 import { filesToAttachments } from "./filesToAttachments";
 import type { FileUIPart } from "ai";
 import { objectEntries } from "@/lib/utils/objectEntries";

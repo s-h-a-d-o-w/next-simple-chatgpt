@@ -30,10 +30,7 @@ const StyledPercentage = styled("div", {
     fontSize: "2xs",
     fontWeight: "bold",
 
-    color: "gray.700",
-    _dark: {
-      color: "gray.300",
-    },
+    color: "text",
 
     display: "none",
     xs: {

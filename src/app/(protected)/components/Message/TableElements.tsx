@@ -4,10 +4,7 @@ import { css } from "@/styled-system/css";
 
 const cellStyle = css({
   padding: "6rem 12rem",
-  border: "1px solid token(colors.stone.400)",
-  _dark: {
-    border: "1px solid token(colors.gray.100)",
-  },
+  border: "1px solid token(colors.surface.secondary.border)",
 });
 
 export function HeaderCell({
@@ -40,10 +37,7 @@ export function Cell({
 
 const rowStyle = css({
   _even: {
-    backgroundColor: "stone.200",
-    _dark: {
-      backgroundColor: "gray.600",
-    },
+    backgroundColor: "surface.secondary.raised",
   },
 });
 
