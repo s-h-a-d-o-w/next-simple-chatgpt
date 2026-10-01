@@ -13,7 +13,7 @@ jobs:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/setup@v2
+      - uses: pnpm/setup@v3
         with:
           cache: true
           runtime: node@lts
