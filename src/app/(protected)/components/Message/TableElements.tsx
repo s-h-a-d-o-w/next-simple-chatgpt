@@ -6,7 +6,7 @@ const cellStyle = css({
   padding: "6rem 12rem",
   border: "1px solid token(colors.stone.400)",
   _dark: {
-    border: "1px solid token(colors.gray.400)",
+    border: "1px solid token(colors.gray.100)",
   },
 });
 

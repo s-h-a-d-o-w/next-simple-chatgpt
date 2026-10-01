@@ -33,7 +33,7 @@ const StyledHistory = styled("div", {
     backgroundColor: "amber.50",
     padding: "12rem",
     border: "2px solid token(colors.amber.800)",
-    boxShadow: "token(colors.amber.900) 1px 1px 0px 0px",
+    boxShadow: "token(colors.amber.800) 1px 1px 0px 0px",
 
     display: "flex",
     flexDirection: "column",
