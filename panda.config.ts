@@ -160,13 +160,13 @@ export default defineConfig({
                 },
               },
               raised: {
+                value: { base: "white", _dark: "{colors.gray.900}" },
+              },
+              sunken: {
                 value: {
                   base: "{colors.stone.200}",
                   _dark: "{colors.gray.600}",
                 },
-              },
-              sunken: {
-                value: { base: "white", _dark: "{colors.gray.900}" },
               },
             },
           },

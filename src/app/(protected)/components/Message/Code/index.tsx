@@ -34,7 +34,7 @@ const StyledPre = styled("pre", {
     whiteSpace: "pre-wrap",
     wordBreak: "break-all",
 
-    backgroundColor: "surface.secondary.sunken",
+    backgroundColor: "surface.secondary.raised",
   },
 });
 

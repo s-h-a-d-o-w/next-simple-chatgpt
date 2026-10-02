@@ -37,7 +37,7 @@ export function Cell({
 
 const rowStyle = css({
   _even: {
-    backgroundColor: "surface.secondary.raised",
+    backgroundColor: "surface.secondary.sunken",
   },
 });
 
