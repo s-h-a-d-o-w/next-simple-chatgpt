@@ -5,6 +5,8 @@ import { useReasoningEffort } from "@/app/(protected)/hooks/useReasoningEffort";
 
 const StyledSelect = styled("select", {
   base: {
+    fontSize: "14rem",
+    maxWidth: "70rem",
     padding: "4rem 8rem",
     border: "2rem solid token(colors.accent)",
     backgroundColor: "surface.field",

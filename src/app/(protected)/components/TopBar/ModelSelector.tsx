@@ -7,13 +7,13 @@ import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
 
 const StyledSelect = styled("select", {
   base: {
+    fontSize: "14rem",
     padding: "4rem 8rem",
-    paddingRight: "20rem",
+    paddingRight: "16rem",
     border: "2rem solid token(colors.accent)",
     backgroundColor: "surface.field",
     cursor: "pointer",
     width: "100%",
-    maxWidth: "340rem",
     textOverflow: "ellipsis",
   },
 });
