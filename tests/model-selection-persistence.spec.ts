@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { config } from "@/config";
 import { modelSelection } from "@/lib/models";
+import { modelSelect } from "./utils/locators";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -8,15 +9,15 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("should persist selected model across page reloads", async ({ page }) => {
-  const modelSelect = page.locator("select");
-  expect(await modelSelect.inputValue()).toBe(config.models.default);
+  const select = modelSelect(page);
+  expect(await select.inputValue()).toBe(config.models.default);
 
   const differentModel = modelSelection.find(
     (m) => m !== config.models.default,
   );
-  await modelSelect.selectOption(differentModel!);
+  await select.selectOption(differentModel!);
   await page.reload();
-  expect(await modelSelect.inputValue()).toBe(differentModel);
+  expect(await select.inputValue()).toBe(differentModel);
 });
 
 test("should handle oudated model data in localStorage", async ({ page }) => {
@@ -26,5 +27,5 @@ test("should handle oudated model data in localStorage", async ({ page }) => {
 
   await page.reload();
 
-  expect(await page.locator("select").inputValue()).toBe(config.models.default);
+  expect(await modelSelect(page).inputValue()).toBe(config.models.default);
 });

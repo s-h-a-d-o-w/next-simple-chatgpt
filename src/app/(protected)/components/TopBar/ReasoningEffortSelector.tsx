@@ -24,7 +24,8 @@ export function ReasoningEffortSelector() {
 
   return (
     <StyledSelect
-      aria-label="Thinking effort"
+      aria-label="Reasoning effort"
+      title="Reasoning effort"
       disabled={
         !modelConfig.supportsReasoning ||
         !(
@@ -32,7 +33,6 @@ export function ReasoningEffortSelector() {
           modelConfig.provider === "anthropic"
         )
       }
-      title="Thinking effort"
       value={reasoningEffort}
       onChange={(e) => setReasoningEffort(e.target.value as ReasoningEffort)}
     >

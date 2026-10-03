@@ -49,6 +49,8 @@ export function ModelSelector({ showAttachmentModelsOnly }: Props) {
   return (
     <StyledSelectContainer>
       <StyledSelect
+        aria-label="Model"
+        title="Model"
         value={model}
         onChange={(e) => setModel(e.target.value as ModelKey)}
       >
