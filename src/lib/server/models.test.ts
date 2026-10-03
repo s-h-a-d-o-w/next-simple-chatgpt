@@ -33,6 +33,7 @@ const remoteModels: Record<string, LiteLLMModelInfo> = {
     input_cost_per_token: 0.00000175,
     output_cost_per_token: 0.000014,
     litellm_provider: "openai",
+    supports_reasoning: true,
   },
   "openrouter/z-ai/glm-5": {
     input_cost_per_token: 0.000001,
@@ -65,22 +66,36 @@ describe("fetchModels", () => {
       cacheRead: undefined,
       cacheWrite: undefined,
       input: 2,
-      name: "gpt-4.1",
+      name: "GPT 4.1",
       output: 8,
       provider: "openai",
       supportsAttachments: true,
+      supportsReasoning: false,
     });
     expect(models["claude-haiku-4-5"]).toMatchObject({
       cacheRead: 0.1,
       cacheWrite: 1.25,
       supportsAttachments: false,
     });
-    expect(models["gpt-5.6-sol"].reasoningEffort).toBe("medium");
+    expect(models["gpt-5.6-sol"].supportsReasoning).toBe(true);
     expect(models["openrouter/z-ai/glm-5"].extraBody).toStrictEqual({
       reasoning: { enabled: true },
     });
     expect(fetchMock).toHaveBeenCalledOnce();
     expect(getModelsFromFilesystem).not.toHaveBeenCalled();
+  });
+
+  it("fetches remote model data only once while the cache is valid", async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(Response.json(remoteModels));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { fetchModels } = await import("./models");
+    await Promise.all([fetchModels(), fetchModels()]);
+    await fetchModels();
+
+    expect(fetchMock).toHaveBeenCalledOnce();
   });
 
   it("uses filesystem model data when the remote request fails", async () => {

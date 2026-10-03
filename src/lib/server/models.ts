@@ -10,6 +10,11 @@ import type { LiteLLMModelInfo } from "@/types";
 
 const LITELLM_MODELS_URL =
   "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json";
+const CACHE_TTL_MS = 6 * 60 * 60 * 1_000;
+
+let remoteModelsCache:
+  | { expiresAt: number; promise: Promise<Record<string, LiteLLMModelInfo>> }
+  | undefined = undefined;
 
 // Models that need config beyond UI.
 const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
@@ -70,6 +75,19 @@ async function fetchRemoteModels() {
   return (await response.json()) as Record<string, LiteLLMModelInfo>;
 }
 
+function getRemoteModels() {
+  if (!remoteModelsCache || remoteModelsCache.expiresAt <= Date.now()) {
+    const promise = fetchRemoteModels().catch((error: unknown) => {
+      remoteModelsCache = undefined;
+      throw error;
+    });
+
+    remoteModelsCache = { expiresAt: Date.now() + CACHE_TTL_MS, promise };
+  }
+
+  return remoteModelsCache.promise;
+}
+
 function selectModels(data: Record<string, LiteLLMModelInfo>) {
   const nextModels: Partial<Models> = {};
   for (const modelId of modelSelection) {
@@ -97,7 +115,7 @@ function selectModels(data: Record<string, LiteLLMModelInfo>) {
 
 export async function fetchModels() {
   try {
-    return selectModels(await fetchRemoteModels());
+    return selectModels(await getRemoteModels());
   } catch (error) {
     // Next.js signals dynamic rendering/redirects via thrown errors.
     unstable_rethrow(error);
