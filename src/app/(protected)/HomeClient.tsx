@@ -46,6 +46,16 @@ function HomeClient() {
   const { model } = useModelSelection();
   const { reasoningEffort } = useReasoningEffort();
 
+  // Body to send along with the messages.
+  const body = useMemo(
+    () =>
+      ({
+        model,
+        reasoningEffort,
+      }) satisfies Omit<ChatRequest, "messages">,
+    [model, reasoningEffort],
+  );
+
   const {
     messages,
     setMessages,
@@ -73,16 +83,6 @@ function HomeClient() {
     messages.some((message) =>
       message.parts.some((part) => part.type === "file"),
     );
-
-  // Body to send along with the messages.
-  const body = useMemo(
-    () =>
-      ({
-        model,
-        reasoningEffort,
-      }) satisfies Omit<ChatRequest, "messages">,
-    [model, reasoningEffort],
-  );
 
   useEffect(() => {
     if (error) {
