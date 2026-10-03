@@ -1,30 +1,42 @@
 import { config } from "@/config";
-import { isReasoningEffort, type ReasoningEffort } from "@/lib/models";
+import {
+  isReasoningEffort,
+  type ModelKey,
+  type ReasoningEffort,
+} from "@/lib/models";
 import useLocalStorageState from "use-local-storage-state";
-import { useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { useModelSelection } from "./useModelSelection";
+
+type ReasoningEffortByModel = Partial<Record<ModelKey, ReasoningEffort>>;
 
 export function useReasoningEffort() {
-  const [storedReasoningEffort, setStoredReasoningEffort] =
-    useLocalStorageState<ReasoningEffort>("reasoningEffort", {
-      defaultValue: config.models.defaultReasoningEffort,
+  const { model } = useModelSelection();
+  const [storedReasoningEfforts, setStoredReasoningEfforts] =
+    useLocalStorageState<ReasoningEffortByModel>("reasoningEffortByModel", {
+      defaultValue: {},
     });
-  const reasoningEffort = useMemo<ReasoningEffort>(
-    () =>
-      isReasoningEffort(storedReasoningEffort)
-        ? storedReasoningEffort
-        : config.models.defaultReasoningEffort,
-    [storedReasoningEffort],
-  );
 
-  // Replace possibly invalid effort with default.
-  useEffect(() => {
-    if (!isReasoningEffort(storedReasoningEffort)) {
-      setStoredReasoningEffort(config.models.defaultReasoningEffort);
-    }
-  }, [storedReasoningEffort, setStoredReasoningEffort]);
+  const reasoningEffort = useMemo<ReasoningEffort>(() => {
+    const storedReasoningEffort = storedReasoningEfforts[model];
+
+    return isReasoningEffort(storedReasoningEffort)
+      ? storedReasoningEffort
+      : config.models.defaultReasoningEffort;
+  }, [storedReasoningEfforts, model]);
+
+  const setReasoningEffort = useCallback(
+    (effort: ReasoningEffort) => {
+      setStoredReasoningEfforts((previous) => ({
+        ...previous,
+        [model]: effort,
+      }));
+    },
+    [model, setStoredReasoningEfforts],
+  );
 
   return {
     reasoningEffort,
-    setReasoningEffort: setStoredReasoningEffort,
+    setReasoningEffort,
   } as const;
 }
