@@ -58,7 +58,7 @@ export function ModelSelector({ showAttachmentModelsOnly }: Props) {
           )
           .map(([id, { name, input, output }]) => (
             <option key={id} value={id}>
-              {name.replace("openrouter/", "")} (in: ${input}/out: ${output})
+              {name} (in: ${input}/out: ${output})
             </option>
           ))}
       </StyledSelect>

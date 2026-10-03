@@ -27,9 +27,17 @@ function perTokenToPerMillion(costPerToken: number) {
   return Math.round(result * 100) / 100;
 }
 
+const modelNames: Record<ModelKey, string> = {
+  "gpt-4.1": "GPT 4.1",
+  "claude-opus-5": "Claude Opus 5",
+  "claude-haiku-4-5": "Claude Haiku 4.5",
+  "gpt-5.6-sol": "GPT 5.6 Sol",
+  "openrouter/z-ai/glm-5": "GLM-5",
+};
+
 function transformLiteLLMModel(name: ModelKey, info: LiteLLMModelInfo) {
   return {
-    name,
+    name: modelNames[name],
     provider: info.litellm_provider,
     input: perTokenToPerMillion(info.input_cost_per_token),
     output: perTokenToPerMillion(info.output_cost_per_token),
@@ -68,6 +76,13 @@ function selectModels(data: Record<string, LiteLLMModelInfo>) {
     const liteLLMInfo = data[modelId];
     if (liteLLMInfo) {
       nextModels[modelId] = transformLiteLLMModel(modelId, liteLLMInfo);
+      const defaultConfig = modelDefaults[modelId];
+      if (defaultConfig) {
+        nextModels[modelId] = {
+          ...nextModels[modelId],
+          ...defaultConfig,
+        };
+      }
     }
   }
 
@@ -75,16 +90,6 @@ function selectModels(data: Record<string, LiteLLMModelInfo>) {
     throw new Error(
       `Model "${modelSelection.find((model) => nextModels[model] === undefined)}" from whitelist is missing in fetched models.`,
     );
-  }
-
-  for (const modelId of modelSelection) {
-    const defaultConfig = modelDefaults[modelId];
-    if (defaultConfig) {
-      nextModels[modelId] = {
-        ...nextModels[modelId],
-        ...defaultConfig,
-      };
-    }
   }
 
   return nextModels;

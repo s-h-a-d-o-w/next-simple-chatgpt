@@ -22,7 +22,7 @@ export function isReasoningEffort(value: unknown): value is ReasoningEffort {
 }
 
 export type ModelConfig = {
-  name: ModelKey; // Maybe we'll have beautified names here later.
+  name: string;
   input: number;
   output: number;
   provider: string;
