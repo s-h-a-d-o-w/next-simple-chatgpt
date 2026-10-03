@@ -14,6 +14,7 @@ import type { ChatRequest } from "@/app/api/chat/route";
 import { withProfiler } from "@/components/withProfiler";
 import { useSyncHistory } from "@/app/(protected)/hooks/useHistory";
 import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
+import { useReasoningEffort } from "@/app/(protected)/hooks/useReasoningEffort";
 import { useScrollToBottom } from "@/app/(protected)/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
 import type { FileUIPart, UIMessage } from "ai";
@@ -43,6 +44,7 @@ function HomeClient() {
   const [systemPrompt] = useAtom(systemPromptAtom);
 
   const { model } = useModelSelection();
+  const { reasoningEffort } = useReasoningEffort();
 
   const {
     messages,
@@ -77,8 +79,9 @@ function HomeClient() {
     () =>
       ({
         model,
+        reasoningEffort,
       }) satisfies Omit<ChatRequest, "messages">,
-    [model],
+    [model, reasoningEffort],
   );
 
   useEffect(() => {

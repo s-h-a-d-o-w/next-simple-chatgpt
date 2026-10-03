@@ -13,9 +13,9 @@ const LITELLM_MODELS_URL =
 
 // How we want to use certain models by default.
 const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
-  "gpt-5.6-sol": {
-    reasoningEffort: "medium",
-  },
+  // "gpt-5.6-sol": {
+  //   reasoningEffort: "medium",
+  // },
   "openrouter/z-ai/glm-5": {
     extraBody: {
       reasoning: {
@@ -37,6 +37,7 @@ function transformLiteLLMModel(name: ModelKey, info: LiteLLMModelInfo) {
     input: perTokenToPerMillion(info.input_cost_per_token),
     output: perTokenToPerMillion(info.output_cost_per_token),
     supportsAttachments: info.supports_vision ?? false,
+    supportsReasoning: info.supports_reasoning ?? false,
     cacheRead: info.cache_read_input_token_cost
       ? perTokenToPerMillion(info.cache_read_input_token_cost)
       : undefined,

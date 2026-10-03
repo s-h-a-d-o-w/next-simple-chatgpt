@@ -1,5 +1,6 @@
 import { IconButton } from "@/components/IconButton";
 import { ModelSelector } from "./ModelSelector";
+import { ReasoningEffortSelector } from "./ReasoningEffortSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { memo, useCallback } from "react";
 import {
@@ -59,6 +60,7 @@ export const TopBar = memo(function TopBar({
 
   return (
     <StyledActions>
+      <ReasoningEffortSelector />
       <ModelSelector showAttachmentModelsOnly={hasFilesInChat} />
       <StyledButtonGroup>
         <IconButton

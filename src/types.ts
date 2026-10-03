@@ -27,6 +27,7 @@ export type LiteLLMModelInfo = {
   litellm_provider: string;
   max_input_tokens?: number;
   max_output_tokens?: number;
+  supports_reasoning?: boolean;
   supports_vision?: boolean;
   supports_pdf_input?: boolean;
 };

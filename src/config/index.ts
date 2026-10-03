@@ -1,5 +1,5 @@
 import { isTest } from "@/lib/utils/consts";
-import type { ModelKey } from "@/lib/models";
+import type { ModelKey, ReasoningEffort } from "@/lib/models";
 
 export const config = {
   ui: {
@@ -14,5 +14,6 @@ export const config = {
   },
   models: {
     default: (isTest ? "claude-haiku-4-5" : "gpt-4.1") satisfies ModelKey,
+    defaultReasoningEffort: "medium" satisfies ReasoningEffort,
   },
 } as const;

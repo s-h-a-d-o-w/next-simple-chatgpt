@@ -1,5 +1,9 @@
 import { authGuard } from "@/lib/server/authGuard";
-import type { ModelKey } from "@/lib/models";
+import {
+  isReasoningEffort,
+  type ModelKey,
+  type ReasoningEffort,
+} from "@/lib/models";
 import { fetchModels } from "@/lib/server/models";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
@@ -21,6 +25,7 @@ import type { Metadata } from "@/types";
 export type ChatRequest = {
   model: ModelKey;
   messages: UIMessage[];
+  reasoningEffort?: ReasoningEffort;
 };
 
 // Workaround for https://github.com/vercel/ai/issues/13103
@@ -35,7 +40,7 @@ const openrouter = createOpenRouter({
 });
 
 async function processChatRequest(request: ChatRequest) {
-  const { model, messages: rawMessages } = request;
+  const { model, messages: rawMessages, reasoningEffort } = request;
   const instructions = rawMessages
     .filter(({ role }) => role === "system")
     .flatMap((message) =>
@@ -48,15 +53,21 @@ async function processChatRequest(request: ChatRequest) {
     rawMessages.filter(({ role }) => role !== "system"),
   );
 
-  return { model, instructions, messages };
+  return {
+    model,
+    instructions,
+    messages,
+    reasoningEffort: isReasoningEffort(reasoningEffort)
+      ? reasoningEffort
+      : undefined,
+  };
 }
 
 export const POST = async (req: NextRequest) => {
   await authGuard();
 
-  const { model, messages, instructions } = await processChatRequest(
-    (await req.json()) as ChatRequest,
-  );
+  const { model, messages, instructions, reasoningEffort } =
+    await processChatRequest((await req.json()) as ChatRequest);
   const models = await fetchModels();
   const modelConfig = models[model];
   const isAnthropic = modelConfig.provider === "anthropic";
@@ -104,11 +115,12 @@ export const POST = async (req: NextRequest) => {
         }),
       },
       {
-        ...(modelConfig.reasoningEffort && {
-          [modelConfig.provider]: {
-            reasoningEffort: modelConfig.reasoningEffort,
-          },
-        }),
+        ...(reasoningEffort &&
+          (isOpenAI || isAnthropic) && {
+            [modelConfig.provider]: {
+              reasoningEffort,
+            },
+          }),
       },
     ),
     abortSignal: abortController.signal,

@@ -32,7 +32,6 @@ const StyledImageIcon = styled(MdImage, {
 const StyledSelectContainer = styled("div", {
   base: {
     position: "relative",
-    flexGrow: 1,
     display: "flex",
     justifyContent: "flex-end",
   },
@@ -58,7 +57,7 @@ export function ModelSelector({ showAttachmentModelsOnly }: Props) {
           )
           .map(([id, { name, input, output }]) => (
             <option key={id} value={id}>
-              {name} (in: ${input}/out: ${output} per 1Mt)
+              {name} (in: ${input}/out: ${output})
             </option>
           ))}
       </StyledSelect>

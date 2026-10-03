@@ -8,6 +8,19 @@ export const modelSelection = [
 
 export type ModelKey = (typeof modelSelection)[number];
 
+export const reasoningEfforts = [
+  "low",
+  "medium",
+  "high",
+  "extra high",
+  "max",
+] as const;
+export type ReasoningEffort = (typeof reasoningEfforts)[number];
+
+export function isReasoningEffort(value: unknown): value is ReasoningEffort {
+  return reasoningEfforts.includes(value as ReasoningEffort);
+}
+
 export type ModelConfig = {
   name: ModelKey; // Maybe we'll have beautified names here later.
   input: number;
@@ -18,7 +31,8 @@ export type ModelConfig = {
   cacheWrite?: number;
   extraBody?: Record<string, unknown>;
   supportsAttachments: boolean;
-  reasoningEffort?: "low" | "medium" | "high";
+  supportsReasoning: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export type Models = Record<ModelKey, ModelConfig>;
