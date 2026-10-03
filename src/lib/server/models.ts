@@ -11,11 +11,8 @@ import type { LiteLLMModelInfo } from "@/types";
 const LITELLM_MODELS_URL =
   "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json";
 
-// How we want to use certain models by default.
+// Models that need config beyond UI.
 const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
-  // "gpt-5.6-sol": {
-  //   reasoningEffort: "medium",
-  // },
   "openrouter/z-ai/glm-5": {
     extraBody: {
       reasoning: {

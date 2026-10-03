@@ -8,6 +8,7 @@ import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
 const StyledSelect = styled("select", {
   base: {
     padding: "4rem 8rem",
+    paddingRight: "20rem",
     border: "2rem solid token(colors.accent)",
     backgroundColor: "surface.field",
     cursor: "pointer",
@@ -57,7 +58,7 @@ export function ModelSelector({ showAttachmentModelsOnly }: Props) {
           )
           .map(([id, { name, input, output }]) => (
             <option key={id} value={id}>
-              {name} (in: ${input}/out: ${output})
+              {name.replace("openrouter/", "")} (in: ${input}/out: ${output})
             </option>
           ))}
       </StyledSelect>

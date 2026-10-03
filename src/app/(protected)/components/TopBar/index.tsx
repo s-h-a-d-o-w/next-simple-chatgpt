@@ -26,16 +26,7 @@ const StyledActions = styled("div", {
     flexWrap: "wrap",
     justifyContent: "flex-end",
     alignItems: "center",
-    gap: "12rem",
-  },
-});
-
-const StyledButtonGroup = styled("div", {
-  base: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "flex-end",
-    gap: "12rem",
+    gap: "8rem",
   },
 });
 
@@ -62,23 +53,21 @@ export const TopBar = memo(function TopBar({
     <StyledActions>
       <ReasoningEffortSelector />
       <ModelSelector showAttachmentModelsOnly={hasFilesInChat} />
-      <StyledButtonGroup>
-        <IconButton
-          name="reset"
-          iconSize="md"
-          onClick={handleReset}
-          label="Reset"
-        />
-        <IconButton
-          name="history"
-          iconSize="md"
-          disabled={disabledHistoryActions}
-          onClick={handleShowHistory}
-          label="History"
-        />
-        <AuthButtonClient isSignedIn />
-        <ThemeToggle />
-      </StyledButtonGroup>
+      <IconButton
+        name="reset"
+        iconSize="md"
+        onClick={handleReset}
+        label="Reset"
+      />
+      <IconButton
+        name="history"
+        iconSize="md"
+        disabled={disabledHistoryActions}
+        onClick={handleShowHistory}
+        label="History"
+      />
+      <AuthButtonClient isSignedIn />
+      <ThemeToggle />
     </StyledActions>
   );
 });
