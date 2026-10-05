@@ -51,6 +51,8 @@ const globalCss = defineGlobalStyles({
 export default defineConfig({
   outdir: "src/styled-system",
 
+  presets: ["@pandacss/preset-base", "@pandacss/preset-panda"],
+
   // Whether to use css reset
   preflight: true,
   globalCss,
@@ -60,7 +62,7 @@ export default defineConfig({
   theme: {
     extend: {
       breakpoints: {
-        xs: "380px",
+        xs: "23.75rem",
       },
       keyframes: {
         fadeIn: {
