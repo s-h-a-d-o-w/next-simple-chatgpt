@@ -4,7 +4,7 @@ import { styled } from "@/styled-system/jsx";
 import { useCallback } from "react";
 import { isDeleteConfirmationOpenAtom } from "./atoms";
 import { useAtom, useSetAtom } from "jotai";
-import { activeHistoryEntryAtom } from "../../atoms";
+import { activeHistoryEntryAtom, isHistoryOpenAtom } from "../../atoms";
 import { useHistory } from "@/app/(protected)/hooks/useHistory";
 
 const StyledButtonContainer = styled("div", {
@@ -38,6 +38,7 @@ export function DeleteConfirmationModal() {
     isDeleteConfirmationOpenAtom,
   );
   const setActiveHistoryEntry = useSetAtom(activeHistoryEntryAtom);
+  const setIsHistoryOpen = useSetAtom(isHistoryOpenAtom);
 
   const [, setConversationHistory] = useHistory();
 
@@ -49,10 +50,12 @@ export function DeleteConfirmationModal() {
     setConversationHistory([]);
     setActiveHistoryEntry(undefined);
     setIsDeleteConfirmationOpen(false);
+    setIsHistoryOpen(false);
   }, [
     setConversationHistory,
     setActiveHistoryEntry,
     setIsDeleteConfirmationOpen,
+    setIsHistoryOpen,
   ]);
 
   return (
