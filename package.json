@@ -54,6 +54,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@pandacss/preset-base": "^2.1.1",
+    "@pandacss/preset-panda": "^2.1.1",
     "@playwright/test": "^1.63.0",
     "@s-h-a-d-o-w/oxlint-config": "^1.8.0",
     "@types/lodash-es": "^4.17.12",
