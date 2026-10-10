@@ -1,0 +1,163 @@
+{
+  "openrouter/z-ai/glm-5": {
+    "id": "z-ai/glm-5",
+    "canonical_slug": "z-ai/glm-5-20260211",
+    "hugging_face_id": "zai-org/GLM-5",
+    "name": "Z.ai: GLM 5",
+    "created": 1770829182,
+    "description": "GLM-5 is Z.ai’s flagship open-source foundation model engineered for complex systems design and long-horizon agent workflows. Built for expert developers, it delivers production-grade performance on large-scale programming tasks, rivaling leading...",
+    "context_length": 204800,
+    "architecture": {
+      "modality": "text->text",
+      "input_modalities": ["text"],
+      "output_modalities": ["text"],
+      "tokenizer": "Other",
+      "instruct_type": null
+    },
+    "pricing": {
+      "prompt": "0.0000006",
+      "completion": "0.00000192",
+      "input_cache_read": "0.00000012"
+    },
+    "top_provider": {
+      "context_length": 198000,
+      "max_completion_tokens": 128000,
+      "is_moderated": false
+    },
+    "per_request_limits": null,
+    "supported_parameters": [
+      "frequency_penalty",
+      "include_reasoning",
+      "logprobs",
+      "max_tokens",
+      "presence_penalty",
+      "reasoning",
+      "repetition_penalty",
+      "response_format",
+      "seed",
+      "stop",
+      "structured_outputs",
+      "temperature",
+      "tool_choice",
+      "tools",
+      "top_k",
+      "top_logprobs",
+      "top_p"
+    ],
+    "default_parameters": {
+      "temperature": 1,
+      "top_p": 0.95,
+      "frequency_penalty": null
+    },
+    "supported_voices": null,
+    "knowledge_cutoff": null,
+    "expiration_date": null,
+    "links": {
+      "details": "/api/v1/models/z-ai/glm-5-20260211/endpoints"
+    },
+    "benchmarks": {
+      "design_arena": [
+        {
+          "arena": "agents",
+          "category": "androidnative",
+          "elo": 1161,
+          "win_rate": 55.1,
+          "rank": 24
+        },
+        {
+          "arena": "agents",
+          "category": "fullstack",
+          "elo": 1123,
+          "win_rate": 51.7,
+          "rank": 27
+        },
+        {
+          "arena": "agents",
+          "category": "godotgamedev",
+          "elo": 1144,
+          "win_rate": 46.7,
+          "rank": 21
+        },
+        {
+          "arena": "agents",
+          "category": "htmlslides",
+          "elo": 1147,
+          "win_rate": 45.1,
+          "rank": 18
+        },
+        {
+          "arena": "agents",
+          "category": "mobileapps",
+          "elo": 1133,
+          "win_rate": 51.6,
+          "rank": 32
+        },
+        {
+          "arena": "models",
+          "category": "3d",
+          "elo": 1234,
+          "win_rate": 56.3,
+          "rank": 35
+        },
+        {
+          "arena": "models",
+          "category": "asciiart",
+          "elo": 1152,
+          "win_rate": 47.9,
+          "rank": 44
+        },
+        {
+          "arena": "models",
+          "category": "codecategories",
+          "elo": 1249,
+          "win_rate": 55.5,
+          "rank": 38
+        },
+        {
+          "arena": "models",
+          "category": "dataviz",
+          "elo": 1232,
+          "win_rate": 53,
+          "rank": 42
+        },
+        {
+          "arena": "models",
+          "category": "gamedev",
+          "elo": 1241,
+          "win_rate": 57.4,
+          "rank": 37
+        },
+        {
+          "arena": "models",
+          "category": "svg",
+          "elo": 1167,
+          "win_rate": 54.4,
+          "rank": 37
+        },
+        {
+          "arena": "models",
+          "category": "uicomponent",
+          "elo": 1234,
+          "win_rate": 53.6,
+          "rank": 44
+        },
+        {
+          "arena": "models",
+          "category": "website",
+          "elo": 1252,
+          "win_rate": 55,
+          "rank": 39
+        }
+      ],
+      "artificial_analysis": {
+        "intelligence_index": 27.9,
+        "coding_index": null,
+        "agentic_index": null
+      }
+    },
+    "reasoning": {
+      "mandatory": false,
+      "default_enabled": true
+    }
+  }
+}

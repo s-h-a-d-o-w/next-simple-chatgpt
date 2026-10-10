@@ -1,13 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { LiteLLMModelInfo } from "@/types";
+import type { LiteLLMModelInfo, OpenRouterModelInfo } from "@/types";
 
-const { getModelsFromFilesystem } = vi.hoisted(() => ({
-  getModelsFromFilesystem:
-    vi.fn<() => Promise<Record<string, LiteLLMModelInfo>>>(),
-}));
+const { getModelsFromFilesystem, getOpenRouterModelsFromFilesystem } =
+  vi.hoisted(() => ({
+    getModelsFromFilesystem:
+      vi.fn<() => Promise<Record<string, LiteLLMModelInfo>>>(),
+    getOpenRouterModelsFromFilesystem:
+      vi.fn<() => Promise<Record<string, OpenRouterModelInfo>>>(),
+  }));
 
 vi.mock(import("./getModelsFromFilesystem"), () => ({
   getModelsFromFilesystem,
+  getOpenRouterModelsFromFilesystem,
 }));
 
 const remoteModels: Record<string, LiteLLMModelInfo> = {
@@ -35,17 +39,47 @@ const remoteModels: Record<string, LiteLLMModelInfo> = {
     litellm_provider: "openai",
     supports_reasoning: true,
   },
-  "openrouter/z-ai/glm-5": {
-    input_cost_per_token: 0.000001,
-    output_cost_per_token: 0.0000032,
-    litellm_provider: "openrouter",
-  },
 };
+
+const glm5: OpenRouterModelInfo = {
+  architecture: {
+    input_modalities: ["text", "image"],
+    output_modalities: ["text"],
+  },
+  id: "z-ai/glm-5",
+  pricing: {
+    completion: "0.0000032",
+    prompt: "0.000001",
+    input_cache_read: "0.0000002",
+    input_cache_write: "0",
+  },
+  supported_parameters: ["reasoning", "tools"],
+};
+
+const remoteOpenRouterModels: Record<string, OpenRouterModelInfo> = {
+  "openrouter/z-ai/glm-5": glm5,
+};
+
+function stubFetch() {
+  const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
+    const url = input instanceof Request ? input.url : input.toString();
+
+    return Promise.resolve(
+      url.includes("openrouter.ai")
+        ? Response.json({ data: [glm5] })
+        : Response.json(remoteModels),
+    );
+  });
+  vi.stubGlobal("fetch", fetchMock);
+
+  return fetchMock;
+}
 
 describe("fetchModels", () => {
   beforeEach(() => {
     vi.resetModules();
     getModelsFromFilesystem.mockReset();
+    getOpenRouterModelsFromFilesystem.mockReset();
   });
 
   afterEach(() => {
@@ -54,10 +88,7 @@ describe("fetchModels", () => {
   });
 
   it("transforms remote model data", async () => {
-    const fetchMock = vi
-      .fn<typeof fetch>()
-      .mockResolvedValue(Response.json(remoteModels));
-    vi.stubGlobal("fetch", fetchMock);
+    const fetchMock = stubFetch();
 
     const { fetchModels } = await import("./models");
     const models = await fetchModels();
@@ -78,21 +109,37 @@ describe("fetchModels", () => {
       supportsAttachments: false,
     });
     expect(models["gpt-5.6-sol"].supportsReasoning).toBe(true);
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(getModelsFromFilesystem).not.toHaveBeenCalled();
+    expect(getOpenRouterModelsFromFilesystem).not.toHaveBeenCalled();
+  });
+
+  it("transforms remote OpenRouter model data", async () => {
+    stubFetch();
+
+    const { fetchModels } = await import("./models");
+    const models = await fetchModels();
+
+    expect(models["openrouter/z-ai/glm-5"]).toStrictEqual({
+      cacheRead: 0.2,
+      cacheWrite: undefined,
+      input: 1,
+      name: "GLM-5",
+      output: 3.2,
+      provider: "openrouter",
+      supportsAttachments: true,
+      supportsReasoning: true,
+    });
   });
 
   it("fetches remote model data only once while the cache is valid", async () => {
-    const fetchMock = vi
-      .fn<typeof fetch>()
-      .mockResolvedValue(Response.json(remoteModels));
-    vi.stubGlobal("fetch", fetchMock);
+    const fetchMock = stubFetch();
 
     const { fetchModels } = await import("./models");
     await Promise.all([fetchModels(), fetchModels()]);
     await fetchModels();
 
-    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("uses filesystem model data when the remote request fails", async () => {
@@ -102,13 +149,16 @@ describe("fetchModels", () => {
       vi.fn<typeof fetch>().mockRejectedValue(requestError),
     );
     getModelsFromFilesystem.mockResolvedValue(remoteModels);
+    getOpenRouterModelsFromFilesystem.mockResolvedValue(remoteOpenRouterModels);
     const consoleError = vi.spyOn(console, "error").mockReturnValue(undefined);
 
     const { fetchModels } = await import("./models");
     const models = await fetchModels();
 
     expect(getModelsFromFilesystem).toHaveBeenCalledOnce();
+    expect(getOpenRouterModelsFromFilesystem).toHaveBeenCalledOnce();
     expect(models["gpt-4.1"].input).toBe(2);
+    expect(models["openrouter/z-ai/glm-5"].input).toBe(1);
     expect(consoleError).toHaveBeenCalledWith(
       "Failed to fetch model data:",
       requestError,

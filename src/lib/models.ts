@@ -1,3 +1,5 @@
+export const OPENROUTER_PREFIX = "openrouter/";
+
 export const modelSelection = [
   "gpt-4.1",
   "claude-opus-5",

@@ -32,6 +32,26 @@ export type LiteLLMModelInfo = {
   supports_pdf_input?: boolean;
 };
 
+// OpenRouter models were dropped from the LiteLLM cost map, so they come from
+// https://openrouter.ai/api/v1/models instead. All prices are strings in USD per token.
+export type OpenRouterModelInfo = {
+  architecture: {
+    input_modalities: string[];
+    output_modalities: string[];
+  };
+  id: string;
+  pricing: {
+    completion: string;
+    prompt: string;
+
+    input_cache_read?: string;
+    input_cache_write?: string;
+  };
+
+  context_length?: number;
+  supported_parameters?: string[];
+};
+
 export type Metadata = {
   usage: NormalizedUsage;
   cost: number;
