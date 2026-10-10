@@ -38,7 +38,6 @@ export function useScrollToBottom(doScroll: boolean) {
         return;
       }
 
-      console.log("scrolling to bottom");
       window.scrollTo({
         top: document.body.scrollHeight,
         behavior: "instant",
