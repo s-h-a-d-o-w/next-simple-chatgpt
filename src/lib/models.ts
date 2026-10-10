@@ -37,7 +37,6 @@ export type ModelConfig = {
 
   cacheRead?: number;
   cacheWrite?: number;
-  extraBody?: Record<string, unknown>;
   supportsAttachments: boolean;
   supportsReasoning: boolean;
   reasoningEffort?: ReasoningEffort;

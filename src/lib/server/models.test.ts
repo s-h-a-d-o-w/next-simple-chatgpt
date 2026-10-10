@@ -53,7 +53,7 @@ describe("fetchModels", () => {
     vi.unstubAllGlobals();
   });
 
-  it("transforms remote model data and applies model defaults", async () => {
+  it("transforms remote model data", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValue(Response.json(remoteModels));
@@ -78,9 +78,6 @@ describe("fetchModels", () => {
       supportsAttachments: false,
     });
     expect(models["gpt-5.6-sol"].supportsReasoning).toBe(true);
-    expect(models["openrouter/z-ai/glm-5"].extraBody).toStrictEqual({
-      reasoning: { enabled: true },
-    });
     expect(fetchMock).toHaveBeenCalledOnce();
     expect(getModelsFromFilesystem).not.toHaveBeenCalled();
   });

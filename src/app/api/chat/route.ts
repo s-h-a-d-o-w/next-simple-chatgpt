@@ -39,6 +39,15 @@ const openrouter = createOpenRouter({
   apiKey: process.env["OPENROUTER_API_KEY"],
 });
 
+// https://openrouter.ai/docs/use-cases/reasoning-tokens
+const openRouterReasoningEfforts = {
+  low: "low",
+  medium: "medium",
+  high: "high",
+  "extra high": "xhigh",
+  max: "max",
+} satisfies Record<ReasoningEffort, string>;
+
 async function processChatRequest(request: ChatRequest) {
   const { model, messages: rawMessages, reasoningEffort } = request;
   const instructions = rawMessages
@@ -72,6 +81,7 @@ export const POST = async (req: NextRequest) => {
   const modelConfig = models[model];
   const isAnthropic = modelConfig.provider === "anthropic";
   const isOpenAI = modelConfig.provider === "openai";
+  const isOpenRouter = modelConfig.provider === "openrouter";
 
   const abortController = new AbortController();
   const timeoutId = setTimeout(() => {
@@ -100,9 +110,7 @@ export const POST = async (req: NextRequest) => {
       ? openai(model)
       : isAnthropic
         ? anthropic(model)
-        : openrouter(model.split("/").slice(1).join("/"), {
-            extraBody: modelConfig.extraBody,
-          }),
+        : openrouter(model.split("/").slice(1).join("/")),
     instructions,
     messages,
     providerOptions: merge(
@@ -119,6 +127,14 @@ export const POST = async (req: NextRequest) => {
           (isOpenAI || isAnthropic) && {
             [modelConfig.provider]: {
               reasoningEffort,
+            },
+          }),
+        ...(reasoningEffort &&
+          isOpenRouter && {
+            openrouter: {
+              reasoning: {
+                effort: openRouterReasoningEfforts[reasoningEffort],
+              },
             },
           }),
       },

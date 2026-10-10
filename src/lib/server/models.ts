@@ -3,7 +3,6 @@ import { getModelsFromFilesystem } from "./getModelsFromFilesystem";
 import {
   modelSelection,
   prettyNames,
-  type ModelConfig,
   type ModelKey,
   type Models,
 } from "@/lib/models";
@@ -16,17 +15,6 @@ const CACHE_TTL_MS = 6 * 60 * 60 * 1_000;
 let remoteModelsCache:
   | { expiresAt: number; promise: Promise<Record<string, LiteLLMModelInfo>> }
   | undefined = undefined;
-
-// Models that need config beyond UI.
-const modelDefaults: Partial<Record<ModelKey, Partial<ModelConfig>>> = {
-  "openrouter/z-ai/glm-5": {
-    extraBody: {
-      reasoning: {
-        enabled: true,
-      },
-    },
-  },
-};
 
 function perTokenToPerMillion(costPerToken: number) {
   const result = costPerToken * 1_000_000;
@@ -87,13 +75,6 @@ function selectModels(data: Record<string, LiteLLMModelInfo>) {
     const liteLLMInfo = data[modelId];
     if (liteLLMInfo) {
       nextModels[modelId] = transformLiteLLMModel(modelId, liteLLMInfo);
-      const defaultConfig = modelDefaults[modelId];
-      if (defaultConfig) {
-        nextModels[modelId] = {
-          ...nextModels[modelId],
-          ...defaultConfig,
-        };
-      }
     }
   }
 

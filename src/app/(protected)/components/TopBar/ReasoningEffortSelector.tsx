@@ -28,13 +28,7 @@ export function ReasoningEffortSelector() {
     <StyledSelect
       aria-label="Reasoning effort"
       title="Reasoning effort"
-      disabled={
-        !modelConfig.supportsReasoning ||
-        !(
-          modelConfig.provider === "openai" ||
-          modelConfig.provider === "anthropic"
-        )
-      }
+      disabled={!modelConfig.supportsReasoning}
       value={reasoningEffort}
       onChange={(e) => setReasoningEffort(e.target.value as ReasoningEffort)}
     >
