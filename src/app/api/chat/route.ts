@@ -31,8 +31,6 @@ export type ChatRequest = {
 // Workaround for https://github.com/vercel/ai/issues/13103
 const singleDownload = createDownload();
 
-export const maxDuration = 60;
-const DEV_TIMEOUT = maxDuration * 1_000 + 1_000; // 1 second more to use environment timeout behavior in production
 const loggedErrors = new Set<string>();
 
 const openrouter = createOpenRouter({
@@ -82,11 +80,6 @@ export const POST = async (req: NextRequest) => {
   const isAnthropic = modelConfig.provider === "anthropic";
   const isOpenAI = modelConfig.provider === "openai";
   const isOpenRouter = modelConfig.provider === "openrouter";
-
-  const abortController = new AbortController();
-  const timeoutId = setTimeout(() => {
-    abortController.abort();
-  }, DEV_TIMEOUT);
 
   const result = streamText({
     // Workaround for https://github.com/vercel/ai/issues/13103
@@ -139,13 +132,9 @@ export const POST = async (req: NextRequest) => {
           }),
       },
     ),
-    abortSignal: abortController.signal,
-    onEnd() {
-      clearTimeout(timeoutId);
-    },
-    onError() {
-      clearTimeout(timeoutId);
-    },
+    // Stops upstream generation (and billing) when the user hits stop or closes the tab.
+    abortSignal: req.signal,
+    timeout: { firstChunkMs: 120_000, chunkMs: 60_000 },
   });
 
   const stream = toUIMessageStream({
