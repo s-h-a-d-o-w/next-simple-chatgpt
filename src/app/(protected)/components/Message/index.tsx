@@ -90,15 +90,18 @@ export const Message = memo(
       >
         {files.length > 0 && <FilesPreview files={files} />}
 
-        {content && (
-          <div style={{ width: "100%" }}>
-            {parts
-              .filter((part) => part.type === "text")
-              .map((part) => (
-                <Part key={`${id}-${part.text}`} part={part} />
-              ))}
-          </div>
-        )}
+        <div style={{ width: "100%" }}>
+          {parts
+            .filter(
+              (part) =>
+                part.type === "text" ||
+                (part.type === "reasoning" && part.text !== ""),
+            )
+            .map((part) => (
+              // @ts-expect-error Strange tool type error
+              <Part key={`${id}-${part.type}-${part.text}`} part={part} />
+            ))}
+        </div>
 
         {!isLoading &&
           lastPart?.type === "reasoning" &&
