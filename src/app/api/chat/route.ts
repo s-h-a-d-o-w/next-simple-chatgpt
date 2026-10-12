@@ -163,6 +163,7 @@ export const POST = async (req: NextRequest) => {
   });
 
   return createUIMessageStreamResponse({
+    keepAliveMs: 5_000,
     stream,
     headers: {
       // Required for nginx to work with streaming responses.
