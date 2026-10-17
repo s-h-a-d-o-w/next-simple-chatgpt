@@ -24,6 +24,13 @@ I'm using relatively few dependencies that front-end engineers are likely famili
 - (At least with the combination of CapRover and cloudflare for HTTPS, it is necessary to tick "WebSocket support" in the app settings in CapRover for streaming to work. I don't know why, since that is done via fetch, not websockets but that's what I've observed.)
 - Deploy like any node app. 🚀 (See `Dockerfile`, `deploy.sh` and the github workflow for inspiration if you're not using a platform that automatically does these things for you.)
 
+## Current web sources for chat
+
+For questions that need fresh information, the optional
+[Parallel search example](examples/parallel-search/README.md) retrieves web
+excerpts and URLs you can paste into a chat prompt. It runs separately in your
+terminal with Node.js and needs no extra dependencies or Parallel API key.
+
 ## Getting started (dev)
 
 1. Clone, install dependencies
