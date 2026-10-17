@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 const endpoint = "https://search.parallel.ai/mcp";
 const protocolVersion = "2025-03-26";
@@ -82,7 +84,10 @@ export async function sourcePrompt(
   ].join("\n\n");
 }
 
-if (import.meta.main) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href
+) {
   const controller = new AbortController();
   const cancel = () => controller.abort(new Error("Search cancelled."));
   process.once("SIGINT", cancel);
