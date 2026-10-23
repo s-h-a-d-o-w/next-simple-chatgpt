@@ -45,7 +45,9 @@ export function Part({
       >
         {padNewlines(part.text)}
       </MemoizedReactMarkdown>
-    ) : undefined;
+    ) : (
+      JSON.stringify(part, undefined, 2)
+    );
 
   return part.type === "reasoning" ? (
     <Reasoning>{markdown}</Reasoning>

@@ -73,9 +73,25 @@ export const Message = memo(
       .map((part) => part.text)
       .join("\n");
     const lastPart = parts.at(-1);
+    const hasAbortedReasoning =
+      !isLoading &&
+      lastPart?.type === "reasoning" &&
+      lastPart.state === "streaming";
 
     const files = useMemo(
       () => parts.filter((part) => part.type === "file"),
+      [parts],
+    );
+    // File parts are rendered separately by FilesPreview.
+    const renderableParts = useMemo(
+      () =>
+        parts.filter(
+          (part) =>
+            part.type === "text" ||
+            (part.type === "reasoning" && part.text !== "") ||
+            part.type === "dynamic-tool" ||
+            part.type.startsWith("tool-"),
+        ),
       [parts],
     );
 
@@ -90,26 +106,18 @@ export const Message = memo(
       >
         {files.length > 0 && <FilesPreview files={files} />}
 
-        <div style={{ width: "100%" }}>
-          {parts
-            .filter(
-              (part) =>
-                part.type === "text" ||
-                (part.type === "reasoning" && part.text !== ""),
-            )
-            .map((part) => (
+        {renderableParts.length > 0 && (
+          <div style={{ width: "100%" }}>
+            {renderableParts.map((part) => (
               // @ts-expect-error Strange tool type error
               <Part key={`${id}-${part.type}-${part.text}`} part={part} />
             ))}
-        </div>
+          </div>
+        )}
 
-        {!isLoading &&
-          lastPart?.type === "reasoning" &&
-          lastPart.state === "streaming" && (
-            <div>Request timed out during model reasoning</div>
-          )}
+        {hasAbortedReasoning && <div>Reasoning was aborted.</div>}
 
-        {(isLoading || showCopyAll || onDelete) && (
+        {(isLoading || showCopyAll || onDelete) && !hasAbortedReasoning && (
           <div
             style={{
               alignSelf: isUser ? undefined : "flex-end",
