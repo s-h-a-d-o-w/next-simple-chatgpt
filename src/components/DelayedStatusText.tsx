@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useState } from "react";
+import { type HTMLAttributes, useEffect, useState } from "react";
 import { styled } from "@/styled-system/jsx";
 
 const SHOW_DELAY = 2_000;

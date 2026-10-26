@@ -34,7 +34,7 @@ export const allModelIds = [
 ] as const;
 
 export type ModelKey = (typeof modelSelection)[number];
-export type InternalModelKey = (typeof internalModelSelection)[number];
+type InternalModelKey = (typeof internalModelSelection)[number];
 export type AnyModelKey = ModelKey | InternalModelKey;
 
 // openrouter accepts these overall:

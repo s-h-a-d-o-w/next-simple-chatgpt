@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 export async function submitPrompt(page: Page, prompt: string) {
   const promptInput = page.getByRole("textbox", { name: "chat prompt" });

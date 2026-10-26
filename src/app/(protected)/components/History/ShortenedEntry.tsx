@@ -4,8 +4,8 @@ import { css } from "@/styled-system/css";
 import { IconButton } from "@/components/IconButton";
 import { Message } from "../Message";
 import { styled } from "@/styled-system/jsx";
-import { HistoryEntryV1 } from "@/app/(protected)/hooks/useHistory";
-import { RowComponentProps } from "react-window";
+import type { HistoryEntryV1 } from "@/app/(protected)/hooks/useHistory";
+import type { RowComponentProps } from "react-window";
 
 type Props = {
   filteredHistory: HistoryEntryV1[];

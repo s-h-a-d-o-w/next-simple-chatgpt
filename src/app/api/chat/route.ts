@@ -16,7 +16,7 @@ import {
   createUIMessageStreamResponse,
   createDownload,
 } from "ai";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { merge } from "lodash-es";
 import { normalizeUsage } from "./normalizeUsage";
 import { getCost } from "./billing/getCost";
@@ -54,7 +54,8 @@ const openRouterReasoningEfforts = {
 } satisfies Record<ReasoningEffort, string>;
 
 async function processChatProps(request: ChatProps) {
-  const { model, messages: rawMessages, reasoningEffort, ...rest } = request;
+  const { messages: rawMessages, reasoningEffort, ...rest } = request;
+
   const instructions = rawMessages
     .filter(({ role }) => role === "system")
     .flatMap((message) =>
@@ -69,7 +70,6 @@ async function processChatProps(request: ChatProps) {
 
   return {
     ...rest,
-    model,
     instructions,
     messages,
     reasoningEffort: isReasoningEffort(reasoningEffort)

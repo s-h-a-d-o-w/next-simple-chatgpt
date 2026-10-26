@@ -4,7 +4,7 @@ import { Code } from "./Code";
 import { padNewlines } from "./padNewlines";
 import { HeaderCell, Cell, Row } from "./TableElements";
 import ReactMarkdown from "react-markdown";
-import { ReasoningUIPart, TextUIPart } from "ai";
+import type { ReasoningUIPart, TextUIPart } from "ai";
 import { styled } from "@/styled-system/jsx";
 
 const remarkPlugins = [remarkGfm];
@@ -26,11 +26,7 @@ const Reasoning = styled("div", {
   },
 });
 
-export function Part({
-  part,
-}: {
-  part: NonNullable<TextUIPart | ReasoningUIPart>;
-}) {
+export function Part({ part }: { part: TextUIPart | ReasoningUIPart }) {
   const markdown = (
     <MemoizedReactMarkdown
       remarkPlugins={remarkPlugins}

@@ -1,18 +1,6 @@
 import type { NormalizedUsage } from "@/app/api/chat/normalizeUsage";
-import { useChat } from "@ai-sdk/react";
+import type { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
-
-export type AnthropicUsage = {
-  input_tokens: number;
-  output_tokens: number;
-  cache_creation_input_tokens: number;
-  cache_read_input_tokens: number;
-  service_tier: string;
-  cache_creation: {
-    ephemeral_1h_input_tokens: number;
-    ephemeral_5m_input_tokens: number;
-  };
-};
 
 export type LiteLLMModelInfo = {
   input_cost_per_token: number;

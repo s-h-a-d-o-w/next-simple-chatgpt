@@ -7,7 +7,7 @@ import { FilesPreview } from "@/components/FilesPreview";
 import { CopyButton } from "./CopyButton";
 import { Part } from "./Part";
 import DelayedStatusText from "@/components/DelayedStatusText";
-import { Metadata } from "@/types";
+import type { Metadata } from "@/types";
 
 type Props = UIMessage<Metadata> & {
   className?: string;

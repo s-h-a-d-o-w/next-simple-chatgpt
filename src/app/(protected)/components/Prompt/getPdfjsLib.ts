@@ -1,3 +1,4 @@
+// oxlint-disable-next-line typescript/consistent-type-imports
 let pdfjsLib: typeof import("pdfjs-dist") | undefined;
 
 // Load pdfjs-dist dynamically so that we don't get "Warning: Please use the `legacy` build in Node.js environments." on the server.

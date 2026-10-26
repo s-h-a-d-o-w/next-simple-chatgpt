@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useEffect } from "react";
+import { type ChangeEventHandler, useCallback, useEffect } from "react";
 import { useAtom } from "jotai";
 import { Textarea } from "@/components/Textarea";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";

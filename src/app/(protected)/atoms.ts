@@ -13,7 +13,6 @@ export const sessionIdAtom = atom(uuidv4());
 // Only set once prompt is sent, used in history
 export const chatStartTimeAtom = atom<number | undefined>(undefined);
 export const isHistoryOpenAtom = atom(false);
-export const tokenAtom = atom<string | undefined>(undefined);
 export const systemPromptAtom = atomWithStorage(
   "system-message",
   "You are a concise assistant. Use markdown for your responses.",

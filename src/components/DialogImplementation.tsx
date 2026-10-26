@@ -1,5 +1,5 @@
 import {
-  ReactNode,
+  type ReactNode,
   useCallback,
   useEffect,
   useRef,
@@ -7,7 +7,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { styled } from "@/styled-system/jsx";
-import { SystemStyleObject } from "@/styled-system/types";
+import type { SystemStyleObject } from "@/styled-system/types";
 
 export type DialogProps = {
   children: ReactNode;

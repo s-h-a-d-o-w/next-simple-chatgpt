@@ -4,7 +4,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { stringify, parse } from "superjson";
 import { useStorageUsage } from "./useStorageUsage";
 import type { UIMessage } from "ai";
-import { Metadata } from "@/types";
+import type { Metadata } from "@/types";
 
 export const CURRENT_HISTORY_VERSION = 1;
 

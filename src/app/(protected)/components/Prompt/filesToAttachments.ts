@@ -1,5 +1,5 @@
 import { getPdfjsLib } from "@/app/(protected)/components/Prompt/getPdfjsLib";
-import { FileUIPart } from "ai";
+import type { FileUIPart } from "ai";
 
 function convertFileToDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
