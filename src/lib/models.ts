@@ -1,3 +1,18 @@
+export type ModelConfig = {
+  name: string;
+  input: number;
+  output: number;
+  provider: string;
+
+  cacheRead?: number;
+  cacheWrite?: number;
+  supportsAttachments: boolean;
+  supportsReasoning: boolean;
+  supportedReasoningEfforts?: ReasoningEffort[];
+  reasoningEffort?: ReasoningEffort;
+};
+export type Models = Record<ModelKey, ModelConfig>;
+
 export const OPENROUTER_PREFIX = "openrouter/";
 
 export const modelSelection = [
@@ -70,23 +85,3 @@ export const openRouterReasoningEfforts = {
   "extra high": "xhigh",
   max: "max",
 } satisfies Record<ReasoningEffort, string>;
-
-export function getAvailableReasoningEfforts(modelConfig: ModelConfig) {
-  return modelConfig.supportedReasoningEfforts ?? reasoningEfforts;
-}
-
-export type ModelConfig = {
-  name: string;
-  input: number;
-  output: number;
-  provider: string;
-
-  cacheRead?: number;
-  cacheWrite?: number;
-  supportsAttachments: boolean;
-  supportsReasoning: boolean;
-  supportedReasoningEfforts?: ReasoningEffort[];
-  reasoningEffort?: ReasoningEffort;
-};
-
-export type Models = Record<ModelKey, ModelConfig>;

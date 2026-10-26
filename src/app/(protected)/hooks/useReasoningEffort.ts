@@ -1,6 +1,5 @@
 import { config } from "@/config";
 import {
-  getAvailableReasoningEfforts,
   isReasoningEffort,
   reasoningEfforts,
   type ModelKey,
@@ -12,20 +11,6 @@ import { useModelSelection } from "./useModelSelection";
 
 type ReasoningEffortByModel = Partial<Record<ModelKey, ReasoningEffort>>;
 
-function getClosestEffort(
-  target: ReasoningEffort,
-  available: readonly ReasoningEffort[],
-) {
-  const targetIndex = reasoningEfforts.indexOf(target);
-
-  return available.reduce((closest, effort) =>
-    Math.abs(reasoningEfforts.indexOf(effort) - targetIndex) <
-    Math.abs(reasoningEfforts.indexOf(closest) - targetIndex)
-      ? effort
-      : closest,
-  );
-}
-
 export function useReasoningEffort() {
   const { model, modelConfig } = useModelSelection();
   const [storedReasoningEfforts, setStoredReasoningEfforts] =
@@ -34,20 +19,17 @@ export function useReasoningEffort() {
     });
 
   const availableReasoningEfforts = useMemo(
-    () => getAvailableReasoningEfforts(modelConfig),
+    () => modelConfig.supportedReasoningEfforts ?? reasoningEfforts,
     [modelConfig],
   );
 
   const reasoningEffort = useMemo<ReasoningEffort>(() => {
     const storedReasoningEffort = storedReasoningEfforts[model];
-    const preferredReasoningEffort = isReasoningEffort(storedReasoningEffort)
+
+    return isReasoningEffort(storedReasoningEffort)
       ? storedReasoningEffort
       : config.models.defaultReasoningEffort;
-
-    return availableReasoningEfforts.length > 0
-      ? getClosestEffort(preferredReasoningEffort, availableReasoningEfforts)
-      : preferredReasoningEffort;
-  }, [storedReasoningEfforts, model, availableReasoningEfforts]);
+  }, [storedReasoningEfforts, model]);
 
   const setReasoningEffort = useCallback(
     (effort: ReasoningEffort) => {

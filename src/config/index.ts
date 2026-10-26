@@ -16,6 +16,7 @@ export const config = {
     default: (isTest
       ? "openrouter/anthropic/claude-haiku-4.5"
       : "gpt-4.1") satisfies ModelKey,
-    defaultReasoningEffort: "medium" satisfies ReasoningEffort,
+    // Should exist across all models
+    defaultReasoningEffort: "high" satisfies ReasoningEffort,
   },
 } as const;

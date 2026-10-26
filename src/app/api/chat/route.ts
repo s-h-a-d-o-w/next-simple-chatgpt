@@ -1,6 +1,5 @@
 import { authGuard } from "@/lib/server/authGuard";
 import {
-  getAvailableReasoningEfforts,
   isReasoningEffort,
   openRouterReasoningEfforts,
   type ModelKey,
@@ -124,11 +123,7 @@ export const POST = async (req: NextRequest) => {
                   "google-ai-studio",
                 ],
               },
-              ...(modelConfig.supportsReasoning &&
-              reasoningEffort &&
-              getAvailableReasoningEfforts(modelConfig).includes(
-                reasoningEffort,
-              )
+              ...(modelConfig.supportsReasoning && reasoningEffort
                 ? {
                     reasoning: {
                       effort: openRouterReasoningEfforts[reasoningEffort],
