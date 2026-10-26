@@ -8,7 +8,9 @@ import {
 import {
   allModelIds,
   OPENROUTER_PREFIX,
+  openRouterReasoningEfforts,
   prettyNames,
+  reasoningEfforts,
   type AnyModelKey,
 } from "@/lib/models";
 import type { OpenRouterModelInfo } from "@/types";
@@ -21,6 +23,18 @@ function parsePricePerMillion(costPerToken: string | undefined) {
   return costPerToken !== undefined && parsed > 0
     ? perTokenToPerMillion(parsed)
     : undefined;
+}
+
+function parseSupportedReasoningEfforts(
+  supportedEfforts: string[] | undefined,
+) {
+  if (!supportedEfforts) {
+    return undefined;
+  }
+
+  return reasoningEfforts.filter((effort) =>
+    supportedEfforts.includes(openRouterReasoningEfforts[effort]),
+  );
 }
 
 async function fetchRemoteOpenRouterModels() {
@@ -48,7 +62,7 @@ export function transformOpenRouterModel(
   name: AnyModelKey,
   info: OpenRouterModelInfo,
 ) {
-  const { architecture, pricing, supported_parameters } = info;
+  const { architecture, pricing, reasoning, supported_parameters } = info;
 
   return {
     name: prettyNames[name],
@@ -57,6 +71,9 @@ export function transformOpenRouterModel(
     output: parsePricePerMillion(pricing.completion) ?? 0,
     supportsAttachments: architecture.input_modalities.includes("image"),
     supportsReasoning: supported_parameters?.includes("reasoning") ?? false,
+    supportedReasoningEfforts: parseSupportedReasoningEfforts(
+      reasoning?.supported_efforts,
+    ),
     cacheRead: parsePricePerMillion(pricing.input_cache_read),
     cacheWrite: parsePricePerMillion(pricing.input_cache_write),
   };

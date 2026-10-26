@@ -1,4 +1,4 @@
-import { reasoningEfforts, type ReasoningEffort } from "@/lib/models";
+import type { ReasoningEffort } from "@/lib/models";
 import { styled } from "@/styled-system/jsx";
 import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
 import { useReasoningEffort } from "@/app/(protected)/hooks/useReasoningEffort";
@@ -22,17 +22,20 @@ const StyledSelect = styled("select", {
 
 export function ReasoningEffortSelector() {
   const { modelConfig } = useModelSelection();
-  const { reasoningEffort, setReasoningEffort } = useReasoningEffort();
+  const { availableReasoningEfforts, reasoningEffort, setReasoningEffort } =
+    useReasoningEffort();
 
   return (
     <StyledSelect
       aria-label="Reasoning effort"
       title="Reasoning effort"
-      disabled={!modelConfig.supportsReasoning}
+      disabled={
+        !modelConfig.supportsReasoning || availableReasoningEfforts.length === 0
+      }
       value={reasoningEffort}
       onChange={(e) => setReasoningEffort(e.target.value as ReasoningEffort)}
     >
-      {reasoningEfforts.map((effort) => (
+      {availableReasoningEfforts.map((effort) => (
         <option key={effort} value={effort}>
           {effort}
         </option>

@@ -48,6 +48,9 @@ const openRouterModel: OpenRouterModelInfo = {
     input_cache_write: "0",
   },
   supported_parameters: ["reasoning", "tools"],
+  reasoning: {
+    supported_efforts: ["max", "xhigh", "low", "none"],
+  },
 };
 
 const openRouterModelIds = allModelIds.filter((id) =>
@@ -73,6 +76,9 @@ function expectedModel(id: AnyModelKey) {
     provider: isOpenRouter ? "openrouter" : "openai",
     supportsAttachments: true,
     supportsReasoning: isOpenRouter,
+    supportedReasoningEfforts: isOpenRouter
+      ? ["low", "extra high", "max"]
+      : undefined,
   };
 }
 

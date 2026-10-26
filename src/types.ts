@@ -33,6 +33,9 @@ export type OpenRouterModelInfo = {
   };
 
   context_length?: number;
+  reasoning?: {
+    supported_efforts?: string[];
+  };
   supported_parameters?: string[];
 };
 

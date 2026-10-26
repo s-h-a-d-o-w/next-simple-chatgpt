@@ -1,6 +1,8 @@
 import { authGuard } from "@/lib/server/authGuard";
 import {
+  getAvailableReasoningEfforts,
   isReasoningEffort,
+  openRouterReasoningEfforts,
   type ModelKey,
   type ReasoningEffort,
 } from "@/lib/models";
@@ -43,15 +45,6 @@ const loggedErrors = new Set<string>();
 const openrouter = createOpenRouter({
   apiKey: process.env["OPENROUTER_API_KEY"],
 });
-
-// https://openrouter.ai/docs/use-cases/reasoning-tokens
-const openRouterReasoningEfforts = {
-  low: "low",
-  medium: "medium",
-  high: "high",
-  "extra high": "xhigh",
-  max: "max",
-} satisfies Record<ReasoningEffort, string>;
 
 async function processChatProps(request: ChatProps) {
   const { messages: rawMessages, reasoningEffort, ...rest } = request;
@@ -131,7 +124,11 @@ export const POST = async (req: NextRequest) => {
                   "google-ai-studio",
                 ],
               },
-              ...(modelConfig.supportsReasoning && reasoningEffort
+              ...(modelConfig.supportsReasoning &&
+              reasoningEffort &&
+              getAvailableReasoningEfforts(modelConfig).includes(
+                reasoningEffort,
+              )
                 ? {
                     reasoning: {
                       effort: openRouterReasoningEfforts[reasoningEffort],

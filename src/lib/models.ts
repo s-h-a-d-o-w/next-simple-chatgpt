@@ -62,6 +62,19 @@ export function isReasoningEffort(value: unknown): value is ReasoningEffort {
   return reasoningEfforts.includes(value as ReasoningEffort);
 }
 
+// https://openrouter.ai/docs/guides/best-practices/reasoning-tokens#reasoning-effort-level
+export const openRouterReasoningEfforts = {
+  low: "low",
+  medium: "medium",
+  high: "high",
+  "extra high": "xhigh",
+  max: "max",
+} satisfies Record<ReasoningEffort, string>;
+
+export function getAvailableReasoningEfforts(modelConfig: ModelConfig) {
+  return modelConfig.supportedReasoningEfforts ?? reasoningEfforts;
+}
+
 export type ModelConfig = {
   name: string;
   input: number;
@@ -72,6 +85,7 @@ export type ModelConfig = {
   cacheWrite?: number;
   supportsAttachments: boolean;
   supportsReasoning: boolean;
+  supportedReasoningEfforts?: ReasoningEffort[];
   reasoningEffort?: ReasoningEffort;
 };
 
