@@ -13,7 +13,9 @@ export const config = {
     localStorageQuota: 2.5 * 1_024 * 1_024,
   },
   models: {
-    default: (isTest ? "claude-haiku-4-5" : "gpt-4.1") satisfies ModelKey,
+    default: (isTest
+      ? "openrouter/anthropic/claude-haiku-4.5"
+      : "gpt-4.1") satisfies ModelKey,
     defaultReasoningEffort: "medium" satisfies ReasoningEffort,
   },
 } as const;

@@ -5,7 +5,7 @@ import {
   perTokenToPerMillion,
   withFilesystemFallback,
 } from "./modelFetching";
-import { prettyNames, type ModelKey } from "@/lib/models";
+import { prettyNames, type AnyModelKey } from "@/lib/models";
 import type { LiteLLMModelInfo } from "@/types";
 
 const LITELLM_MODELS_URL =
@@ -21,7 +21,10 @@ async function fetchRemoteLiteLLMModels() {
 
 const getRemoteLiteLLMModels = createCachedFetcher(fetchRemoteLiteLLMModels);
 
-export function transformLiteLLMModel(name: ModelKey, info: LiteLLMModelInfo) {
+export function transformLiteLLMModel(
+  name: AnyModelKey,
+  info: LiteLLMModelInfo,
+) {
   return {
     name: prettyNames[name],
     provider: info.litellm_provider,

@@ -3,19 +3,29 @@ import {
   getOpenRouterModels,
   transformOpenRouterModel,
 } from "./openRouterModels";
-import { modelSelection, OPENROUTER_PREFIX, type Models } from "@/lib/models";
+import {
+  internalModelSelection,
+  modelSelection,
+  OPENROUTER_PREFIX,
+  type AnyModelKey,
+  type ModelConfig,
+} from "@/lib/models";
 import type { LiteLLMModelInfo, OpenRouterModelInfo } from "@/types";
 
-function isModels(models: Partial<Models>): models is Models {
-  return modelSelection.every((model) => models[model] !== undefined);
+function isComplete<Key extends AnyModelKey>(
+  modelIds: readonly Key[],
+  models: Partial<Record<Key, ModelConfig>>,
+): models is Record<Key, ModelConfig> {
+  return modelIds.every((modelId) => models[modelId] !== undefined);
 }
 
-function selectModels(
+function selectModels<Key extends AnyModelKey>(
+  modelIds: readonly Key[],
   liteLLMModels: Record<string, LiteLLMModelInfo>,
   openRouterModels: Record<string, OpenRouterModelInfo>,
 ) {
-  const nextModels: Partial<Models> = {};
-  for (const modelId of modelSelection) {
+  const nextModels: Partial<Record<Key, ModelConfig>> = {};
+  for (const modelId of modelIds) {
     if (modelId.startsWith(OPENROUTER_PREFIX)) {
       const openRouterInfo = openRouterModels[modelId];
       if (openRouterInfo) {
@@ -29,20 +39,30 @@ function selectModels(
     }
   }
 
-  if (!isModels(nextModels)) {
+  if (!isComplete(modelIds, nextModels)) {
     throw new Error(
-      `Model "${modelSelection.find((model) => nextModels[model] === undefined)}" from whitelist is missing in fetched models.`,
+      `Model "${modelIds.find((modelId) => nextModels[modelId] === undefined)}" from whitelist is missing in fetched models.`,
     );
   }
 
   return nextModels;
 }
 
-export async function fetchModels() {
+async function fetchSelection<Key extends AnyModelKey>(
+  modelIds: readonly Key[],
+) {
   const [liteLLMModels, openRouterModels] = await Promise.all([
     getLiteLLMModels(),
     getOpenRouterModels(),
   ]);
 
-  return selectModels(liteLLMModels, openRouterModels);
+  return selectModels(modelIds, liteLLMModels, openRouterModels);
+}
+
+export function fetchModels() {
+  return fetchSelection(modelSelection);
+}
+
+export function fetchInternalModels() {
+  return fetchSelection(internalModelSelection);
 }

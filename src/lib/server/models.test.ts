@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LiteLLMModelInfo, OpenRouterModelInfo } from "@/types";
+import {
+  allModelIds,
+  internalModelSelection,
+  modelSelection,
+  OPENROUTER_PREFIX,
+  prettyNames,
+  type AnyModelKey,
+} from "../models";
 
 const { getModelsFromFilesystem, getOpenRouterModelsFromFilesystem } =
   vi.hoisted(() => ({
@@ -14,39 +22,25 @@ vi.mock(import("./getModelsFromFilesystem"), () => ({
   getOpenRouterModelsFromFilesystem,
 }));
 
-const remoteModels: Record<string, LiteLLMModelInfo> = {
-  "gpt-4.1": {
-    input_cost_per_token: 0.000002,
-    output_cost_per_token: 0.000008,
-    litellm_provider: "openai",
-    supports_vision: true,
-  },
-  "claude-opus-5": {
-    input_cost_per_token: 0.000015,
-    output_cost_per_token: 0.000075,
-    litellm_provider: "anthropic",
-  },
-  "claude-haiku-4-5": {
-    input_cost_per_token: 0.000001,
-    output_cost_per_token: 0.000005,
-    cache_read_input_token_cost: 0.0000001,
-    cache_creation_input_token_cost: 0.00000125,
-    litellm_provider: "anthropic",
-  },
-  "gpt-5.6-sol": {
-    input_cost_per_token: 0.00000175,
-    output_cost_per_token: 0.000014,
-    litellm_provider: "openai",
-    supports_reasoning: true,
-  },
+const liteLLMModel: LiteLLMModelInfo = {
+  input_cost_per_token: 0.000002,
+  output_cost_per_token: 0.000008,
+  litellm_provider: "openai",
+  supports_vision: true,
 };
 
-const glm5: OpenRouterModelInfo = {
+const remoteModels: Record<string, LiteLLMModelInfo> = Object.fromEntries(
+  allModelIds
+    .filter((id) => !id.startsWith(OPENROUTER_PREFIX))
+    .map((id) => [id, { ...liteLLMModel }]),
+);
+
+const openRouterModel: OpenRouterModelInfo = {
   architecture: {
     input_modalities: ["text", "image"],
     output_modalities: ["text"],
   },
-  id: "z-ai/glm-5",
+  id: "test/model",
   pricing: {
     completion: "0.0000032",
     prompt: "0.000001",
@@ -56,17 +50,43 @@ const glm5: OpenRouterModelInfo = {
   supported_parameters: ["reasoning", "tools"],
 };
 
-const remoteOpenRouterModels: Record<string, OpenRouterModelInfo> = {
-  "openrouter/z-ai/glm-5": glm5,
-};
+const openRouterModelIds = allModelIds.filter((id) =>
+  id.startsWith(OPENROUTER_PREFIX),
+);
+const remoteOpenRouterModels: Record<string, OpenRouterModelInfo> =
+  Object.fromEntries(
+    openRouterModelIds.map((id) => [
+      id,
+      { ...openRouterModel, id: id.slice(OPENROUTER_PREFIX.length) },
+    ]),
+  );
+
+function expectedModel(id: AnyModelKey) {
+  const isOpenRouter = id.startsWith(OPENROUTER_PREFIX);
+
+  return {
+    cacheRead: isOpenRouter ? 0.2 : undefined,
+    cacheWrite: undefined,
+    input: isOpenRouter ? 1 : 2,
+    name: prettyNames[id],
+    output: isOpenRouter ? 3.2 : 8,
+    provider: isOpenRouter ? "openrouter" : "openai",
+    supportsAttachments: true,
+    supportsReasoning: isOpenRouter,
+  };
+}
 
 function stubFetch() {
   const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
     const url = input instanceof Request ? input.url : input.toString();
 
     return Promise.resolve(
-      url.includes("openrouter.ai")
-        ? Response.json({ data: [glm5] })
+      url.startsWith("https://openrouter.ai/api/v1/model/")
+        ? Response.json({
+            data: remoteOpenRouterModels[
+              `${OPENROUTER_PREFIX}${url.slice("https://openrouter.ai/api/v1/model/".length)}`
+            ],
+          })
         : Response.json(remoteModels),
     );
   });
@@ -87,49 +107,23 @@ describe("fetchModels", () => {
     vi.unstubAllGlobals();
   });
 
-  it("transforms remote model data", async () => {
+  it.each(modelSelection)("transforms remote model data for %s", async (id) => {
     const fetchMock = stubFetch();
 
     const { fetchModels } = await import("./models");
     const models = await fetchModels();
 
-    expect(models["gpt-4.1"]).toStrictEqual({
-      cacheRead: undefined,
-      cacheWrite: undefined,
-      input: 2,
-      name: "GPT 4.1",
-      output: 8,
-      provider: "openai",
-      supportsAttachments: true,
-      supportsReasoning: false,
-    });
-    expect(models["claude-haiku-4-5"]).toMatchObject({
-      cacheRead: 0.1,
-      cacheWrite: 1.25,
-      supportsAttachments: false,
-    });
-    expect(models["gpt-5.6-sol"].supportsReasoning).toBe(true);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(models[id]).toStrictEqual(expectedModel(id));
+    expect(fetchMock).toHaveBeenCalledTimes(1 + openRouterModelIds.length);
+    for (const openRouterId of openRouterModelIds) {
+      expect(fetchMock).toHaveBeenCalledWith(
+        `https://openrouter.ai/api/v1/model/${openRouterId.slice(OPENROUTER_PREFIX.length)}`,
+        expect.any(Object),
+      );
+    }
+    expect(Object.keys(models)).toStrictEqual([...modelSelection]);
     expect(getModelsFromFilesystem).not.toHaveBeenCalled();
     expect(getOpenRouterModelsFromFilesystem).not.toHaveBeenCalled();
-  });
-
-  it("transforms remote OpenRouter model data", async () => {
-    stubFetch();
-
-    const { fetchModels } = await import("./models");
-    const models = await fetchModels();
-
-    expect(models["openrouter/z-ai/glm-5"]).toStrictEqual({
-      cacheRead: 0.2,
-      cacheWrite: undefined,
-      input: 1,
-      name: "GLM-5",
-      output: 3.2,
-      provider: "openrouter",
-      supportsAttachments: true,
-      supportsReasoning: true,
-    });
   });
 
   it("fetches remote model data only once while the cache is valid", async () => {
@@ -139,7 +133,7 @@ describe("fetchModels", () => {
     await Promise.all([fetchModels(), fetchModels()]);
     await fetchModels();
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(1 + openRouterModelIds.length);
   });
 
   it("uses filesystem model data when the remote request fails", async () => {
@@ -157,11 +151,65 @@ describe("fetchModels", () => {
 
     expect(getModelsFromFilesystem).toHaveBeenCalledOnce();
     expect(getOpenRouterModelsFromFilesystem).toHaveBeenCalledOnce();
-    expect(models["gpt-4.1"].input).toBe(2);
-    expect(models["openrouter/z-ai/glm-5"].input).toBe(1);
+    expect(models).toStrictEqual(
+      Object.fromEntries(modelSelection.map((id) => [id, expectedModel(id)])),
+    );
+    expect(consoleError).toHaveBeenCalledTimes(2);
     expect(consoleError).toHaveBeenCalledWith(
       "Failed to fetch model data:",
       requestError,
     );
+  });
+
+  it.each(modelSelection)(
+    "rejects when the selected model %s is missing",
+    async (missingId) => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn<typeof fetch>().mockRejectedValue(new Error("offline")),
+      );
+      vi.spyOn(console, "error").mockReturnValue(undefined);
+      getModelsFromFilesystem.mockResolvedValue(
+        Object.fromEntries(
+          Object.entries(remoteModels).filter(([id]) => id !== missingId),
+        ),
+      );
+      getOpenRouterModelsFromFilesystem.mockResolvedValue(
+        Object.fromEntries(
+          Object.entries(remoteOpenRouterModels).filter(
+            ([id]) => id !== missingId,
+          ),
+        ),
+      );
+
+      const { fetchModels } = await import("./models");
+
+      await expect(fetchModels()).rejects.toThrow(
+        `Model "${missingId}" from whitelist is missing in fetched models.`,
+      );
+    },
+  );
+
+  it("returns only internal models and shares the remote cache", async () => {
+    const fetchMock = stubFetch();
+
+    const { fetchInternalModels, fetchModels } = await import("./models");
+    const [models, internalModels] = await Promise.all([
+      fetchModels(),
+      fetchInternalModels(),
+    ]);
+
+    expect(Object.keys(internalModels)).toStrictEqual([
+      ...internalModelSelection,
+    ]);
+    expect(internalModels).toStrictEqual(
+      Object.fromEntries(
+        internalModelSelection.map((id) => [id, expectedModel(id)]),
+      ),
+    );
+    for (const id of internalModelSelection) {
+      expect(models).not.toHaveProperty(id);
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(1 + openRouterModelIds.length);
   });
 });

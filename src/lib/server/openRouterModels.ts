@@ -5,10 +5,15 @@ import {
   perTokenToPerMillion,
   withFilesystemFallback,
 } from "./modelFetching";
-import { OPENROUTER_PREFIX, prettyNames, type ModelKey } from "@/lib/models";
+import {
+  allModelIds,
+  OPENROUTER_PREFIX,
+  prettyNames,
+  type AnyModelKey,
+} from "@/lib/models";
 import type { OpenRouterModelInfo } from "@/types";
 
-const OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models";
+const OPENROUTER_MODEL_URL = "https://openrouter.ai/api/v1/model";
 
 // OpenRouter reports prices as strings and uses "0"/"-1" for free or variable pricing.
 function parsePricePerMillion(costPerToken: string | undefined) {
@@ -19,13 +24,20 @@ function parsePricePerMillion(costPerToken: string | undefined) {
 }
 
 async function fetchRemoteOpenRouterModels() {
-  const { data } = (await fetchJson(OPENROUTER_MODELS_URL)) as {
-    data: OpenRouterModelInfo[];
-  };
+  const models = await Promise.all(
+    allModelIds
+      .filter((name) => name.startsWith(OPENROUTER_PREFIX))
+      .map(async (name) => {
+        const id = name.slice(OPENROUTER_PREFIX.length);
+        const { data } = (await fetchJson(`${OPENROUTER_MODEL_URL}/${id}`)) as {
+          data: OpenRouterModelInfo;
+        };
 
-  return Object.fromEntries(
-    data.map((model) => [`${OPENROUTER_PREFIX}${model.id}`, model]),
+        return [name, data] as const;
+      }),
   );
+
+  return Object.fromEntries(models);
 }
 
 const getRemoteOpenRouterModels = createCachedFetcher(
@@ -33,7 +45,7 @@ const getRemoteOpenRouterModels = createCachedFetcher(
 );
 
 export function transformOpenRouterModel(
-  name: ModelKey,
+  name: AnyModelKey,
   info: OpenRouterModelInfo,
 ) {
   const { architecture, pricing, supported_parameters } = info;
