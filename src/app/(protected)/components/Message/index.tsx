@@ -1,5 +1,4 @@
 import { IconButton } from "@/components/IconButton";
-import Spinner from "@/components/Spinner";
 import { withProfiler } from "@/components/withProfiler";
 import type { UIMessage } from "ai";
 import { memo, useMemo } from "react";
@@ -7,8 +6,10 @@ import { styled } from "@/styled-system/jsx";
 import { FilesPreview } from "@/components/FilesPreview";
 import { CopyButton } from "./CopyButton";
 import { Part } from "./Part";
+import DelayedStatusText from "@/components/DelayedStatusText";
+import { Metadata } from "@/types";
 
-type Props = UIMessage & {
+type Props = UIMessage<Metadata> & {
   className?: string;
   isExpandable?: boolean;
   isLoading?: boolean;
@@ -55,24 +56,39 @@ const StyledMessage = styled("div", {
   },
 });
 
+function extractResponse(parts: UIMessage["parts"]) {
+  let result = "";
+
+  for (const part of parts) {
+    if (part.type === "text") {
+      if (result !== "" && part.text !== "") {
+        result += "\n\n";
+      }
+
+      result += part.text;
+    }
+  }
+
+  return result;
+}
+
 export const Message = memo(
   withProfiler(function Message({
-    role,
+    className,
     id,
     isLoading = false,
+    metadata,
+    onClick,
+    onDelete,
+    parts,
+    role,
     shortened = false,
     showCopyAll = false,
-    className,
-    onDelete,
-    onClick,
-    parts,
   }: Props) {
     const isUser = role === "user";
-    const content = parts
-      .filter((part) => part.type === "text")
-      .map((part) => part.text)
-      .join("\n");
+    const content = extractResponse(parts);
     const lastPart = parts.at(-1);
+    const isReasoning = lastPart?.type === "reasoning";
     const hasAbortedReasoning =
       !isLoading &&
       lastPart?.type === "reasoning" &&
@@ -115,6 +131,10 @@ export const Message = memo(
           </div>
         )}
 
+        {metadata?.triggeredContentFilter && (
+          <div>The model refused to respond due to content restrictions.</div>
+        )}
+
         {hasAbortedReasoning && <div>Reasoning was aborted.</div>}
 
         {(isLoading || showCopyAll || onDelete) && !hasAbortedReasoning && (
@@ -126,7 +146,15 @@ export const Message = memo(
               alignItems: "center",
             }}
           >
-            {isLoading && content === "" && <Spinner />}
+            {isLoading && content === "" && (
+              <div>
+                {isReasoning ? (
+                  <DelayedStatusText>Reasoning...</DelayedStatusText>
+                ) : (
+                  "Waiting for response..."
+                )}
+              </div>
+            )}
             {!isLoading && onDelete && (
               <IconButton
                 name="delete"
