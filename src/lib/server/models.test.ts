@@ -76,9 +76,9 @@ function expectedModel(id: AnyModelKey) {
     provider: isOpenRouter ? "openrouter" : "openai",
     supportsAttachments: true,
     supportsReasoning: isOpenRouter,
-    supportedReasoningEfforts: isOpenRouter
-      ? ["low", "extra high", "max"]
-      : undefined,
+    ...(isOpenRouter && {
+      supportedReasoningEfforts: ["low", "extra high", "max"],
+    }),
   };
 }
 
