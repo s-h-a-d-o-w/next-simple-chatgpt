@@ -4,7 +4,7 @@ import { Code } from "./Code";
 import { padNewlines } from "./padNewlines";
 import { HeaderCell, Cell, Row } from "./TableElements";
 import ReactMarkdown from "react-markdown";
-import { UIMessage } from "ai";
+import { ReasoningUIPart, TextUIPart } from "ai";
 import { styled } from "@/styled-system/jsx";
 
 const remarkPlugins = [remarkGfm];
@@ -29,25 +29,22 @@ const Reasoning = styled("div", {
 export function Part({
   part,
 }: {
-  part: NonNullable<UIMessage["parts"]>[number];
+  part: NonNullable<TextUIPart | ReasoningUIPart>;
 }) {
-  const markdown =
-    part.type === "text" || part.type === "reasoning" ? (
-      <MemoizedReactMarkdown
-        remarkPlugins={remarkPlugins}
-        components={{
-          code: Code,
-          pre: ({ children }) => children,
-          th: HeaderCell,
-          td: Cell,
-          tr: Row,
-        }}
-      >
-        {padNewlines(part.text)}
-      </MemoizedReactMarkdown>
-    ) : (
-      JSON.stringify(part, undefined, 2)
-    );
+  const markdown = (
+    <MemoizedReactMarkdown
+      remarkPlugins={remarkPlugins}
+      components={{
+        code: Code,
+        pre: ({ children }) => children,
+        th: HeaderCell,
+        td: Cell,
+        tr: Row,
+      }}
+    >
+      {padNewlines(part.text)}
+    </MemoizedReactMarkdown>
+  );
 
   return part.type === "reasoning" ? (
     <Reasoning>{markdown}</Reasoning>

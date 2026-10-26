@@ -32,7 +32,11 @@ test(`Vision works correctly with PDF`, async ({ page }) => {
     "What number can you see here? (No commentary, just output the number)",
   );
 
-  await expect(page.locator('[data-testid$="-assistant"]')).toHaveText("427");
+  await page.pause();
+
+  await expect(
+    page.locator('[data-testid$="-assistant-part"]').last(),
+  ).toHaveText("427");
 });
 
 test(`Vision works correctly with PNG`, async ({ page }) => {
@@ -47,5 +51,7 @@ test(`Vision works correctly with PNG`, async ({ page }) => {
     "What number can you see here? (No commentary, just output the number)",
   );
 
-  await expect(page.locator('[data-testid$="-assistant"]')).toHaveText("427");
+  await expect(
+    page.locator('[data-testid$="-assistant-part"]').last(),
+  ).toHaveText("427");
 });

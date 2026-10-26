@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/IconButton";
 import { withProfiler } from "@/components/withProfiler";
-import type { UIMessage } from "ai";
+import type { ReasoningUIPart, TextUIPart, UIMessage } from "ai";
 import { memo, useMemo } from "react";
 import { styled } from "@/styled-system/jsx";
 import { FilesPreview } from "@/components/FilesPreview";
@@ -104,10 +104,8 @@ export const Message = memo(
         parts.filter(
           (part) =>
             part.type === "text" ||
-            (part.type === "reasoning" && part.text !== "") ||
-            part.type === "dynamic-tool" ||
-            part.type.startsWith("tool-"),
-        ),
+            (part.type === "reasoning" && part.text !== ""),
+        ) as (TextUIPart | ReasoningUIPart)[],
       [parts],
     );
 
@@ -125,8 +123,12 @@ export const Message = memo(
         {renderableParts.length > 0 && (
           <div style={{ width: "100%" }}>
             {renderableParts.map((part) => (
-              // @ts-expect-error Strange tool type error
-              <Part key={`${id}-${part.type}-${part.text}`} part={part} />
+              <div
+                key={`${id}-${part.type}-${part.text}`}
+                data-testid={`message-${role}-part`}
+              >
+                <Part part={part} />
+              </div>
             ))}
           </div>
         )}
