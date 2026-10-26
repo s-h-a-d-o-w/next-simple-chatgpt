@@ -1,8 +1,9 @@
-import { POST, type ChatRequest } from "./route";
+import { POST, type ChatProps } from "./route";
 import { it, describe, expect } from "vitest";
 import { NextRequest } from "next/server";
 import type { ModelKey } from "@/lib/models";
-import type { Metadata, AnthropicUsage } from "@/types";
+import type { Metadata } from "@/types";
+import { config } from "@/config";
 
 // Haiku 4.5 requires a minimum of 4096 tokens for caching
 const longSystemPrompt = `You are a helpful assistant with extensive knowledge across many domains.
@@ -54,7 +55,8 @@ This system prompt is designed to be sufficiently long to trigger automatic cach
 Please respond to all user queries following the above guidelines. Remember to be helpful, accurate, and considerate in all interactions.`;
 
 async function callRouteHandler(model: ModelKey, systemPrompt: string) {
-  const body: ChatRequest = {
+  const body: ChatProps = {
+    id: "test-session",
     model,
     messages: [
       {
@@ -103,37 +105,25 @@ describe("/api/chat", () => {
     const timestamp = Date.now().toString();
 
     const cacheWriteMetadata = await callRouteHandler(
-      "claude-haiku-4-5",
+      config.models.default,
       timestamp + " " + longSystemPrompt,
     );
     const {
       usage: { cacheWriteTokens },
     } = cacheWriteMetadata;
     expect(cacheWriteTokens).toBeGreaterThan(4_096);
-    const anthropicCacheWriteUsage = cacheWriteMetadata.rawPart
-      .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
-    expect(anthropicCacheWriteUsage.cache_creation_input_tokens).toStrictEqual(
-      cacheWriteTokens,
-    );
 
     // Attempt at reducing flakiness.
     await new Promise((resolve) => setTimeout(resolve, 1_000));
 
     const cacheReadMetadata = await callRouteHandler(
-      "claude-haiku-4-5",
+      config.models.default,
       timestamp + " " + longSystemPrompt,
     );
     const {
-      usage: { cacheReadTokens, inputTokens, outputTokens },
+      usage: { cacheReadTokens },
     } = cacheReadMetadata;
     expect(cacheReadTokens).toBeGreaterThan(4_096);
-    const anthropicCacheReadUsage = cacheReadMetadata.rawPart
-      .providerMetadata?.["anthropic"]?.["usage"] as AnthropicUsage;
-    expect(anthropicCacheReadUsage.cache_read_input_tokens).toStrictEqual(
-      cacheReadTokens,
-    );
-    expect(anthropicCacheReadUsage.input_tokens).toStrictEqual(inputTokens);
-    expect(anthropicCacheReadUsage.output_tokens).toStrictEqual(outputTokens);
   }, 30_000);
 
   it("has reasonable normalized usage with openai provider", async () => {

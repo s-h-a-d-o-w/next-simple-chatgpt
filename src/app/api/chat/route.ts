@@ -22,11 +22,18 @@ import { normalizeUsage } from "./normalizeUsage";
 import { getCost } from "./billing/getCost";
 import type { Metadata } from "@/types";
 
-export type ChatRequest = {
-  model: ModelKey;
+type SdkChatProps = {
+  id: string;
   messages: UIMessage[];
+};
+
+export type AppChatProps = {
+  model: ModelKey;
+
   reasoningEffort?: ReasoningEffort;
 };
+
+export type ChatProps = SdkChatProps & AppChatProps;
 
 // Workaround for https://github.com/vercel/ai/issues/13103
 const singleDownload = createDownload();
@@ -46,8 +53,8 @@ const openRouterReasoningEfforts = {
   max: "max",
 } satisfies Record<ReasoningEffort, string>;
 
-async function processChatRequest(request: ChatRequest) {
-  const { model, messages: rawMessages, reasoningEffort } = request;
+async function processChatProps(request: ChatProps) {
+  const { model, messages: rawMessages, reasoningEffort, ...rest } = request;
   const instructions = rawMessages
     .filter(({ role }) => role === "system")
     .flatMap((message) =>
@@ -61,6 +68,7 @@ async function processChatRequest(request: ChatRequest) {
   );
 
   return {
+    ...rest,
     model,
     instructions,
     messages,
@@ -73,13 +81,17 @@ async function processChatRequest(request: ChatRequest) {
 export const POST = async (req: NextRequest) => {
   await authGuard();
 
-  const { model, messages, instructions, reasoningEffort } =
-    await processChatRequest((await req.json()) as ChatRequest);
+  const {
+    id: sessionId,
+    model,
+    messages,
+    instructions,
+    reasoningEffort,
+  } = await processChatProps((await req.json()) as ChatProps);
   const models = await fetchModels();
   const modelConfig = models[model];
   const isAnthropic = modelConfig.provider === "anthropic";
   const isOpenAI = modelConfig.provider === "openai";
-  const isOpenRouter = modelConfig.provider === "openrouter";
 
   const result = streamText({
     // Workaround for https://github.com/vercel/ai/issues/13103
@@ -103,7 +115,31 @@ export const POST = async (req: NextRequest) => {
       ? openai(model)
       : isAnthropic
         ? anthropic(model)
-        : openrouter(model.split("/").slice(1).join("/")),
+        : openrouter(model.split("/").slice(1).join("/"), {
+            // providerOptions is bricked: https://github.com/OpenRouterTeam/ai-sdk-provider/issues/616
+            extraBody: {
+              session_id: sessionId,
+              cache_control: { type: "ephemeral" }, // ignored by non-anthropic models
+              provider: {
+                sort: "latency",
+                // https://www.washingtonpost.com/nation/2026/10/15/see-full-list-major-donors-white-house-ballroom/
+                // ... but we need "google-vertex" 🤮️ for ZDR anthropic LLM usage
+                ignore: [
+                  "amazon-nova",
+                  "amazon-bedrock",
+                  "azure",
+                  "google-ai-studio",
+                ],
+              },
+              ...(modelConfig.supportsReasoning && reasoningEffort
+                ? {
+                    reasoning: {
+                      effort: openRouterReasoningEfforts[reasoningEffort],
+                    },
+                  }
+                : {}),
+            },
+          }),
     instructions,
     messages,
     providerOptions: merge(
@@ -122,14 +158,6 @@ export const POST = async (req: NextRequest) => {
               reasoningEffort,
             },
           }),
-        ...(reasoningEffort &&
-          isOpenRouter && {
-            openrouter: {
-              reasoning: {
-                effort: openRouterReasoningEfforts[reasoningEffort],
-              },
-            },
-          }),
       },
     ),
     // Stops upstream generation (and billing) when the user hits stop or closes the tab.
@@ -142,9 +170,14 @@ export const POST = async (req: NextRequest) => {
     // AI SDK doesn't add usage metadata to the response by default. Needed for testing.
     messageMetadata({ part }) {
       if (part.type === "finish-step") {
+        // part.finishReason
         const usage = normalizeUsage(part.usage);
         const cost = getCost(modelConfig, usage);
-        return { cost, usage, rawPart: part } satisfies Metadata;
+        return {
+          cost,
+          usage,
+          triggeredContentFilter: part.finishReason === "content-filter",
+        } satisfies Metadata;
       }
     },
     onError(error) {

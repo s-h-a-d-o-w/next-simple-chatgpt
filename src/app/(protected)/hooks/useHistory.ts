@@ -4,6 +4,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { stringify, parse } from "superjson";
 import { useStorageUsage } from "./useStorageUsage";
 import type { UIMessage } from "ai";
+import { Metadata } from "@/types";
 
 export const CURRENT_HISTORY_VERSION = 1;
 
@@ -14,7 +15,7 @@ type HistoryV1 = {
 
 export type HistoryEntryV1 = {
   startTime: number;
-  messages: UIMessage[];
+  messages: UIMessage<Metadata>[];
 };
 
 type LegacyHistoryEntry = HistoryEntryV1;
@@ -38,7 +39,9 @@ export const historySerializer = {
   parse: (value: string) => maybeMigrateHistory(parse(value)),
 };
 
-function stripAttachmentsFromMessages(messages: UIMessage[]): UIMessage[] {
+function stripAttachmentsFromMessages(
+  messages: UIMessage<Metadata>[],
+): UIMessage<Metadata>[] {
   // Could be optimized by filtering messages that have file parts and only processing those more deeply. But since this is only called on a single history entry, this seems excessive at the moment.
   return messages.map(({ parts, ...rest }) => ({
     parts: parts.map((part) =>
@@ -66,7 +69,7 @@ export function useHistory(namespace?: string) {
 export function useSyncHistory(
   isLoading: boolean,
   startTime: number | undefined,
-  messages: UIMessage[],
+  messages: UIMessage<Metadata>[],
   namespace?: string,
 ) {
   const [conversationHistory, setConversationHistory] = useHistory(namespace);

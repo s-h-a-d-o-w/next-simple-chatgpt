@@ -1,10 +1,6 @@
 import type { NormalizedUsage } from "@/app/api/chat/normalizeUsage";
-import type { TextStreamPart, ToolSet } from "ai";
-import type { useChat } from "@ai-sdk/react";
-
-export type SetMessages = ReturnType<typeof useChat>["setMessages"];
-
-type FinishStepPart = Extract<TextStreamPart<ToolSet>, { type: "finish-step" }>;
+import { useChat } from "@ai-sdk/react";
+import type { UIMessage } from "ai";
 
 export type AnthropicUsage = {
   input_tokens: number;
@@ -55,5 +51,9 @@ export type OpenRouterModelInfo = {
 export type Metadata = {
   usage: NormalizedUsage;
   cost: number;
-  rawPart: FinishStepPart;
+  triggeredContentFilter: boolean;
 };
+
+export type SetMessages = ReturnType<
+  typeof useChat<UIMessage<Metadata>>
+>["setMessages"];

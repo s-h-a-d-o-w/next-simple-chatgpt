@@ -3,11 +3,12 @@ import { ModelSelector } from "./ModelSelector";
 import { ReasoningEffortSelector } from "./ReasoningEffortSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { memo, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   promptFilesAtom,
-  chatIdAtom,
   chatStartTimeAtom,
   isHistoryOpenAtom,
+  sessionIdAtom,
 } from "@/app/(protected)/atoms";
 import { useSetAtom } from "jotai";
 import { styled } from "@/styled-system/jsx";
@@ -43,7 +44,7 @@ export const TopBar = memo(function TopBar({
   disabledHistoryActions,
   hasFilesInChat,
 }: Props) {
-  const setChatId = useSetAtom(chatIdAtom);
+  const setSessionId = useSetAtom(sessionIdAtom);
   const setFiles = useSetAtom(promptFilesAtom);
   const setIsHistoryOpen = useSetAtom(isHistoryOpenAtom);
   const setStartTime = useSetAtom(chatStartTimeAtom);
@@ -53,10 +54,10 @@ export const TopBar = memo(function TopBar({
   }, [setIsHistoryOpen]);
 
   const handleReset = useCallback(() => {
-    setChatId((currentChatId) => currentChatId + 1);
+    setSessionId(uuidv4());
     setFiles([]);
     setStartTime(undefined);
-  }, [setChatId, setFiles, setStartTime]);
+  }, [setSessionId, setFiles, setStartTime]);
 
   return (
     <StyledActions>

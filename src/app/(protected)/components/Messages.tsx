@@ -1,11 +1,12 @@
 import { Message } from "@/app/(protected)/components/Message";
 import { Button } from "@/components/Button";
-import { UIMessage } from "ai";
+import type { UIMessage } from "ai";
+import type { Metadata } from "@/types";
 import { styled } from "@/styled-system/jsx";
 import { memo } from "react";
 
 type Props = {
-  messages: UIMessage[];
+  messages: UIMessage<Metadata>[];
 
   hasError?: boolean;
   isLoading?: boolean;

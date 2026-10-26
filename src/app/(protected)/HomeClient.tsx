@@ -1,16 +1,16 @@
 "use client";
 
 import "@/lib/utils/logBuildInfo";
-
+import type { Metadata } from "@/types";
 import { History } from "@/app/(protected)/components/History";
 import {
-  chatIdAtom,
   chatStartTimeAtom,
   promptFilesAtom,
+  sessionIdAtom,
   systemPromptAtom,
 } from "@/app/(protected)/atoms";
 import { Messages } from "./components/Messages";
-import type { ChatRequest } from "@/app/api/chat/route";
+import type { AppChatProps } from "@/app/api/chat/route";
 import { withProfiler } from "@/components/withProfiler";
 import { useSyncHistory } from "@/app/(protected)/hooks/useHistory";
 import { useModelSelection } from "@/app/(protected)/hooks/useModelSelection";
@@ -18,7 +18,7 @@ import { useReasoningEffort } from "@/app/(protected)/hooks/useReasoningEffort";
 import { useScrollToBottom } from "@/app/(protected)/hooks/useScrollToBottom";
 import { useChat } from "@ai-sdk/react";
 import type { FileUIPart, UIMessage } from "ai";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useMemo } from "react";
 import { styled } from "@/styled-system/jsx";
 import { TopBar } from "./components/TopBar";
@@ -39,9 +39,9 @@ const StyledMain = styled("main", {
 });
 
 function HomeClient() {
-  const [chatId] = useAtom(chatIdAtom);
-  const [startTime] = useAtom(chatStartTimeAtom);
-  const [systemPrompt] = useAtom(systemPromptAtom);
+  const sessionId = useAtomValue(sessionIdAtom);
+  const startTime = useAtomValue(chatStartTimeAtom);
+  const systemPrompt = useAtomValue(systemPromptAtom);
 
   const { model } = useModelSelection();
   const { reasoningEffort } = useReasoningEffort();
@@ -52,7 +52,7 @@ function HomeClient() {
       ({
         model,
         reasoningEffort,
-      }) satisfies Omit<ChatRequest, "messages">,
+      }) satisfies AppChatProps,
     [model, reasoningEffort],
   );
 
@@ -65,9 +65,8 @@ function HomeClient() {
     regenerate,
     sendMessage,
     // Might not be necessary here but is for code below.
-    // oxlint-disable-next-line typescript/no-unnecessary-type-arguments
-  } = useChat<UIMessage>({
-    id: chatId.toString(),
+  } = useChat<UIMessage<Metadata>>({
+    id: sessionId,
     throttle: 500,
     messages: [
       {

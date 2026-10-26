@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -16,6 +17,7 @@ import {
   activeHistoryEntryAtom,
   chatStartTimeAtom,
   isHistoryOpenAtom,
+  sessionIdAtom,
   systemPromptAtom,
 } from "../../atoms";
 import type { SetMessages } from "@/types";
@@ -99,6 +101,7 @@ export const History = memo(function History({ setMessages }: Props) {
   const [isOpen, setIsHistoryOpen] = useAtom(isHistoryOpenAtom);
   const setSystemPrompt = useSetAtom(systemPromptAtom);
   const setStartTime = useSetAtom(chatStartTimeAtom);
+  const setSessionId = useSetAtom(sessionIdAtom);
 
   const [conversationHistory, setConversationHistory] = useHistory();
 
@@ -148,6 +151,7 @@ export const History = memo(function History({ setMessages }: Props) {
         ),
       );
       setMessages(activeHistoryEntry.messages);
+      setSessionId(uuidv4());
       setStartTime(Date.now());
       setActiveHistoryEntry(undefined);
       setIsHistoryOpen(false);
@@ -163,6 +167,7 @@ export const History = memo(function History({ setMessages }: Props) {
     setMessages,
     setStartTime,
     setSystemPrompt,
+    setSessionId,
   ]);
 
   const searchTerms = useMemo(
