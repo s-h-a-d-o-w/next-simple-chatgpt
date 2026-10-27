@@ -46,5 +46,5 @@ test(`Deleting and restoring history entries works correctly`, async ({
   await historyEntries.nth(0).click({ position: { x: 10, y: 10 } });
 
   await page.locator('button:has-text("Restore")').click();
-  await expect(page.getByText("4")).toBeVisible();
+  await expect(page.getByText("4", { exact: true })).toBeVisible();
 });

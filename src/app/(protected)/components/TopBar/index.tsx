@@ -8,7 +8,7 @@ import {
   promptFilesAtom,
   chatStartTimeAtom,
   isHistoryOpenAtom,
-  sessionIdAtom,
+  chatSessionAtom,
 } from "@/app/(protected)/atoms";
 import { useSetAtom } from "jotai";
 import { styled } from "@/styled-system/jsx";
@@ -44,7 +44,7 @@ export const TopBar = memo(function TopBar({
   disabledHistoryActions,
   hasFilesInChat,
 }: Props) {
-  const setSessionId = useSetAtom(sessionIdAtom);
+  const setChatSession = useSetAtom(chatSessionAtom);
   const setFiles = useSetAtom(promptFilesAtom);
   const setIsHistoryOpen = useSetAtom(isHistoryOpenAtom);
   const setStartTime = useSetAtom(chatStartTimeAtom);
@@ -54,10 +54,10 @@ export const TopBar = memo(function TopBar({
   }, [setIsHistoryOpen]);
 
   const handleReset = useCallback(() => {
-    setSessionId(uuidv4());
+    setChatSession({ id: uuidv4() });
     setFiles([]);
     setStartTime(undefined);
-  }, [setSessionId, setFiles, setStartTime]);
+  }, [setChatSession, setFiles, setStartTime]);
 
   return (
     <StyledActions>

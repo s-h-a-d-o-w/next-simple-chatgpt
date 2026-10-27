@@ -17,15 +17,10 @@ import {
   activeHistoryEntryAtom,
   chatStartTimeAtom,
   isHistoryOpenAtom,
-  sessionIdAtom,
+  chatSessionAtom,
   systemPromptAtom,
 } from "../../atoms";
-import type { SetMessages } from "@/types";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
-
-type Props = {
-  setMessages: SetMessages;
-};
 
 const StyledHistory = styled("div", {
   base: {
@@ -94,14 +89,14 @@ const StyledSearchInput = styled("input", {
   },
 });
 
-export const History = memo(function History({ setMessages }: Props) {
+export const History = memo(function History() {
   const [activeHistoryEntry, setActiveHistoryEntry] = useAtom(
     activeHistoryEntryAtom,
   );
   const [isOpen, setIsHistoryOpen] = useAtom(isHistoryOpenAtom);
   const setSystemPrompt = useSetAtom(systemPromptAtom);
   const setStartTime = useSetAtom(chatStartTimeAtom);
-  const setSessionId = useSetAtom(sessionIdAtom);
+  const setChatSession = useSetAtom(chatSessionAtom);
 
   const [conversationHistory, setConversationHistory] = useHistory();
 
@@ -126,21 +121,16 @@ export const History = memo(function History({ setMessages }: Props) {
 
   const handleDeleteHistoryEntry = useCallback(
     (entry: HistoryEntryV1) => {
-      if (activeHistoryEntry === entry) {
+      if (activeHistoryEntry?.startTime === entry.startTime) {
         setActiveHistoryEntry(undefined);
       }
 
-      const nextHistory = structuredClone(conversationHistory);
-      const entryIndex = nextHistory.indexOf(entry);
-      nextHistory.splice(entryIndex, 1);
-      setConversationHistory(nextHistory);
+      // State is actually local storage via serialize/deserialize, so cloning is not needed.
+      setConversationHistory((history) =>
+        history.filter(({ startTime }) => startTime !== entry.startTime),
+      );
     },
-    [
-      activeHistoryEntry,
-      conversationHistory,
-      setActiveHistoryEntry,
-      setConversationHistory,
-    ],
+    [activeHistoryEntry, setActiveHistoryEntry, setConversationHistory],
   );
 
   const handleRestoreHistoryEntry = useCallback(() => {
@@ -150,8 +140,10 @@ export const History = memo(function History({ setMessages }: Props) {
           (entry) => entry.startTime !== activeHistoryEntry.startTime,
         ),
       );
-      setMessages(activeHistoryEntry.messages);
-      setSessionId(uuidv4());
+      setChatSession({
+        id: uuidv4(),
+        initialMessages: activeHistoryEntry.messages,
+      });
       setStartTime(Date.now());
       setActiveHistoryEntry(undefined);
       setIsHistoryOpen(false);
@@ -164,10 +156,9 @@ export const History = memo(function History({ setMessages }: Props) {
     setActiveHistoryEntry,
     setConversationHistory,
     setIsHistoryOpen,
-    setMessages,
     setStartTime,
     setSystemPrompt,
-    setSessionId,
+    setChatSession,
   ]);
 
   const searchTerms = useMemo(

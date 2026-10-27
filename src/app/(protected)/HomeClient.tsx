@@ -6,7 +6,7 @@ import { History } from "@/app/(protected)/components/History";
 import {
   chatStartTimeAtom,
   promptFilesAtom,
-  sessionIdAtom,
+  chatSessionAtom,
   systemPromptAtom,
 } from "@/app/(protected)/atoms";
 import { Messages } from "./components/Messages";
@@ -39,7 +39,7 @@ const StyledMain = styled("main", {
 });
 
 function HomeClient() {
-  const sessionId = useAtomValue(sessionIdAtom);
+  const { id: sessionId, initialMessages } = useAtomValue(chatSessionAtom);
   const startTime = useAtomValue(chatStartTimeAtom);
   const systemPrompt = useAtomValue(systemPromptAtom);
 
@@ -68,7 +68,7 @@ function HomeClient() {
   } = useChat<UIMessage<Metadata>>({
     id: sessionId,
     throttle: 500,
-    messages: [
+    messages: initialMessages ?? [
       {
         parts: [{ type: "text", text: systemPrompt }],
         role: "system",
@@ -156,7 +156,7 @@ function HomeClient() {
           onStop={stop}
         />
       </StyledMain>
-      <History setMessages={setMessages} />
+      <History />
     </>
   );
 }
