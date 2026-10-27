@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nextjs";
 import { authGuard } from "@/lib/server/authGuard";
 import {
   isReasoningEffort,
@@ -173,7 +174,8 @@ export const POST = async (req: NextRequest) => {
       }
     },
     onError(error) {
-      // Would add error reporting service integration in commercial product here.
+      captureException(error);
+
       if (!loggedErrors.has((error as Error).message)) {
         if (loggedErrors.size > 100) {
           loggedErrors.clear();
