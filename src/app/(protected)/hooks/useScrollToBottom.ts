@@ -3,11 +3,22 @@ import { useCallback, useEffect, useRef } from "react";
 // Scroll to bottom while the document grows (e.g. a response streaming in)
 export function useScrollToBottom(doScroll: boolean) {
   const hasUserScrolledUp = useRef(false);
+  const lastScrollY = useRef(0);
 
-  // Detect whether user scrolled up
+  // Detect whether user scrolled up.
+  // Only upward movement counts - content growing between our scrollTo() and the
+  // (async) scroll event must not be mistaken for the user scrolling up.
   const handleUserScroll = useCallback(() => {
-    hasUserScrolledUp.current =
-      window.scrollY < document.body.scrollHeight - window.innerHeight - 10;
+    const { innerHeight, scrollY } = window;
+    const isAtBottom = scrollY >= document.body.scrollHeight - innerHeight - 10;
+
+    if (isAtBottom) {
+      hasUserScrolledUp.current = false;
+    } else if (scrollY < lastScrollY.current) {
+      hasUserScrolledUp.current = true;
+    }
+
+    lastScrollY.current = scrollY;
   }, []);
   useEffect(() => {
     window.addEventListener("scroll", handleUserScroll, { passive: true });
