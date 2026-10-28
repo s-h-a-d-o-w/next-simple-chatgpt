@@ -146,6 +146,7 @@ describe("/api/chat", () => {
       new NextRequest("http://localhost:3000/api/chat", {
         method: "POST",
         body: JSON.stringify({
+          id: "mocked",
           model: "gpt-4.1",
           messages: [
             {
@@ -154,7 +155,7 @@ describe("/api/chat", () => {
               parts: [{ type: "text", text: "Hello." }],
             },
           ],
-        }),
+        } satisfies ChatProps),
         signal: controller.signal,
       }),
     );
