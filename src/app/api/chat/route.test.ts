@@ -1,58 +1,23 @@
+import { openai } from "@ai-sdk/openai";
 import { POST, type ChatProps } from "./route";
-import { it, describe, expect } from "vitest";
+import { it, describe, expect, vi } from "vitest";
 import { NextRequest } from "next/server";
 import type { ModelKey } from "@/lib/models";
 import type { Metadata } from "@/types";
 import { config } from "@/config";
+import { MockLanguageModelV4 } from "ai/test";
+import { simulateReadableStream } from "ai";
+
+vi.mock(import("@ai-sdk/openai"), { spy: true });
 
 // Haiku 4.5 requires a minimum of 4096 tokens for caching
-const longSystemPrompt = `You are a helpful assistant with extensive knowledge across many domains.
-
-${Array.from({ length: 11 })
+const longSystemPrompt = Array.from({ length: 400 })
   .fill(undefined)
   .map(
-    (_, i) => `
-## Section ${i + 1}: Important Guidelines and Information
-
-This section contains important information about how to respond to user queries. We need to ensure that this prompt is sufficiently long to trigger the caching mechanism. The prompt caching feature requires a minimum number of tokens to be activated.
-
-### Key Principles
-- Always provide accurate and helpful information
-- Be concise when appropriate, but thorough when needed
-- Use examples to illustrate complex concepts
-- Acknowledge uncertainty when it exists
-- Consider multiple perspectives on issues
-- Provide actionable advice when possible
-- Ask clarifying questions when the request is ambiguous
-
-### Background Information
-The caching mechanism works by storing frequently used prompt prefixes. This allows for faster response times and reduced token usage on subsequent requests. The minimum token requirement varies by model:
-- Claude Haiku 4.5: 4096 tokens
-- Claude Haiku 3.5: 2048 tokens
-- Claude Haiku 3: 2048 tokens
-
-When automatic caching is enabled, the API automatically determines where to place cache breakpoints based on the content structure. This optimizes for both performance and cost efficiency.
-
-### Additional Context
-This system prompt is designed to be sufficiently long to trigger automatic caching in Claude models. By including this extended system prompt, we ensure that the prompt caching feature can be properly tested. The caching is particularly beneficial for applications that make repeated API calls with similar prompt structures.
-
-### Usage Guidelines
-1. Process user requests efficiently
-2. Maintain context throughout the conversation
-3. Provide relevant information
-4. Structure responses clearly
-5. Use formatting when helpful
-6. Include code examples when discussing programming
-7. Provide citations when referencing facts
-8. Summarize complex information when appropriate
-9. Break down complex problems into steps
-10. Consider the user's perspective and needs
-`,
+    () => `
+You are a helpful assistant with extensive knowledge across many domains.`,
   )
-  .join("\n")}
-
-## Final Instructions
-Please respond to all user queries following the above guidelines. Remember to be helpful, accurate, and considerate in all interactions.`;
+  .join("\n");
 
 async function callRouteHandler(model: ModelKey, systemPrompt: string) {
   const body: ChatProps = {
@@ -142,4 +107,89 @@ describe("/api/chat", () => {
 
     // It's not possible to test caching, since caching with OpenAI is merely "best effort".
   }, 30_000);
+
+  it("aborts streaming when the request is aborted", async () => {
+    const controller = new AbortController();
+
+    const model = new MockLanguageModelV4({
+      doStream: [
+        {
+          stream: simulateReadableStream({
+            initialDelayInMs: 10,
+            chunkDelayInMs: 10,
+            chunks: [
+              { type: "text-start", id: "text-1" },
+              { type: "text-delta", id: "text-1", delta: "Hello" },
+              { type: "text-delta", id: "text-1", delta: ", world" },
+              { type: "text-end", id: "text-1" },
+              {
+                type: "finish",
+                finishReason: { unified: "stop", raw: undefined },
+                usage: {
+                  inputTokens: {
+                    total: 1,
+                    noCache: 1,
+                    cacheRead: undefined,
+                    cacheWrite: undefined,
+                  },
+                  outputTokens: { total: 1, text: 1, reasoning: undefined },
+                },
+              },
+            ],
+          }),
+        },
+      ],
+    });
+    vi.mocked(openai).mockReturnValueOnce(model);
+
+    const response = await POST(
+      new NextRequest("http://localhost:3000/api/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          model: "gpt-4.1",
+          messages: [
+            {
+              id: "user-1",
+              role: "user",
+              parts: [{ type: "text", text: "Hello." }],
+            },
+          ],
+        }),
+        signal: controller.signal,
+      }),
+    );
+
+    const reader = response.body!.getReader();
+    const parts: unknown[] = [];
+    for (let i = 0; ; i++) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      // Abort the request after reading 4 chunks.
+      if (i === 4) {
+        controller.abort(new Error("user cancelled"));
+      }
+      parts.push(value);
+    }
+
+    const serialized = Buffer.concat(parts as Uint8Array[]).toString();
+    expect(serialized).toMatchInlineSnapshot(`
+      ": stream-open
+
+      data: {"type":"start"}
+
+      data: {"type":"start-step"}
+
+      data: {"type":"text-start","id":"text-1"}
+
+      data: {"type":"text-delta","id":"text-1","delta":"Hello"}
+
+      data: {"type":"abort","reason":"Error: user cancelled"}
+
+      data: [DONE]
+
+      "
+    `);
+  });
 });
