@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { generateSessionId } from "@/lib/utils/generateSessionId";
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -141,7 +141,7 @@ export const History = memo(function History() {
         ),
       );
       setChatSession({
-        id: uuidv4(),
+        id: generateSessionId(),
         initialMessages: activeHistoryEntry.messages,
       });
       setStartTime(Date.now());

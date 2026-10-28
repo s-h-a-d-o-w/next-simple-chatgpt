@@ -3,7 +3,7 @@ import { ModelSelector } from "./ModelSelector";
 import { ReasoningEffortSelector } from "./ReasoningEffortSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { memo, useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { generateSessionId } from "@/lib/utils/generateSessionId";
 import {
   promptFilesAtom,
   chatStartTimeAtom,
@@ -54,7 +54,7 @@ export const TopBar = memo(function TopBar({
   }, [setIsHistoryOpen]);
 
   const handleReset = useCallback(() => {
-    setChatSession({ id: uuidv4() });
+    setChatSession({ id: generateSessionId() });
     setFiles([]);
     setStartTime(undefined);
   }, [setChatSession, setFiles, setStartTime]);
