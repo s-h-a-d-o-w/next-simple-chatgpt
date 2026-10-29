@@ -1,5 +1,5 @@
 import { formatDistance } from "date-fns";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { css } from "@/styled-system/css";
 import { IconButton } from "@/components/IconButton";
 import { Message } from "../Message";
@@ -30,13 +30,18 @@ export function ShortenedEntry({
 }: RowComponentProps<Props>) {
   const entry = filteredHistory[index];
   const firstUserMessage = entry?.messages[1];
+  const startTime = entry?.startTime;
+
   // oxlint-disable-next-line react/hook-use-state
-  const [howLongAgo] = useState(() =>
-    entry?.startTime
-      ? formatDistance(entry.startTime, new Date(), {
-          addSuffix: true,
-        })
-      : "",
+  const [now] = useState(() => new Date());
+  const howLongAgo = useMemo(
+    () =>
+      startTime
+        ? formatDistance(startTime, now, {
+            addSuffix: true,
+          })
+        : "",
+    [now, startTime],
   );
 
   return !firstUserMessage ? (
