@@ -95,7 +95,7 @@ export const History = memo(function History() {
   );
   const [isOpen, setIsHistoryOpen] = useAtom(isHistoryOpenAtom);
   const setSystemPrompt = useSetAtom(systemPromptAtom);
-  const setStartTime = useSetAtom(chatStartTimeAtom);
+  const [chatStartTime, setStartTime] = useAtom(chatStartTimeAtom);
   const setChatSession = useSetAtom(chatSessionAtom);
 
   const [conversationHistory, setConversationHistory] = useHistory();
@@ -169,11 +169,19 @@ export const History = memo(function History() {
     [debouncedSearchValue],
   );
 
+  const historyWithoutCurrentSession = useMemo(
+    () =>
+      conversationHistory.filter(
+        ({ startTime }) => startTime !== chatStartTime,
+      ),
+    [conversationHistory, chatStartTime],
+  );
+
   const filteredHistory = useMemo(
     () =>
       (!searchTerms
-        ? conversationHistory
-        : conversationHistory.filter((entry) =>
+        ? historyWithoutCurrentSession
+        : historyWithoutCurrentSession.filter((entry) =>
             searchTerms.every((term) =>
               entry.messages.some((message) =>
                 message.parts.some(
@@ -185,7 +193,7 @@ export const History = memo(function History() {
             ),
           )
       ).toReversed(),
-    [conversationHistory, searchTerms],
+    [historyWithoutCurrentSession, searchTerms],
   );
 
   const rowHeight = useDynamicRowHeight({
