@@ -32,7 +32,6 @@ export function Part({ part }: { part: TextUIPart | ReasoningUIPart }) {
       remarkPlugins={remarkPlugins}
       components={{
         code: Code,
-        pre: ({ children }) => children,
         th: HeaderCell,
         td: Cell,
         tr: Row,

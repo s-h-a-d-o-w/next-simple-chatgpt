@@ -18,6 +18,14 @@ import {
   type SupportedLanguage,
 } from "./refractorLanguages";
 
+const StyledCode = styled("code", {
+  base: {
+    padding: "2rem 4rem",
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-all",
+  },
+});
+
 const StyledCopyButton = styled(CopyButton, {
   base: {
     position: "absolute",
@@ -88,7 +96,7 @@ export function Code(
 
   // Inline code
   if (isInline) {
-    return <code className={className}>{text}</code>;
+    return <StyledCode className={className}>{text}</StyledCode>;
   }
 
   return (
